@@ -1,3 +1,6 @@
+
+'use client';
+import * as React from 'react';
 import Link from 'next/link';
 import {
   Card,
@@ -16,11 +19,21 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/app/page-header';
-import { DashboardChart } from '@/components/app/dashboard-chart';
 import { invoices, buyers } from '@/lib/data';
 import { DollarSign, Receipt, Users, PlusCircle, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
 
 export default function SellPage() {
   const sellInvoices = invoices.filter((inv) => inv.type === 'sell');
@@ -32,7 +45,21 @@ export default function SellPage() {
     .filter((inv) => inv.status === 'Unpaid' || inv.status === 'Overdue')
     .reduce((sum, inv) => sum + inv.totalAmount, 0);
 
-  const recentSellInvoices = sellInvoices.slice(0, 5);
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = React.useState<string | null>(null);
+
+  const handleDelete = () => {
+    if (selectedInvoiceId) {
+      console.log(`Deleting invoice with id: ${selectedInvoiceId}`);
+      setShowDeleteDialog(false);
+      setSelectedInvoiceId(null);
+    }
+  };
+  
+  const openDeleteDialog = (invoiceId: string) => {
+    setSelectedInvoiceId(invoiceId);
+    setShowDeleteDialog(true);
+  }
 
   return (
     <>
@@ -104,7 +131,9 @@ export default function SellPage() {
               <TableBody>
                 {sellInvoices.map((invoice) => (
                   <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
+                    <TableCell className="font-medium">
+                      <Link href={`/invoices/${invoice.id}`} className="hover:underline">{invoice.invoiceNumber}</Link>
+                    </TableCell>
                     <TableCell>{invoice.party.name}</TableCell>
                     <TableCell>{invoice.date}</TableCell>
                     <TableCell>${invoice.totalAmount.toLocaleString()}</TableCell>
@@ -122,10 +151,10 @@ export default function SellPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                           <Link href={`/invoices/${invoice.id}`} legacyBehavior passHref><DropdownMenuItem>View Details</DropdownMenuItem></Link>
+                           <Link href={`/invoices/${invoice.id}/edit`} legacyBehavior passHref><DropdownMenuItem>Edit</DropdownMenuItem></Link>
                           <DropdownMenuItem>Mark as Paid</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(invoice.id)}>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -136,6 +165,20 @@ export default function SellPage() {
           </CardContent>
         </Card>
       </div>
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the invoice.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

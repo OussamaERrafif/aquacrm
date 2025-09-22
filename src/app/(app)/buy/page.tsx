@@ -1,3 +1,6 @@
+
+'use client';
+import * as React from 'react';
 import Link from 'next/link';
 import {
   Card,
@@ -20,6 +23,16 @@ import { invoices, sellers } from '@/lib/data';
 import { DollarSign, Receipt, Users, PlusCircle, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function BuyPage() {
   const buyInvoices = invoices.filter((inv) => inv.type === 'buy');
@@ -29,6 +42,22 @@ export default function BuyPage() {
   const paidAmount = buyInvoices
     .filter((inv) => inv.status === 'Paid')
     .reduce((sum, inv) => sum + inv.totalAmount, 0);
+
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = React.useState<string | null>(null);
+
+  const handleDelete = () => {
+    if (selectedInvoiceId) {
+      console.log(`Deleting invoice with id: ${selectedInvoiceId}`);
+      setShowDeleteDialog(false);
+      setSelectedInvoiceId(null);
+    }
+  };
+  
+  const openDeleteDialog = (invoiceId: string) => {
+    setSelectedInvoiceId(invoiceId);
+    setShowDeleteDialog(true);
+  }
 
   return (
     <>
@@ -100,7 +129,9 @@ export default function BuyPage() {
               <TableBody>
                 {buyInvoices.map((invoice) => (
                   <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
+                    <TableCell className="font-medium">
+                      <Link href={`/invoices/${invoice.id}`} className="hover:underline">{invoice.invoiceNumber}</Link>
+                    </TableCell>
                     <TableCell>{invoice.party.name}</TableCell>
                     <TableCell>{invoice.date}</TableCell>
                     <TableCell>${invoice.totalAmount.toLocaleString()}</TableCell>
@@ -118,10 +149,10 @@ export default function BuyPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                           <Link href={`/invoices/${invoice.id}`} legacyBehavior passHref><DropdownMenuItem>View Details</DropdownMenuItem></Link>
+                           <Link href={`/invoices/${invoice.id}/edit`} legacyBehavior passHref><DropdownMenuItem>Edit</DropdownMenuItem></Link>
                           <DropdownMenuItem>Mark as Paid</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(invoice.id)}>Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -132,6 +163,20 @@ export default function BuyPage() {
           </CardContent>
         </Card>
       </div>
+       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the invoice.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

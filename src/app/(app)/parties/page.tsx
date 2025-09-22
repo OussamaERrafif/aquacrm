@@ -1,3 +1,8 @@
+
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
 import {
   Table,
   TableBody,
@@ -17,17 +22,46 @@ import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/app/page-header';
 import { parties } from '@/lib/data';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function PartiesPage() {
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const [selectedPartyId, setSelectedPartyId] = React.useState<string | null>(null);
+
+  const handleDelete = () => {
+    if (selectedPartyId) {
+      console.log(`Deleting party with id: ${selectedPartyId}`);
+      // Here you would typically call an API to delete the party
+      setShowDeleteDialog(false);
+      setSelectedPartyId(null);
+    }
+  };
+  
+  const openDeleteDialog = (partyId: string) => {
+    setSelectedPartyId(partyId);
+    setShowDeleteDialog(true);
+  }
+
   return (
     <>
       <PageHeader
         title="Parties"
         action={
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Party
-          </Button>
+          <Link href="/parties/new" passHref>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Party
+            </Button>
+          </Link>
         }
       />
       <Card>
@@ -49,7 +83,9 @@ export default function PartiesPage() {
             <TableBody>
               {parties.map((party) => (
                 <TableRow key={party.id}>
-                  <TableCell className="font-medium">{party.name}</TableCell>
+                  <TableCell className="font-medium">
+                     <Link href={`/parties/${party.id}`} className="hover:underline">{party.name}</Link>
+                  </TableCell>
                   <TableCell>{party.company}</TableCell>
                   <TableCell>{party.email}</TableCell>
                   <TableCell>
@@ -61,8 +97,9 @@ export default function PartiesPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                         <Link href={`/parties/${party.id}`} legacyBehavior passHref><DropdownMenuItem>View Details</DropdownMenuItem></Link>
+                        <Link href={`/parties/${party.id}/edit`} legacyBehavior passHref><DropdownMenuItem>Edit</DropdownMenuItem></Link>
+                        <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(party.id)}>
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -74,6 +111,20 @@ export default function PartiesPage() {
           </Table>
         </CardContent>
       </Card>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the party and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

@@ -1,3 +1,8 @@
+
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -23,17 +28,46 @@ import { PageHeader } from '@/components/app/page-header';
 import { loans } from '@/lib/data';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
 
 export default function LoansPage() {
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const [selectedLoanId, setSelectedLoanId] = React.useState<string | null>(null);
+
+  const handleDelete = () => {
+    if (selectedLoanId) {
+      console.log(`Deleting loan with id: ${selectedLoanId}`);
+      setShowDeleteDialog(false);
+      setSelectedLoanId(null);
+    }
+  };
+  
+  const openDeleteDialog = (loanId: string) => {
+    setSelectedLoanId(loanId);
+    setShowDeleteDialog(true);
+  }
+
   return (
     <>
       <PageHeader
         title="Loans"
         action={
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Loan
-          </Button>
+          <Link href="/loans/new" passHref>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Loan
+            </Button>
+          </Link>
         }
       />
       <Card>
@@ -58,7 +92,9 @@ export default function LoansPage() {
             <TableBody>
               {loans.map((loan) => (
                 <TableRow key={loan.id}>
-                  <TableCell className="font-medium">{loan.loanId}</TableCell>
+                  <TableCell className="font-medium">
+                     <Link href={`/loans/${loan.id}`} className="hover:underline">{loan.loanId}</Link>
+                  </TableCell>
                   <TableCell>{loan.fisher.name}</TableCell>
                   <TableCell>${loan.amount.toLocaleString()}</TableCell>
                   <TableCell>{loan.interestRate}%</TableCell>
@@ -77,10 +113,11 @@ export default function LoansPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                        <Link href={`/loans/${loan.id}`} legacyBehavior passHref><DropdownMenuItem>View Details</DropdownMenuItem></Link>
+                        <Link href={`/loans/${loan.id}/edit`} legacyBehavior passHref><DropdownMenuItem>Edit</DropdownMenuItem></Link>
                         <DropdownMenuItem>Record Repayment</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
-                          Flag as Default
+                        <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(loan.id)}>
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -91,6 +128,20 @@ export default function LoansPage() {
           </Table>
         </CardContent>
       </Card>
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the loan record.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
