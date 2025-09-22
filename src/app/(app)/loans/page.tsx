@@ -64,7 +64,6 @@ export default function LoansPage() {
       setLoans(loans.filter(l => l.id !== selectedLoan.id));
       setShowDeleteDialog(false);
       setSelectedLoan(null);
-      router.refresh();
     }
   };
   
@@ -177,3 +176,5 @@ export default function LoansPage() {
     </>
   );
 }
+
+    

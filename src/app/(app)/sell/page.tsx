@@ -32,14 +32,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import type { Invoice, Party } from '@/lib/types';
+import type { Invoice } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 
 
 export default function SellPage() {
   const router = useRouter();
   const [invoices, setInvoices] = React.useState<Invoice[]>([]);
-  const [buyers, setBuyers] = React.useState<Party[]>([]);
+  const [buyers, setBuyers] = React.useState<any[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = React.useState<string | null>(null);
 
@@ -50,7 +50,7 @@ export default function SellPage() {
       setInvoices(invoicesData.filter(inv => inv.type === 'sell'));
 
       const resParties = await fetch('/api/parties');
-      const partiesData: Party[] = await resParties.json();
+      const partiesData: any[] = await resParties.json();
       // This is a simplification. In a real app, you'd filter parties who are buyers.
       setBuyers(partiesData);
     }
@@ -71,7 +71,7 @@ export default function SellPage() {
       setInvoices(invoices.filter(inv => inv.id !== selectedInvoiceId));
       setShowDeleteDialog(false);
       setSelectedInvoiceId(null);
-      router.refresh();
+      // No need for router.refresh() as we handle state locally
     }
   };
   
@@ -201,3 +201,5 @@ export default function SellPage() {
     </>
   );
 }
+
+    

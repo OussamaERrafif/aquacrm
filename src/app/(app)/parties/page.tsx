@@ -20,30 +20,28 @@ import {
 import type { Party, Invoice } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 
+interface PartyWithInvoices extends Party {
+    invoices: Invoice[];
+}
+
 export default function PartiesPage() {
   const router = useRouter();
-  const [parties, setParties] = React.useState<Party[]>([]);
-  const [invoices, setInvoices] = React.useState<Invoice[]>([]);
+  const [parties, setParties] = React.useState<PartyWithInvoices[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedPartyId, setSelectedPartyId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     async function fetchData() {
-      const resParties = await fetch('/api/parties');
+      const resParties = await fetch('/api/parties?include_invoices=true');
       const partiesData = await resParties.json();
       setParties(partiesData);
-
-      const resInvoices = await fetch('/api/invoices');
-      const invoicesData = await resInvoices.json();
-      setInvoices(invoicesData);
     }
     fetchData();
   }, []);
 
-  const getPartyBalance = (partyId: string) => {
-    const partyInvoices = invoices.filter(inv => inv.party.id === partyId);
+  const getPartyBalance = (party: PartyWithInvoices) => {
     let balance = 0;
-    partyInvoices.forEach(inv => {
+    party.invoices.forEach(inv => {
       if (inv.status !== 'Paid') {
         if (inv.type === 'sell') {
           balance -= inv.totalAmount; 
@@ -63,7 +61,6 @@ export default function PartiesPage() {
       setParties(parties.filter(p => p.id !== selectedPartyId));
       setShowDeleteDialog(false);
       setSelectedPartyId(null);
-      router.refresh();
     }
   };
   
@@ -87,7 +84,7 @@ export default function PartiesPage() {
       />
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {parties.map((party) => {
-           const balance = getPartyBalance(party.id);
+           const balance = getPartyBalance(party);
            const balanceStatus = balance === 0 ? 'مسدد' : balance > 0 ? 'أنت مدين' : 'مدين لك';
            const balanceColor = balance === 0 ? 'text-green-600' : balance > 0 ? 'text-red-600' : 'text-blue-600';
 
@@ -141,3 +138,5 @@ export default function PartiesPage() {
     </>
   );
 }
+
+    
