@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Party {
+  id      String @id @default(cuid())
+  name    String
+  company String?
+  email   String @unique
+  phone   String?
+  address String?
+
+  buyInvoices  Invoice[] @relation("BuyInvoices")
+  sellInvoices Invoice[] @relation("SellInvoices")
+  loans        Loan[]
+}
+
+model Fish {
+  id       String  @id @default(cuid())
+  name     String
+  category String
+  status   String // "In Stock", "Low Stock", "Out of Stock"
+  price    Float
+  stock    Float
+  minStock Float
+  supplier String
+  imageUrl String
+  imageHint String
+
+  invoiceItems InvoiceItem[]
+}
+
+model InvoiceItem {
+  id           String @id @default(cuid())
+  length       String // 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl'
+  weight       Float
+  pricePerKilo Float
+  total        Float
+
+  fishId String
+  fish   Fish   @relation(fields: [fishId], references: [id])
+
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+}
+
+model Invoice {
+  id            String      @id @default(cuid())
+  invoiceNumber String      @unique
+  type          String // "buy" or "sell"
+  date          DateTime
+  dueDate       DateTime
+  totalAmount   Float
+  status        String // "Paid", "Unpaid", "Overdue"
+
+  partyId String
+  party   Party  @relation(name: "BuyInvoices", fields: [partyId], references: [id])
+
+  sellerId String
+  seller   Party @relation(name: "SellInvoices", fields: [sellerId], references: [id])
+
+  items InvoiceItem[]
+}
+
+model Loan {
+  id                  String   @id @default(cuid())
+  loanId              String   @unique
+  amount              Float
+  disbursementDate    DateTime
+  repaymentSchedule   String
+  outstandingBalance  Float
+  status              String // "Active", "Paid Off", "Defaulted"
+
+  fisherId String
+  fisher   Party  @relation(fields: [fisherId], references: [id])
+}
