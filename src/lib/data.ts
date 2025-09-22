@@ -1,3 +1,4 @@
+
 import type { Buyer, Seller, Fish, Invoice, Loan, Person } from './types';
 
 export const parties: Person[] = [
@@ -124,6 +125,41 @@ export const invoices: Invoice[] = [
       { id: 'I006', fish: fish[0], length: 'm', weight: 12, pricePerKilo: 23, total: 276 },
     ],
     totalAmount: 276, status: 'Paid',
+  },
+  {
+    id: 'INV-006', invoiceNumber: '2024-006', type: 'sell', date: '2024-07-22', dueDate: '2024-08-21', party: parties[0],
+    items: [
+      { id: 'I007', fish: fish[2], length: 'l', weight: 20, pricePerKilo: 22, total: 440 },
+    ],
+    totalAmount: 440, status: 'Unpaid',
+  },
+  {
+    id: 'INV-007', invoiceNumber: '2024-007', type: 'buy', date: '2024-07-25', dueDate: '2024-08-24', party: parties[0],
+    items: [
+      { id: 'I008', fish: fish[4], length: 's', weight: 15, pricePerKilo: 20, total: 300 },
+    ],
+    totalAmount: 300, status: 'Unpaid',
+  },
+  {
+    id: 'INV-008', invoiceNumber: '2024-008', type: 'sell', date: '2024-07-28', dueDate: '2024-08-27', party: parties[0],
+    items: [
+      { id: 'I009', fish: fish[0], length: 'xl', weight: 25, pricePerKilo: 26, total: 650 },
+    ],
+    totalAmount: 650, status: 'Paid',
+  },
+  {
+    id: 'INV-009', invoiceNumber: '2024-009', type: 'sell', date: '2024-08-01', dueDate: '2024-08-31', party: parties[0],
+    items: [
+      { id: 'I010', fish: fish[3], length: 'm', weight: 10, pricePerKilo: 10, total: 100 },
+    ],
+    totalAmount: 100, status: 'Unpaid',
+  },
+    {
+    id: 'INV-010', invoiceNumber: '2024-010', type: 'buy', date: '2024-08-02', dueDate: '2024-09-01', party: parties[0],
+    items: [
+      { id: 'I011', fish: fish[5], length: 'l', weight: 18, pricePerKilo: 14, total: 252 },
+    ],
+    totalAmount: 252, status: 'Unpaid',
   },
 ];
 
