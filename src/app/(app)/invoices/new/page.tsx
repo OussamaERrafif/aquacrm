@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { PageHeader } from "@/components/app/page-header";
-import { buyers, sellers, fish } from "@/lib/data";
+import { parties, fish } from "@/lib/data";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -66,7 +66,7 @@ export default function NewInvoicePage() {
 
   const invoiceType = form.watch("type");
 
-  const partyList = invoiceType === "sell" ? buyers : sellers;
+  const partyList = parties;
 
   const onSubmit = (data: InvoiceFormValues) => {
     console.log(data);
@@ -112,11 +112,11 @@ export default function NewInvoicePage() {
                 name="partyId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{invoiceType === 'sell' ? 'Buyer' : 'Seller'}</FormLabel>
+                    <FormLabel>Party</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={`Select a ${invoiceType === 'sell' ? 'buyer' : 'seller'}`} />
+                          <SelectValue placeholder={`Select a party`} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

@@ -1,4 +1,4 @@
-import type { Buyer, Seller, Fish, Invoice, Loan } from './types';
+import type { Buyer, Seller, Fish, Invoice, Loan, Person } from './types';
 
 export const buyers: Buyer[] = [
   { id: 'B001', name: 'Global Seafoods Inc.', company: 'Global Seafoods Inc.', email: 'contact@globalseafoods.com', phone: '123-456-7890', address: '123 Ocean Ave, Seattle, WA', credit: { limit: 50000, balance: 12500 } },
@@ -11,6 +11,8 @@ export const sellers: Seller[] = [
   { id: 'S002', name: 'Gulf Coast Catch', company: 'Gulf Coast Catch', email: 'contact@gulfcatch.com', phone: '567-890-1234', address: '2 Shrimp Blvd, New Orleans, LA', credit: { limit: 80000, balance: 15000 } },
   { id: 'S003', name: 'Pacific Tuna Fleet', company: 'Pacific Tuna Fleet', email: 'fleet@pacifictuna.com', phone: '678-901-2345', address: '3 Tuna Pier, San Diego, CA', credit: { limit: 120000, balance: 45000 } },
 ];
+
+export const parties: Person[] = [...buyers, ...sellers];
 
 export const fish: Fish[] = [
   { id: 'F001', name: 'Salmon', type: 'King' },

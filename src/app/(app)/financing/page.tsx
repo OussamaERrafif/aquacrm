@@ -10,12 +10,12 @@ export default function FinancingPage() {
         <CardHeader>
           <CardTitle>Financing & Credit Management</CardTitle>
           <CardDescription>
-            Financing options, credit limits, and terms are managed within individual buyer and seller profiles.
+            Financing options, credit limits, and terms are managed within individual party profiles.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Please navigate to the <Link href="/buyers" className="text-primary underline">Buyers</Link> or <Link href="/sellers" className="text-primary underline">Sellers</Link> sections to view or edit financing details.
+            Please navigate to the <Link href="/parties" className="text-primary underline">Parties</Link> section to view or edit financing details.
           </p>
         </CardContent>
       </Card>

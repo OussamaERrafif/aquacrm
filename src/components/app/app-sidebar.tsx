@@ -25,15 +25,14 @@ import { Button } from '@/components/ui/button';
 
 const useActivePath = () => {
   const pathname = usePathname();
-  return (path: string) => pathname === path;
+  return (path: string) => pathname.startsWith(path) && (path === '/' ? pathname === '/' : true);
 };
 
 export function AppSidebar() {
   const isActive = useActivePath();
   const navItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard /> },
-    { title: 'Buyers', href: '/buyers', icon: <Users /> },
-    { title: 'Sellers', href: '/sellers', icon: <Users /> },
+    { title: 'Parties', href: '/parties', icon: <Users /> },
     { title: 'Invoices', href: '/invoices', icon: <FileText /> },
     { title: 'Loans', href: '/loans', icon: <Landmark /> },
     { title: 'Financing', href: '/financing', icon: <Handshake /> },
