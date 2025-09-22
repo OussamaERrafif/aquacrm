@@ -146,7 +146,7 @@ export default function EditPartyPage({ params }: { params: { id: string } }) {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Link href={`/parties/${params.id}`} legacyBehavior passHref><Button variant="outline">Cancel</Button></Link>
+            <Link href={`/parties/${params.id}`}><Button variant="outline">Cancel</Button></Link>
             <Button type="submit">Save Changes</Button>
           </CardFooter>
         </Card>

@@ -183,7 +183,7 @@ export default function NewLoanPage() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Link href="/loans" legacyBehavior passHref><Button variant="outline">Cancel</Button></Link>
+            <Link href="/loans"><Button variant="outline">Cancel</Button></Link>
             <Button type="submit">Save Loan</Button>
           </CardFooter>
         </Card>

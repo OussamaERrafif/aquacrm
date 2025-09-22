@@ -138,7 +138,7 @@ export default function NewPartyPage() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Link href="/parties" legacyBehavior passHref><Button variant="outline">Cancel</Button></Link>
+            <Link href="/parties"><Button variant="outline">Cancel</Button></Link>
             <Button type="submit">Save Party</Button>
           </CardFooter>
         </Card>

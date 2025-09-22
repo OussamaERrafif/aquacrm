@@ -230,7 +230,7 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Link href={`/loans/${params.id}`} legacyBehavior passHref><Button variant="outline">Cancel</Button></Link>
+            <Link href={`/loans/${params.id}`}><Button variant="outline">Cancel</Button></Link>
             <Button type="submit">Save Changes</Button>
           </CardFooter>
         </Card>

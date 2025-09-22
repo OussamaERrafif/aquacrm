@@ -56,7 +56,7 @@ export default function PartiesPage() {
       <PageHeader
         title="Parties"
         action={
-          <Link href="/parties/new" passHref>
+          <Link href="/parties/new">
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Party
@@ -97,8 +97,8 @@ export default function PartiesPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                         <Link href={`/parties/${party.id}`} legacyBehavior passHref><DropdownMenuItem>View Details</DropdownMenuItem></Link>
-                        <Link href={`/parties/${party.id}/edit`} legacyBehavior passHref><DropdownMenuItem>Edit</DropdownMenuItem></Link>
+                         <DropdownMenuItem asChild><Link href={`/parties/${party.id}`}>View Details</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href={`/parties/${party.id}/edit`}>Edit</Link></DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(party.id)}>
                           Delete
                         </DropdownMenuItem>

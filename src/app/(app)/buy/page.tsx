@@ -64,7 +64,7 @@ export default function BuyPage() {
       <PageHeader
         title="Buy Dashboard"
         action={
-          <Link href="/invoices/new" legacyBehavior passHref>
+          <Link href="/invoices/new">
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
               Create Buy Invoice
@@ -149,8 +149,8 @@ export default function BuyPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                           <Link href={`/invoices/${invoice.id}`} legacyBehavior passHref><DropdownMenuItem>View Details</DropdownMenuItem></Link>
-                           <Link href={`/invoices/${invoice.id}/edit`} legacyBehavior passHref><DropdownMenuItem>Edit</DropdownMenuItem></Link>
+                           <DropdownMenuItem asChild><Link href={`/invoices/${invoice.id}`}>View Details</Link></DropdownMenuItem>
+                           <DropdownMenuItem asChild><Link href={`/invoices/${invoice.id}/edit`}>Edit</Link></DropdownMenuItem>
                           <DropdownMenuItem>Mark as Paid</DropdownMenuItem>
                           <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(invoice.id)}>Delete</DropdownMenuItem>
                         </DropdownMenuContent>

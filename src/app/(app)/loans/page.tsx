@@ -62,7 +62,7 @@ export default function LoansPage() {
       <PageHeader
         title="Loans"
         action={
-          <Link href="/loans/new" passHref>
+          <Link href="/loans/new">
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Loan
@@ -113,8 +113,8 @@ export default function LoansPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <Link href={`/loans/${loan.id}`} legacyBehavior passHref><DropdownMenuItem>View Details</DropdownMenuItem></Link>
-                        <Link href={`/loans/${loan.id}/edit`} legacyBehavior passHref><DropdownMenuItem>Edit</DropdownMenuItem></Link>
+                        <DropdownMenuItem asChild><Link href={`/loans/${loan.id}`}>View Details</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href={`/loans/${loan.id}/edit`}>Edit</Link></DropdownMenuItem>
                         <DropdownMenuItem>Record Repayment</DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(loan.id)}>
                           Delete
