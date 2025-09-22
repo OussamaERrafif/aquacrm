@@ -20,7 +20,14 @@ export type Seller = Person;
 export type Fish = {
   id: string;
   name: string;
-  type: string;
+  category: string;
+  status: 'In Stock' | 'Low Stock' | 'Out of Stock';
+  price: number;
+  stock: number;
+  minStock: number;
+  supplier: string;
+  imageUrl: string;
+  imageHint: string;
 };
 
 export type InvoiceItem = {

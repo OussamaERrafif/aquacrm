@@ -174,7 +174,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
                     <Button variant="outline" size="sm" asChild>
                         <Link href="/products" target="_blank">
                             <Package className="mr-2 h-4 w-4" />
-                            View All Products
+                            Select Products
                         </Link>
                     </Button>
               </div>
@@ -209,7 +209,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {fish.map(f => <SelectItem key={f.id} value={f.id}>{f.name} ({f.type})</SelectItem>)}
+                                    {fish.map(f => <SelectItem key={f.id} value={f.id}>{f.name} ({f.category})</SelectItem>)}
                                   </SelectContent>
                                 </Select>
                               </FormItem>

@@ -4,22 +4,89 @@ export const parties: Person[] = [
   { id: 'P001', name: 'Global Seafoods Inc.', company: 'Global Seafoods Inc.', email: 'contact@globalseafoods.com', phone: '123-456-7890', address: '123 Ocean Ave, Seattle, WA' },
   { id: 'P002', name: 'The Fish Market', company: 'The Fish Market', email: 'orders@thefishmarket.com', phone: '234-567-8901', address: '456 Dock St, San Francisco, CA' },
   { id: 'P003', name: 'Ocean\'s Bounty', company: 'Ocean\'s Bounty', email: 'info@oceansbounty.net', phone: '345-678-9012', address: '789 Port Rd, Miami, FL' },
-  { id: 'P004', name: 'Alaskan King Fishery', company: 'Alaskan King Fishery', email: 'sales@akfishery.com', phone: '456-789-0123', address: '1 Fishery Ln, Anchorage, AK' },
-  { id: 'P005', name: 'Gulf Coast Catch', company: 'Gulf Coast Catch', email: 'contact@gulfcatch.com', phone: '567-890-1234', address: '2 Shrimp Blvd, New Orleans, LA' },
-  { id: 'P006', name: 'Pacific Tuna Fleet', company: 'Pacific Tuna Fleet', email: 'fleet@pacifictuna.com', phone: '678-901-2345', address: '3 Tuna Pier, San Diego, CA' },
+  { id: 'P004', name: 'Deep Sea Fishers', company: 'Deep Sea Fishers', email: 'sales@dsfishers.com', phone: '456-789-0123', address: '1 Fishery Ln, Anchorage, AK' },
+  { id: 'P005', name: 'Captain Rodriguez', company: 'Captain Rodriguez', email: 'contact@rodriguezcatch.com', phone: '567-890-1234', address: '2 Shrimp Blvd, New Orleans, LA' },
+  { id: 'P006', name: 'Ocean Fresh', company: 'Ocean Fresh', email: 'fleet@oceanfresh.com', phone: '678-901-2345', address: '3 Tuna Pier, San Diego, CA' },
 ];
 
 export const buyers: Buyer[] = parties.slice(0, 3);
 export const sellers: Seller[] = parties.slice(3, 6);
 
 export const fish: Fish[] = [
-  { id: 'F001', name: 'Salmon', type: 'King' },
-  { id: 'F002', name: 'Tuna', type: 'Bluefin' },
-  { id: 'F003', name: 'Cod', type: 'Atlantic' },
-  { id: 'F004', name: 'Halibut', type: 'Pacific' },
-  { id: 'F005', name: 'Mahi-mahi', type: 'Common' },
-  { id: 'F006', name: 'Snapper', type: 'Red' },
+  { 
+    id: 'F001', 
+    name: 'Atlantic Salmon', 
+    category: 'Fresh Fish', 
+    status: 'In Stock', 
+    price: 12.50, 
+    stock: 150, 
+    minStock: 50, 
+    supplier: 'Deep Sea Fishers',
+    imageUrl: 'https://picsum.photos/seed/salmon/600/400',
+    imageHint: 'atlantic salmon'
+  },
+  { 
+    id: 'F002', 
+    name: 'Pacific Tuna', 
+    category: 'Fresh Fish', 
+    status: 'Low Stock', 
+    price: 18.75, 
+    stock: 25, 
+    minStock: 30, 
+    supplier: 'Captain Rodriguez',
+    imageUrl: 'https://picsum.photos/seed/tuna/600/400',
+    imageHint: 'pacific tuna'
+  },
+  { 
+    id: 'F003', 
+    name: 'Fresh Shrimp', 
+    category: 'Shellfish', 
+    status: 'In Stock', 
+    price: 22.00, 
+    stock: 80, 
+    minStock: 40, 
+    supplier: 'Ocean Fresh',
+    imageUrl: 'https://picsum.photos/seed/shrimp/600/400',
+    imageHint: 'fresh shrimp'
+  },
+  { 
+    id: 'F004', 
+    name: 'Atlantic Cod', 
+    category: 'Fresh Fish',
+    status: 'In Stock',
+    price: 9.50,
+    stock: 120,
+    minStock: 40,
+    supplier: 'Deep Sea Fishers',
+    imageUrl: 'https://picsum.photos/seed/cod/600/400',
+    imageHint: 'atlantic cod'
+  },
+  { 
+    id: 'F005', 
+    name: 'Mahi-mahi', 
+    category: 'Exotic Fish',
+    status: 'Out of Stock',
+    price: 25.00,
+    stock: 0,
+    minStock: 20,
+    supplier: 'Captain Rodriguez',
+    imageUrl: 'https://picsum.photos/seed/mahi/600/400',
+    imageHint: 'mahi mahi'
+  },
+  { 
+    id: 'F006', 
+    name: 'Red Snapper', 
+    category: 'Fresh Fish',
+    status: 'Low Stock',
+    price: 15.00,
+    stock: 30,
+    minStock: 25,
+    supplier: 'Ocean Fresh',
+    imageUrl: 'https://picsum.photos/seed/snapper/600/400',
+    imageHint: 'red snapper'
+  },
 ];
+
 
 export const invoices: Invoice[] = [
   {
@@ -40,14 +107,14 @@ export const invoices: Invoice[] = [
   {
     id: 'INV-003', invoiceNumber: '2024-003', type: 'sell', date: '2024-07-20', dueDate: '2024-08-19', party: parties[1],
     items: [
-      { id: 'I004', fish: fish[2], length: 60, weight: 8, pricePerKilo: 18, total: 144 },
+      { id: 'I004', fish: fish[3], length: 60, weight: 8, pricePerKilo: 18, total: 144 },
     ],
     totalAmount: 144, status: 'Unpaid',
   },
   {
     id: 'INV-004', invoiceNumber: '2024-004', type: 'sell', date: '2024-06-10', dueDate: '2024-07-10', party: parties[2],
     items: [
-      { id: 'I005', fish: fish[3], length: 120, weight: 30, pricePerKilo: 22, total: 660 },
+      { id: 'I005', fish: fish[4], length: 120, weight: 30, pricePerKilo: 22, total: 660 },
     ],
     totalAmount: 660, status: 'Overdue',
   },

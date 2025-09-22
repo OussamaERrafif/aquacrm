@@ -1,21 +1,117 @@
 
 import { PageHeader } from '@/components/app/page-header';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { fish } from '@/lib/data';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu';
+import { PlusCircle, Search, Filter, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 export default function ProductsPage() {
+
+  const getStatusColor = (status: 'In Stock' | 'Low Stock' | 'Out of Stock') => {
+    switch (status) {
+      case 'In Stock':
+        return 'bg-green-100 text-green-800';
+      case 'Low Stock':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Out of Stock':
+        return 'bg-red-100 text-red-800';
+    }
+  }
+  
+  const categories = [...new Set(fish.map(f => f.category))];
+  const statuses = ['In Stock', 'Low Stock', 'Out of Stock'];
+
+
   return (
     <>
-      <PageHeader title="Our Products" />
+      <PageHeader 
+        title="Product Catalog"
+        action={
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Product
+            </Button>
+        }
+       >
+        <p className="text-sm text-muted-foreground mt-2">Browse and manage your seafood inventory</p>
+      </PageHeader>
+
+      <Card className="mb-6">
+        <CardContent className="p-4">
+            <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="Search products..." className="pl-10" />
+                </div>
+                <div className="flex gap-4">
+                     <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="w-full md:w-auto">
+                                <Filter className="mr-2 h-4 w-4" />
+                                All Categories
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {categories.map(c => <DropdownMenuCheckboxItem key={c}>{c}</DropdownMenuCheckboxItem>)}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                             <Button variant="outline" className="w-full md:w-auto">
+                                <Filter className="mr-2 h-4 w-4" />
+                                All Statuses
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                           {statuses.map(s => <DropdownMenuCheckboxItem key={s}>{s}</DropdownMenuCheckboxItem>)}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+        </CardContent>
+      </Card>
+      
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {fish.map((f) => (
-          <Card key={f.id}>
-            <CardHeader>
-              <CardTitle>{f.name}</CardTitle>
+        {fish.map((f, index) => (
+          <Card key={f.id} className="overflow-hidden">
+            <CardHeader className="p-0">
+                <div className="relative h-48 w-full">
+                    <Image 
+                        src={f.imageUrl} 
+                        alt={f.name} 
+                        fill
+                        className="object-cover"
+                        data-ai-hint={f.imageHint}
+                    />
+                </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Type: {f.type}</p>
+            <CardContent className="p-4">
+                <div className="flex justify-between items-start">
+                    <h3 className="text-lg font-bold">{f.name}</h3>
+                    {index % 2 === 0 ? <TrendingUp className="h-5 w-5 text-green-500" /> : <TrendingDown className="h-5 w-5 text-yellow-500" />}
+                </div>
+              <p className="text-sm text-muted-foreground">{f.category}</p>
+              
+              <div className="flex justify-between items-center mt-4">
+                <Badge className={cn("text-xs", getStatusColor(f.status))}>{f.status}</Badge>
+                <p className="text-lg font-semibold">${f.price.toFixed(2)}/kg</p>
+              </div>
+
+               <div className="text-sm text-muted-foreground mt-2 space-y-1">
+                    <p>Stock: {f.stock} kg</p>
+                    <p>Min: {f.minStock} kg</p>
+                    <p>Supplier: {f.supplier}</p>
+                </div>
+
             </CardContent>
+             <CardFooter className="p-4 bg-muted/50">
+                 <Button variant="ghost" size="sm" className="w-full justify-center">View Details <ArrowRight className="ml-2 h-4 w-4" /></Button>
+            </CardFooter>
           </Card>
         ))}
       </div>

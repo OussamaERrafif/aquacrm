@@ -82,7 +82,7 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
                 <TableBody>
                     {invoice.items.map(item => (
                         <TableRow key={item.id}>
-                            <TableCell className="font-medium">{item.fish.name} ({item.fish.type})</TableCell>
+                            <TableCell className="font-medium">{item.fish.name} ({item.fish.category})</TableCell>
                             <TableCell className="text-center">{item.length}</TableCell>
                             <TableCell className="text-center">{item.weight}</TableCell>
                             <TableCell className="text-right">${item.pricePerKilo.toFixed(2)}</TableCell>
