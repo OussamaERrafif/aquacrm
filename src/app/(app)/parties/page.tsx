@@ -89,6 +89,9 @@ export default function PartiesPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end gap-2">
+                 <Button variant="outline" size="sm" asChild>
+                    <Link href={`/parties/${party.id}`}>عرض التفاصيل</Link>
+                 </Button>
                  <Button variant="ghost" size="icon" asChild>
                     <Link href={`/parties/${party.id}/edit`}><Edit className="h-4 w-4" /></Link>
                  </Button>
