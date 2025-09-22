@@ -20,11 +20,10 @@ import Link from 'next/link';
 
 const partySchema = z.object({
   name: z.string().min(1, 'Name is required.'),
-  company: z.string().min(1, 'Company is required.'),
+  company: z.string().optional(),
   email: z.string().email('Invalid email address.'),
-  phone: z.string().min(1, 'Phone is required.'),
-  address: z.string().min(1, 'Address is required.'),
-  creditLimit: z.coerce.number().min(0, 'Credit limit must be a positive number.'),
+  phone: z.string().optional(),
+  address: z.string().optional(),
 });
 
 type PartyFormValues = z.infer<typeof partySchema>;
@@ -38,7 +37,6 @@ export default function NewPartyPage() {
       email: '',
       phone: '',
       address: '',
-      creditLimit: 0,
     },
   });
 
@@ -75,7 +73,7 @@ export default function NewPartyPage() {
                 name="company"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company</FormLabel>
+                    <FormLabel>Company (Optional)</FormLabel>
                     <FormControl>
                       <Input placeholder="Global Seafoods Inc." {...field} />
                     </FormControl>
@@ -101,7 +99,7 @@ export default function NewPartyPage() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>Phone (Optional)</FormLabel>
                     <FormControl>
                       <Input placeholder="123-456-7890" {...field} />
                     </FormControl>
@@ -114,22 +112,9 @@ export default function NewPartyPage() {
                 name="address"
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel>Address (Optional)</FormLabel>
                     <FormControl>
                       <Input placeholder="123 Ocean Ave, Seattle, WA" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="creditLimit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Credit Limit</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="50000" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

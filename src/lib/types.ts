@@ -8,14 +8,10 @@ export type NavItem = {
 export type Person = {
   id: string;
   name: string;
-  company: string;
+  company?: string;
   email:string;
-  phone: string;
-  address: string;
-  credit: {
-    limit: number;
-    balance: number;
-  }
+  phone?: string;
+  address?: string;
 };
 
 export type Buyer = Person;
@@ -53,7 +49,6 @@ export type Loan = {
   loanId: string;
   fisher: Person;
   amount: number;
-  interestRate: number;
   disbursementDate: string;
   repaymentSchedule: string;
   outstandingBalance: number;

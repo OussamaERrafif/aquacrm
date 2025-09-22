@@ -51,10 +51,6 @@ export default function LoanDetailsPage({ params }: { params: { id: string } }) 
               <p>${loan.amount.toLocaleString()}</p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground">Interest Rate</h3>
-              <p>{loan.interestRate}%</p>
-            </div>
-            <div>
               <h3 className="text-sm font-medium text-muted-foreground">Disbursement Date</h3>
               <p>{loan.disbursementDate}</p>
             </div>

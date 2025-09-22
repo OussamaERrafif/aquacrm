@@ -3,25 +3,11 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/app/page-header';
-import { parties } from '@/lib/data';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { parties, invoices } from '@/lib/data';
+import { PlusCircle, Edit, Trash2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,6 +22,21 @@ import {
 export default function PartiesPage() {
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedPartyId, setSelectedPartyId] = React.useState<string | null>(null);
+
+  const getPartyBalance = (partyId: string) => {
+    const partyInvoices = invoices.filter(inv => inv.party.id === partyId);
+    let balance = 0;
+    partyInvoices.forEach(inv => {
+      if (inv.status !== 'Paid') {
+        if (inv.type === 'sell') {
+          balance -= inv.totalAmount; // We are owed (credit for us)
+        } else {
+          balance += inv.totalAmount; // We owe (debit for us)
+        }
+      }
+    });
+    return balance;
+  };
 
   const handleDelete = () => {
     if (selectedPartyId) {
@@ -64,53 +65,42 @@ export default function PartiesPage() {
           </Button>
         }
       />
-      <Card>
-        <CardHeader>
-          <CardTitle>Party Profiles</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {parties.map((party) => (
-                <TableRow key={party.id}>
-                  <TableCell className="font-medium">
-                     <Link href={`/parties/${party.id}`} className="hover:underline">{party.name}</Link>
-                  </TableCell>
-                  <TableCell>{party.company}</TableCell>
-                  <TableCell>{party.email}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                         <DropdownMenuItem asChild><Link href={`/parties/${party.id}`}>View Details</Link></DropdownMenuItem>
-                        <DropdownMenuItem asChild><Link href={`/parties/${party.id}/edit`}>Edit</Link></DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(party.id)}>
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {parties.map((party) => {
+           const balance = getPartyBalance(party.id);
+           const balanceStatus = balance === 0 ? 'Settled' : balance > 0 ? 'You Owe' : 'Owes You';
+           const balanceColor = balance === 0 ? 'text-green-600' : balance > 0 ? 'text-red-600' : 'text-blue-600';
+
+          return (
+            <Card key={party.id} className="flex flex-col">
+              <CardHeader>
+                <CardTitle className="hover:underline">
+                  <Link href={`/parties/${party.id}`}>{party.name}</Link>
+                </CardTitle>
+                <CardDescription>{party.company}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm text-muted-foreground">{party.email}</p>
+                <p className="text-sm text-muted-foreground">{party.phone}</p>
+                 <div className="mt-4">
+                    <p className="text-sm font-medium">Balance Status</p>
+                    <p className={`text-lg font-bold ${balanceColor}`}>
+                      ${Math.abs(balance).toLocaleString()} <span className="text-sm font-normal">({balanceStatus})</span>
+                    </p>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-end gap-2">
+                 <Button variant="ghost" size="icon" asChild>
+                    <Link href={`/parties/${party.id}/edit`}><Edit className="h-4 w-4" /></Link>
+                 </Button>
+                 <Button variant="ghost" size="icon" onClick={() => openDeleteDialog(party.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                 </Button>
+              </CardFooter>
+            </Card>
+          )
+        })}
+      </div>
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

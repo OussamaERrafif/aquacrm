@@ -35,7 +35,6 @@ import { notFound } from 'next/navigation';
 const loanSchema = z.object({
   fisherId: z.string().min(1, 'Please select a fisher.'),
   amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
-  interestRate: z.coerce.number().min(0, 'Interest rate cannot be negative.'),
   disbursementDate: z.date({
     required_error: "A disbursement date is required.",
   }),
@@ -58,7 +57,6 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
     defaultValues: {
       fisherId: loan.fisher.id,
       amount: loan.amount,
-      interestRate: loan.interestRate,
       disbursementDate: new Date(loan.disbursementDate),
       repaymentSchedule: loan.repaymentSchedule,
       outstandingBalance: loan.outstandingBalance,
@@ -152,19 +150,6 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="15000" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="interestRate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Interest Rate (%)</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.1" placeholder="5.5" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

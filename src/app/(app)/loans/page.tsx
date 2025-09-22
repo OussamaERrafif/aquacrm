@@ -81,7 +81,6 @@ export default function LoansPage() {
                 <TableHead>Loan ID</TableHead>
                 <TableHead>Fisher</TableHead>
                 <TableHead>Amount</TableHead>
-                <TableHead>Interest Rate</TableHead>
                 <TableHead>Outstanding</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>
@@ -97,7 +96,6 @@ export default function LoansPage() {
                   </TableCell>
                   <TableCell>{loan.fisher.name}</TableCell>
                   <TableCell>${loan.amount.toLocaleString()}</TableCell>
-                  <TableCell>{loan.interestRate}%</TableCell>
                   <TableCell>${loan.outstandingBalance.toLocaleString()}</TableCell>
                   <TableCell>
                     <Badge variant={loan.status === 'Paid Off' ? 'secondary' : loan.status === 'Defaulted' ? 'destructive' : 'default'}>

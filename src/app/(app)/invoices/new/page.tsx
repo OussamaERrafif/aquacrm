@@ -31,8 +31,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { PageHeader } from "@/components/app/page-header";
 import { parties, fish } from "@/lib/data";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2, Package } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 const invoiceSchema = z.object({
   type: z.enum(["buy", "sell"]),
@@ -63,8 +64,6 @@ export default function NewInvoicePage() {
     control: form.control,
     name: "items",
   });
-
-  const invoiceType = form.watch("type");
 
   const partyList = parties;
 
@@ -134,7 +133,15 @@ export default function NewInvoicePage() {
             <Separator />
 
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Invoice Items</h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-medium">Invoice Items</h3>
+                 <Button variant="outline" size="sm" asChild>
+                    <Link href="/products" target="_blank">
+                        <Package className="mr-2 h-4 w-4" />
+                        View All Products
+                    </Link>
+                 </Button>
+              </div>
               <Table>
                 <TableHeader>
                   <TableRow>

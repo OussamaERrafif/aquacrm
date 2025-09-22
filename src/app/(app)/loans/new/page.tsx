@@ -34,7 +34,6 @@ import { format } from 'date-fns';
 const loanSchema = z.object({
   fisherId: z.string().min(1, 'Please select a fisher.'),
   amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
-  interestRate: z.coerce.number().min(0, 'Interest rate cannot be negative.'),
   disbursementDate: z.date({
     required_error: "A disbursement date is required.",
   }),
@@ -49,7 +48,6 @@ export default function NewLoanPage() {
     defaultValues: {
       fisherId: '',
       amount: 0,
-      interestRate: 5.0,
       repaymentSchedule: 'Monthly',
     },
   });
@@ -140,19 +138,6 @@ export default function NewLoanPage() {
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
                       <Input type="number" placeholder="15000" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="interestRate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Interest Rate (%)</FormLabel>
-                    <FormControl>
-                      <Input type="number" step="0.1" placeholder="5.5" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
