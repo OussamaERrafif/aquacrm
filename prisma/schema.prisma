@@ -11,31 +11,35 @@ datasource db {
 }
 
 model Party {
-  id           String    @id @default(cuid())
-  name         String
-  company      String?
-  email        String    @unique
-  phone        String?
-  address      String?
-  buyInvoices  Invoice[] @relation("BuyInvoices")
-  sellInvoices Invoice[] @relation("SellInvoices")
-  loans        Loan[]
+  id      String @id @default(cuid())
+  name    String
+  company String?
+  email   String @unique
+  phone   String?
+  address String?
+  
+  // Relation to Invoices
+  invoices Invoice[]
+
+  // Relation to Loans
+  loans   Loan[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Fish {
-  id         String        @id @default(cuid())
-  name       String
-  category   String
-  status     String // "In Stock", "Low Stock", "Out of Stock"
-  price      Float
-  stock      Float
-  minStock   Float
-  supplier   String
-  imageUrl   String
-  imageHint  String
+  id        String   @id @default(cuid())
+  name      String
+  category  String
+  status    String // "In Stock", "Low Stock", "Out of Stock"
+  price     Float
+  stock     Int
+  minStock  Int
+  supplier  String
+  imageUrl  String
+  imageHint String
+  
   invoiceItems InvoiceItem[]
 
   createdAt DateTime @default(now())
@@ -43,38 +47,36 @@ model Fish {
 }
 
 model Invoice {
-  id            String        @id @default(cuid())
-  invoiceNumber String        @unique
+  id            String  @id @default(cuid())
+  invoiceNumber String  @unique
   type          String // "buy" or "sell"
   date          DateTime
   dueDate       DateTime
   totalAmount   Float
   status        String // "Paid", "Unpaid", "Overdue"
 
+  // Relation to Party
   partyId String
   party   Party  @relation(fields: [partyId], references: [id])
 
   items InvoiceItem[]
-
-  // Explicit relations for buy/sell to satisfy Prisma
-  buyer   Party? @relation("SellInvoices", fields: [buyerId], references: [id])
-  buyerId String?
-  seller  Party? @relation("BuyInvoices", fields: [sellerId], references: [id])
-  sellerId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model InvoiceItem {
-  id           String  @id @default(cuid())
+  id           String @id @default(cuid())
   length       String // "xs", "s", "m", "l", "xl", "xxl"
   weight       Float
   pricePerKilo Float
   total        Float
 
-  fishId    String
-  fish      Fish    @relation(fields: [fishId], references: [id])
+  // Relation to Fish
+  fishId String
+  fish   Fish   @relation(fields: [fishId], references: [id])
+
+  // Relation to Invoice
   invoiceId String
   invoice   Invoice @relation(fields: [invoiceId], references: [id])
 
@@ -91,8 +93,9 @@ model Loan {
   outstandingBalance  Float
   status              String // "Active", "Paid Off", "Defaulted"
 
-  fisherId String
-  fisher   Party  @relation(fields: [fisherId], references: [id])
+  // Relation to Party (Fisher)
+  fisherId            String
+  fisher              Party    @relation(fields: [fisherId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
