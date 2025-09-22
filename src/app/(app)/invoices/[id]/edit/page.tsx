@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useFieldArray, useForm } from "react-hook-form";
@@ -70,14 +69,16 @@ export default function EditInvoicePage() {
 
   useEffect(() => {
     async function fetchData() {
-        const resParties = await fetch('/api/parties');
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+        const resParties = await fetch(`${baseUrl}/api/parties`);
         setPartyList(await resParties.json());
 
-        const resFish = await fetch('/api/products');
+        const resFish = await fetch(`${baseUrl}/api/products`);
         setFishList(await resFish.json());
 
         if (params.id) {
-            const resInvoice = await fetch(`/api/invoices/${params.id}`);
+            const resInvoice = await fetch(`${baseUrl}/api/invoices/${params.id}`);
             if (resInvoice.ok) {
                 const invoiceData: Invoice = await resInvoice.json();
                 setInvoice(invoiceData);

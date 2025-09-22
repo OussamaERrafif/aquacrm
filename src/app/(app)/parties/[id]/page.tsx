@@ -1,4 +1,3 @@
-
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +24,13 @@ async function getParty(id: string) {
 }
 
 export default async function PartyDetailsPage({ params }: { params: { id: string } }) {
-  const party: PartyWithRelations = await getParty(params.id);
+  const id = params?.id;
+
+  if (!id) {
+    return notFound();
+  }
+
+  const party: PartyWithRelations = await getParty(id);
 
   const partyInvoices = party.invoices || [];
   

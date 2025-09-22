@@ -61,3 +61,16 @@ export type Loan = {
   outstandingBalance: number;
   status: 'Active' | 'Paid Off' | 'Defaulted';
 };
+
+export type Party = {
+  id: string;
+  name: string;
+  company?: string;
+  email: string;
+  phone?: string;
+  address?: string;
+};
+
+export interface PartyWithRelations extends Party {
+  invoices: Invoice[];
+}
