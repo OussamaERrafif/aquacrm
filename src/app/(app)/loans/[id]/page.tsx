@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -10,10 +11,13 @@ import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { PaymentRegistrationDialog } from '@/components/app/payment-registration-dialog';
+import type { Loan } from '@/lib/types';
 
 export default function LoanDetailsPage() {
   const params = useParams<{ id: string }>();
   const loan = loans.find((l) => l.id === params.id);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
   if (!loan) {
     notFound();
@@ -91,11 +95,14 @@ export default function LoanDetailsPage() {
             </div>
         </CardContent>
          <CardFooter>
-            <Button>تسجيل سداد</Button>
+            <Button onClick={() => setIsPaymentDialogOpen(true)}>تسجيل سداد</Button>
         </CardFooter>
       </Card>
+      <PaymentRegistrationDialog 
+        isOpen={isPaymentDialogOpen}
+        onClose={() => setIsPaymentDialogOpen(false)}
+        loan={loan}
+      />
     </>
   );
 }
-
-    

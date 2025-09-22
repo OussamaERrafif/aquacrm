@@ -38,24 +38,32 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { PaymentRegistrationDialog } from '@/components/app/payment-registration-dialog';
+import type { Loan } from '@/lib/types';
 
 
 export default function LoansPage() {
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
-  const [selectedLoanId, setSelectedLoanId] = React.useState<string | null>(null);
+  const [selectedLoan, setSelectedLoan] = React.useState<Loan | null>(null);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = React.useState(false);
 
   const handleDelete = () => {
-    if (selectedLoanId) {
-      console.log(`Deleting loan with id: ${selectedLoanId}`);
+    if (selectedLoan) {
+      console.log(`Deleting loan with id: ${selectedLoan.id}`);
       setShowDeleteDialog(false);
-      setSelectedLoanId(null);
+      setSelectedLoan(null);
     }
   };
   
-  const openDeleteDialog = (loanId: string) => {
-    setSelectedLoanId(loanId);
+  const openDeleteDialog = (loan: Loan) => {
+    setSelectedLoan(loan);
     setShowDeleteDialog(true);
   }
+
+  const openPaymentDialog = (loan: Loan) => {
+    setSelectedLoan(loan);
+    setIsPaymentDialogOpen(true);
+  };
 
   const getStatusArabic = (status: 'Active' | 'Paid Off' | 'Defaulted') => {
       switch (status) {
@@ -121,8 +129,8 @@ export default function LoansPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild><Link href={`/loans/${loan.id}`}>عرض التفاصيل</Link></DropdownMenuItem>
                         <DropdownMenuItem asChild><Link href={`/loans/${loan.id}/edit`}>تعديل</Link></DropdownMenuItem>
-                        <DropdownMenuItem>تسجيل سداد</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(loan.id)}>
+                        <DropdownMenuItem onClick={() => openPaymentDialog(loan)}>تسجيل سداد</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(loan)}>
                           حذف
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -148,6 +156,11 @@ export default function LoansPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+       <PaymentRegistrationDialog 
+        isOpen={isPaymentDialogOpen}
+        onClose={() => setIsPaymentDialogOpen(false)}
+        loan={selectedLoan}
+      />
     </>
   );
 }
