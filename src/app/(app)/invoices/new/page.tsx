@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFieldArray, useForm } from "react-hook-form";
@@ -34,6 +35,9 @@ import { parties, fish } from "@/lib/data";
 import { PlusCircle, Trash2, Package } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { ProductSelectionModal } from "@/components/app/product-selection-modal";
+import React from "react";
+import type { Fish } from "@/lib/types";
 
 const invoiceSchema = z.object({
   type: z.enum(["buy", "sell"]),
@@ -51,6 +55,8 @@ const invoiceSchema = z.object({
 type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 
 export default function NewInvoicePage() {
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   const form = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceSchema),
     defaultValues: {
@@ -72,11 +78,39 @@ export default function NewInvoicePage() {
     // Here you would typically send the data to your backend
   };
 
+  const handleSelectProducts = (selectedProducts: Fish[]) => {
+    const currentFishIds = new Set(form.getValues('items').map(item => item.fishId));
+    
+    // Filter out products that are already in the invoice
+    const newProducts = selectedProducts.filter(product => !currentFishIds.has(product.id));
+
+    // If the first item is the default empty one, remove it
+    const items = form.getValues('items');
+    if (items.length === 1 && !items[0].fishId) {
+        remove(0);
+    }
+    
+    newProducts.forEach(product => {
+      append({
+        fishId: product.id,
+        length: 0, // Default value
+        weight: 0, // Default value
+        pricePerKilo: product.price, // Pre-fill price
+      });
+    });
+  };
+
   const totalAmount = form.watch("items").reduce((acc, item) => {
     return acc + (item.weight || 0) * (item.pricePerKilo || 0);
   }, 0);
 
   return (
+    <>
+    <ProductSelectionModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelectProducts={handleSelectProducts}
+    />
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <PageHeader title="Create New Invoice" />
@@ -135,11 +169,9 @@ export default function NewInvoicePage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-medium">Invoice Items</h3>
-                 <Button variant="outline" size="sm" asChild>
-                    <Link href="/products" target="_blank">
-                        <Package className="mr-2 h-4 w-4" />
-                        Select Products
-                    </Link>
+                 <Button variant="outline" size="sm" type="button" onClick={() => setIsModalOpen(true)}>
+                    <Package className="mr-2 h-4 w-4" />
+                    Select Products
                  </Button>
               </div>
               <Table>
@@ -221,5 +253,6 @@ export default function NewInvoicePage() {
         </Card>
       </form>
     </Form>
+    </>
   );
 }

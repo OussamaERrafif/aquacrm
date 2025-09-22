@@ -36,6 +36,9 @@ import { PlusCircle, Trash2, Package } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import React from "react";
+import { ProductSelectionModal } from "@/components/app/product-selection-modal";
+import type { Fish } from "@/lib/types";
 
 const invoiceSchema = z.object({
   type: z.enum(["buy", "sell"]),
@@ -55,6 +58,7 @@ type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 
 export default function EditInvoicePage({ params }: { params: { id: string } }) {
   const invoice = invoices.find(inv => inv.id === params.id);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   
   if (!invoice) {
     notFound();
@@ -86,12 +90,32 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
     console.log(data);
     // Here you would typically send the data to your backend
   };
+  
+  const handleSelectProducts = (selectedProducts: Fish[]) => {
+    const currentFishIds = new Set(form.getValues('items').map(item => item.fishId));
+    const newProducts = selectedProducts.filter(product => !currentFishIds.has(product.id));
+
+    newProducts.forEach(product => {
+      append({
+        fishId: product.id,
+        length: 0,
+        weight: 0,
+        pricePerKilo: product.price,
+      });
+    });
+  };
 
   const totalAmount = form.watch("items").reduce((acc, item) => {
     return acc + (item.weight || 0) * (item.pricePerKilo || 0);
   }, 0);
 
   return (
+    <>
+     <ProductSelectionModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelectProducts={handleSelectProducts}
+    />
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <PageHeader title={`Edit Invoice ${invoice.invoiceNumber}`} />
@@ -171,11 +195,9 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
                     <h3 className="text-lg font-medium">Invoice Items</h3>
-                    <Button variant="outline" size="sm" asChild>
-                        <Link href="/products" target="_blank">
-                            <Package className="mr-2 h-4 w-4" />
-                            Select Products
-                        </Link>
+                    <Button variant="outline" size="sm" type="button" onClick={() => setIsModalOpen(true)}>
+                        <Package className="mr-2 h-4 w-4" />
+                        Select Products
                     </Button>
               </div>
               <Table>
@@ -257,5 +279,6 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
         </Card>
       </form>
     </Form>
+    </>
   );
 }
