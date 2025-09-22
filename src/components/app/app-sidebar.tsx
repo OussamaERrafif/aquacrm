@@ -4,13 +4,14 @@ import { usePathname } from 'next/navigation';
 
 import {
   BarChart,
-  FileText,
   Fish,
   Handshake,
   Landmark,
   LayoutDashboard,
   Settings,
   Users,
+  ShoppingCart,
+  ShoppingBag,
 } from 'lucide-react';
 import {
   SidebarContent,
@@ -32,8 +33,9 @@ export function AppSidebar() {
   const isActive = useActivePath();
   const navItems: NavItem[] = [
     { title: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard /> },
+    { title: 'Sell', href: '/sell', icon: <ShoppingBag /> },
+    { title: 'Buy', href: '/buy', icon: <ShoppingCart /> },
     { title: 'Parties', href: '/parties', icon: <Users /> },
-    { title: 'Invoices', href: '/invoices', icon: <FileText /> },
     { title: 'Loans', href: '/loans', icon: <Landmark /> },
     { title: 'Financing', href: '/financing', icon: <Handshake /> },
     { title: 'AI Overview', href: '/overview', icon: <BarChart /> },
