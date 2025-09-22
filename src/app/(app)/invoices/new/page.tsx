@@ -40,16 +40,16 @@ import React from "react";
 import type { Fish } from "@/lib/types";
 
 const invoiceItemSchema = z.object({
-  fishId: z.string().min(1, "Please select a fish."),
+  fishId: z.string().min(1, "الرجاء اختيار سمكة."),
   length: z.enum(["xs", "s", "m", "l", "xl", "xxl"]),
-  weight: z.coerce.number().min(1, "Weight is required."),
-  pricePerKilo: z.coerce.number().min(0.01, "Price is required."),
+  weight: z.coerce.number().min(1, "الوزن مطلوب."),
+  pricePerKilo: z.coerce.number().min(0.01, "السعر مطلوب."),
 });
 
 const invoiceSchema = z.object({
   type: z.enum(["buy", "sell"]),
-  partyId: z.string().min(1, "Please select a party."),
-  items: z.array(invoiceItemSchema).min(1, "Please add at least one item."),
+  partyId: z.string().min(1, "الرجاء اختيار طرف."),
+  items: z.array(invoiceItemSchema).min(1, "الرجاء إضافة عنصر واحد على الأقل."),
 });
 
 type InvoiceFormValues = z.infer<typeof invoiceSchema>;
@@ -77,21 +77,19 @@ export default function NewInvoicePage() {
 
   const onSubmit = (data: InvoiceFormValues) => {
     console.log(data);
-    // Here you would typically send the data to your backend
   };
 
   const handleSelectProducts = (selectedProducts: Fish[]) => {
     const currentFishIds = new Set(form.getValues('items').map(item => item.fishId));
     
-    // Filter out products that are already in the invoice
     const newProducts = selectedProducts.filter(product => !currentFishIds.has(product.id));
     
     newProducts.forEach(product => {
       append({
         fishId: product.id,
-        length: "m", // Default value
-        weight: 0, // Default value
-        pricePerKilo: product.price, // Pre-fill price
+        length: "m",
+        weight: 0,
+        pricePerKilo: product.price,
       });
     });
   };
@@ -109,10 +107,10 @@ export default function NewInvoicePage() {
     />
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <PageHeader title="Create New Invoice" />
+        <PageHeader title="إنشاء فاتورة جديدة" />
         <Card>
           <CardHeader>
-            <CardTitle>Invoice Details</CardTitle>
+            <CardTitle>تفاصيل الفاتورة</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -121,16 +119,16 @@ export default function NewInvoicePage() {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Invoice Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>نوع الفاتورة</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select invoice type" />
+                          <SelectValue placeholder="اختر نوع الفاتورة" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="sell">Sell Invoice</SelectItem>
-                        <SelectItem value="buy">Buy Invoice</SelectItem>
+                        <SelectItem value="sell">فاتورة بيع</SelectItem>
+                        <SelectItem value="buy">فاتورة شراء</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormItem>
@@ -141,11 +139,11 @@ export default function NewInvoicePage() {
                 name="partyId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Party</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>الطرف</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={`Select a party`} />
+                          <SelectValue placeholder="اختر طرفًا" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -164,20 +162,20 @@ export default function NewInvoicePage() {
 
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium">Invoice Items</h3>
+                <h3 className="text-lg font-medium">بنود الفاتورة</h3>
                  <Button variant="outline" size="sm" type="button" onClick={() => setIsModalOpen(true)}>
-                    <Package className="mr-2 h-4 w-4" />
-                    Select Products
+                    <Package className="ml-2 h-4 w-4" />
+                    اختيار المنتجات
                  </Button>
               </div>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Fish</TableHead>
-                    <TableHead>Length</TableHead>
-                    <TableHead>Weight (kg)</TableHead>
-                    <TableHead>Price/kg</TableHead>
-                    <TableHead>Total</TableHead>
+                    <TableHead>السمك</TableHead>
+                    <TableHead>الطول</TableHead>
+                    <TableHead>الوزن (كغ)</TableHead>
+                    <TableHead>السعر/كغ</TableHead>
+                    <TableHead>الإجمالي</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -194,10 +192,10 @@ export default function NewInvoicePage() {
                             name={`items.${index}.fishId`}
                             render={({ field }) => (
                               <FormItem>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                                   <FormControl>
                                     <SelectTrigger>
-                                      <SelectValue placeholder="Select fish" />
+                                      <SelectValue placeholder="اختر سمكة" />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
@@ -214,10 +212,10 @@ export default function NewInvoicePage() {
                             name={`items.${index}.length`}
                             render={({ field }) => (
                               <FormItem>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                                   <FormControl>
                                     <SelectTrigger>
-                                      <SelectValue placeholder="Size" />
+                                      <SelectValue placeholder="الحجم" />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
@@ -228,8 +226,8 @@ export default function NewInvoicePage() {
                             )}
                           />
                         </TableCell>
-                        <TableCell><FormField control={form.control} name={`items.${index}.weight`} render={({ field }) => <Input {...field} type="number" placeholder="0" />} /></TableCell>
-                        <TableCell><FormField control={form.control} name={`items.${index}.pricePerKilo`} render={({ field }) => <Input {...field} type="number" placeholder="0.00" />} /></TableCell>
+                        <TableCell><FormField control={form.control} name={`items.${index}.weight`} render={({ field }) => <Input {...field} type="number" placeholder="0" className="text-right" />} /></TableCell>
+                        <TableCell><FormField control={form.control} name={`items.${index}.pricePerKilo`} render={({ field }) => <Input {...field} type="number" placeholder="0.00" className="text-right" />} /></TableCell>
                         <TableCell>${itemTotal.toFixed(2)}</TableCell>
                         <TableCell><Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                       </TableRow>
@@ -237,24 +235,24 @@ export default function NewInvoicePage() {
                   })}
                 </TableBody>
               </Table>
-              <Button type="button" variant="outline" size="sm" onClick={() => append({ fishId: "", length: 'm', weight: 0, pricePerKilo: 0 })}><PlusCircle className="mr-2 h-4 w-4" />Add Item</Button>
+              <Button type="button" variant="outline" size="sm" onClick={() => append({ fishId: "", length: 'm', weight: 0, pricePerKilo: 0 })}><PlusCircle className="ml-2 h-4 w-4" />إضافة بند</Button>
             </div>
             
              <Separator />
              
              <div className="flex justify-end">
-                <div className="w-full max-w-xs space-y-2">
+                <div className="w-full max-w-xs space-y-2 text-left">
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Subtotal</span>
+                        <span className="text-muted-foreground">المجموع الفرعي</span>
                         <span>${totalAmount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Tax (0%)</span>
+                        <span className="text-muted-foreground">الضريبة (0%)</span>
                         <span>$0.00</span>
                     </div>
                      <Separator />
                     <div className="flex justify-between font-semibold text-lg">
-                        <span>Total</span>
+                        <span>الإجمالي</span>
                         <span>${totalAmount.toFixed(2)}</span>
                     </div>
                 </div>
@@ -262,8 +260,8 @@ export default function NewInvoicePage() {
 
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Button variant="outline" type="button" asChild><Link href={form.getValues('type') === 'buy' ? '/buy' : '/sell'}>Cancel</Link></Button>
-            <Button type="submit">Save Invoice</Button>
+            <Button variant="outline" type="button" asChild><Link href={form.getValues('type') === 'buy' ? '/buy' : '/sell'}>إلغاء</Link></Button>
+            <Button type="submit">حفظ الفاتورة</Button>
           </CardFooter>
         </Card>
       </form>

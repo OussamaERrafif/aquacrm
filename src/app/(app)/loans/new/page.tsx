@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componentsui/card';
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
 import { sellers } from '@/lib/data';
@@ -32,12 +32,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 
 const loanSchema = z.object({
-  fisherId: z.string().min(1, 'Please select a fisher.'),
-  amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
+  fisherId: z.string().min(1, 'الرجاء اختيار صياد.'),
+  amount: z.coerce.number().min(1, 'يجب أن يكون المبلغ أكبر من 0.'),
   disbursementDate: z.date({
-    required_error: "A disbursement date is required.",
+    required_error: "تاريخ الصرف مطلوب.",
   }),
-  repaymentSchedule: z.string().min(1, 'Repayment schedule is required.'),
+  repaymentSchedule: z.string().min(1, 'جدول السداد مطلوب.'),
 });
 
 type LoanFormValues = z.infer<typeof loanSchema>;
@@ -54,16 +54,15 @@ export default function NewLoanPage() {
 
   const onSubmit = (data: LoanFormValues) => {
     console.log(data);
-    // Here you would typically send the data to your backend
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <PageHeader title="Create New Loan" />
+        <PageHeader title="إنشاء قرض جديد" />
         <Card>
           <CardHeader>
-            <CardTitle>Loan Details</CardTitle>
+            <CardTitle>تفاصيل القرض</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -72,11 +71,11 @@ export default function NewLoanPage() {
                 name="fisherId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fisher</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>الصياد</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a fisher" />
+                          <SelectValue placeholder="اختر صيادًا" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -94,23 +93,23 @@ export default function NewLoanPage() {
                 name="disbursementDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Disbursement Date</FormLabel>
+                    <FormLabel>تاريخ الصرف</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
+                              "w-full pl-3 text-right font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>Pick a date</span>
+                              <span>اختر تاريخًا</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -135,9 +134,9 @@ export default function NewLoanPage() {
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount</FormLabel>
+                    <FormLabel>المبلغ</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="15000" {...field} />
+                      <Input type="number" placeholder="15000" {...field} className="text-right" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -148,17 +147,17 @@ export default function NewLoanPage() {
                 name="repaymentSchedule"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Repayment Schedule</FormLabel>
-                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>جدول السداد</FormLabel>
+                     <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a schedule" />
+                          <SelectValue placeholder="اختر جدولًا" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Monthly">Monthly</SelectItem>
-                        <SelectItem value="Quarterly">Quarterly</SelectItem>
-                        <SelectItem value="Annually">Annually</SelectItem>
+                        <SelectItem value="Monthly">شهري</SelectItem>
+                        <SelectItem value="Quarterly">ربع سنوي</SelectItem>
+                        <SelectItem value="Annually">سنوي</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -168,8 +167,8 @@ export default function NewLoanPage() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Button variant="outline" asChild><Link href="/loans">Cancel</Link></Button>
-            <Button type="submit">Save Loan</Button>
+            <Button variant="outline" asChild><Link href="/loans">إلغاء</Link></Button>
+            <Button type="submit">حفظ القرض</Button>
           </CardFooter>
         </Card>
       </form>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -19,27 +20,27 @@ export function AppHeader() {
       <SidebarTrigger className="md:hidden" />
 
       <div className="relative flex-1">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
-          placeholder="Search..."
-          className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
+          placeholder="بحث..."
+          className="w-full rounded-lg bg-background pr-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full">
             <UserCircle className="h-6 w-6" />
-            <span className="sr-only">Toggle user menu</span>
+            <span className="sr-only">فتح قائمة المستخدم</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>حسابي</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
+          <DropdownMenuItem>الإعدادات</DropdownMenuItem>
+          <DropdownMenuItem>الدعم</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem>تسجيل الخروج</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

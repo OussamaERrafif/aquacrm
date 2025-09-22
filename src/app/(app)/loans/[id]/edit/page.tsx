@@ -33,13 +33,13 @@ import { format } from 'date-fns';
 import { notFound } from 'next/navigation';
 
 const loanSchema = z.object({
-  fisherId: z.string().min(1, 'Please select a fisher.'),
-  amount: z.coerce.number().min(1, 'Amount must be greater than 0.'),
+  fisherId: z.string().min(1, 'الرجاء اختيار صياد.'),
+  amount: z.coerce.number().min(1, 'يجب أن يكون المبلغ أكبر من 0.'),
   disbursementDate: z.date({
-    required_error: "A disbursement date is required.",
+    required_error: "تاريخ الصرف مطلوب.",
   }),
-  repaymentSchedule: z.string().min(1, 'Repayment schedule is required.'),
-  outstandingBalance: z.coerce.number().min(0, 'Outstanding balance cannot be negative.'),
+  repaymentSchedule: z.string().min(1, 'جدول السداد مطلوب.'),
+  outstandingBalance: z.coerce.number().min(0, 'لا يمكن أن يكون الرصيد المستحق سالبًا.'),
   status: z.enum(['Active', 'Paid Off', 'Defaulted']),
 });
 
@@ -66,16 +66,15 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
 
   const onSubmit = (data: LoanFormValues) => {
     console.log(data);
-    // Here you would typically send the data to your backend
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <PageHeader title={`Edit Loan ${loan.loanId}`} />
+        <PageHeader title={`تعديل القرض ${loan.loanId}`} />
         <Card>
           <CardHeader>
-            <CardTitle>Loan Details</CardTitle>
+            <CardTitle>تفاصيل القرض</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -84,11 +83,11 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
                 name="fisherId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fisher</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>الصياد</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a fisher" />
+                          <SelectValue placeholder="اختر صيادًا" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -106,23 +105,23 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
                 name="disbursementDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Disbursement Date</FormLabel>
+                    <FormLabel>تاريخ الصرف</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
+                              "w-full pl-3 text-right font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span>Pick a date</span>
+                              <span>اختر تاريخًا</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="mr-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -147,9 +146,9 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount</FormLabel>
+                    <FormLabel>المبلغ</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="15000" {...field} />
+                      <Input type="number" placeholder="15000" {...field} className="text-right" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -160,17 +159,17 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
                 name="repaymentSchedule"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Repayment Schedule</FormLabel>
-                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>جدول السداد</FormLabel>
+                     <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a schedule" />
+                          <SelectValue placeholder="اختر جدولًا" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Monthly">Monthly</SelectItem>
-                        <SelectItem value="Quarterly">Quarterly</SelectItem>
-                        <SelectItem value="Annually">Annually</SelectItem>
+                        <SelectItem value="Monthly">شهري</SelectItem>
+                        <SelectItem value="Quarterly">ربع سنوي</SelectItem>
+                        <SelectItem value="Annually">سنوي</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -182,9 +181,9 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
                 name="outstandingBalance"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Outstanding Balance</FormLabel>
+                    <FormLabel>الرصيد المستحق</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" {...field} />
+                      <Input type="number" step="0.01" {...field} className="text-right" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -195,17 +194,17 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
-                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel>الحالة</FormLabel>
+                     <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a status" />
+                          <SelectValue placeholder="اختر حالة" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Paid Off">Paid Off</SelectItem>
-                        <SelectItem value="Defaulted">Defaulted</SelectItem>
+                        <SelectItem value="Active">نشط</SelectItem>
+                        <SelectItem value="Paid Off">مدفوع بالكامل</SelectItem>
+                        <SelectItem value="Defaulted">متعثر</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -215,8 +214,8 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Button variant="outline" asChild><Link href={`/loans/${params.id}`}>Cancel</Link></Button>
-            <Button type="submit">Save Changes</Button>
+            <Button variant="outline" asChild><Link href={`/loans/${params.id}`}>إلغاء</Link></Button>
+            <Button type="submit">حفظ التغييرات</Button>
           </CardFooter>
         </Card>
       </form>

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu';
-import { PlusCircle, Search, Filter, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { PlusCircle, Search, Filter, TrendingUp, TrendingDown, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -23,6 +23,17 @@ export default function ProductsPage() {
         return 'bg-red-100 text-red-800';
     }
   }
+
+  const getStatusArabic = (status: 'In Stock' | 'Low Stock' | 'Out of Stock') => {
+    switch (status) {
+      case 'In Stock':
+        return 'متوفر';
+      case 'Low Stock':
+        return 'مخزون منخفض';
+      case 'Out of Stock':
+        return 'نفذ المخزون';
+    }
+  }
   
   const categories = [...new Set(fish.map(f => f.category))];
   const statuses = ['In Stock', 'Low Stock', 'Out of Stock'];
@@ -31,30 +42,30 @@ export default function ProductsPage() {
   return (
     <>
       <PageHeader 
-        title="Product Catalog"
+        title="كتالوج المنتجات"
         action={
             <Button>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add Product
+                <PlusCircle className="ml-2 h-4 w-4" />
+                إضافة منتج
             </Button>
         }
        >
-        <p className="text-sm text-muted-foreground mt-2">Browse and manage your seafood inventory</p>
+        <p className="text-sm text-muted-foreground mt-2">تصفح وأدر مخزونك من المأكولات البحرية</p>
       </PageHeader>
 
       <Card className="mb-6">
         <CardContent className="p-4">
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Search products..." className="pl-10" />
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="بحث عن منتجات..." className="pr-10" />
                 </div>
                 <div className="flex gap-4">
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" className="w-full md:w-auto">
-                                <Filter className="mr-2 h-4 w-4" />
-                                All Categories
+                                <Filter className="ml-2 h-4 w-4" />
+                                كل الفئات
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -64,12 +75,12 @@ export default function ProductsPage() {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                              <Button variant="outline" className="w-full md:w-auto">
-                                <Filter className="mr-2 h-4 w-4" />
-                                All Statuses
+                                <Filter className="ml-2 h-4 w-4" />
+                                كل الحالات
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                           {statuses.map(s => <DropdownMenuCheckboxItem key={s}>{s}</DropdownMenuCheckboxItem>)}
+                           {statuses.map(s => <DropdownMenuCheckboxItem key={s}>{getStatusArabic(s as any)}</DropdownMenuCheckboxItem>)}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -101,20 +112,20 @@ export default function ProductsPage() {
               <p className="text-sm text-muted-foreground">{f.category}</p>
               
               <div className="flex justify-between items-center mt-4">
-                <Badge className={cn("text-xs", getStatusColor(f.status))}>{f.status}</Badge>
-                <p className="text-lg font-semibold">${f.price.toFixed(2)}/kg</p>
+                <Badge className={cn("text-xs", getStatusColor(f.status))}>{getStatusArabic(f.status)}</Badge>
+                <p className="text-lg font-semibold">${f.price.toFixed(2)}/كغ</p>
               </div>
 
                <div className="text-sm text-muted-foreground mt-2 space-y-1">
-                    <p>Stock: {f.stock} kg</p>
-                    <p>Min: {f.minStock} kg</p>
-                    <p>Supplier: {f.supplier}</p>
+                    <p>المخزون: {f.stock} كغ</p>
+                    <p>الحد الأدنى: {f.minStock} كغ</p>
+                    <p>المورد: {f.supplier}</p>
                 </div>
 
             </CardContent>
              <CardFooter className="p-4 bg-muted/50">
                  <Button variant="ghost" size="sm" className="w-full justify-center" asChild>
-                    <Link href={`/products/${f.id}`}>View Details <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                    <Link href={`/products/${f.id}`}>عرض التفاصيل <ArrowLeft className="mr-2 h-4 w-4" /></Link>
                 </Button>
             </CardFooter>
           </Card>

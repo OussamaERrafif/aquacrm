@@ -29,9 +29,9 @@ export default function PartiesPage() {
     partyInvoices.forEach(inv => {
       if (inv.status !== 'Paid') {
         if (inv.type === 'sell') {
-          balance -= inv.totalAmount; // We are owed (credit for us)
+          balance -= inv.totalAmount; 
         } else {
-          balance += inv.totalAmount; // We owe (debit for us)
+          balance += inv.totalAmount; 
         }
       }
     });
@@ -41,7 +41,6 @@ export default function PartiesPage() {
   const handleDelete = () => {
     if (selectedPartyId) {
       console.log(`Deleting party with id: ${selectedPartyId}`);
-      // Here you would typically call an API to delete the party
       setShowDeleteDialog(false);
       setSelectedPartyId(null);
     }
@@ -55,12 +54,12 @@ export default function PartiesPage() {
   return (
     <>
       <PageHeader
-        title="Parties"
+        title="الأطراف"
         action={
           <Button asChild>
             <Link href="/parties/new">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Party
+              <PlusCircle className="ml-2 h-4 w-4" />
+              إضافة طرف
             </Link>
           </Button>
         }
@@ -68,7 +67,7 @@ export default function PartiesPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {parties.map((party) => {
            const balance = getPartyBalance(party.id);
-           const balanceStatus = balance === 0 ? 'Settled' : balance > 0 ? 'You Owe' : 'Owes You';
+           const balanceStatus = balance === 0 ? 'مسدد' : balance > 0 ? 'أنت مدين' : 'مدين لك';
            const balanceColor = balance === 0 ? 'text-green-600' : balance > 0 ? 'text-red-600' : 'text-blue-600';
 
           return (
@@ -83,7 +82,7 @@ export default function PartiesPage() {
                 <p className="text-sm text-muted-foreground">{party.email}</p>
                 <p className="text-sm text-muted-foreground">{party.phone}</p>
                  <div className="mt-4">
-                    <p className="text-sm font-medium">Balance Status</p>
+                    <p className="text-sm font-medium">حالة الرصيد</p>
                     <p className={`text-lg font-bold ${balanceColor}`}>
                       ${Math.abs(balance).toLocaleString()} <span className="text-sm font-normal">({balanceStatus})</span>
                     </p>
@@ -104,14 +103,14 @@ export default function PartiesPage() {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete this party?</AlertDialogTitle>
+            <AlertDialogTitle>هل أنت متأكد من حذف هذا الطرف؟</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the party and all associated data.
+             لا يمكن التراجع عن هذا الإجراء. سيؤدي هذا إلى حذف الطرف وجميع البيانات المرتبطة به بشكل دائم.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>حذف</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'AquaTrade CRM',
-  description: 'A robust CRM app for a fish trading company.',
+  description: 'تطبيق إدارة علاقات العملاء لشركة تجارة أسماك.',
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ar" suppressHydrationWarning dir="rtl">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -23,6 +23,10 @@ export default function RootLayout({
         />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+         <link
+          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>

@@ -62,12 +62,12 @@ export default function BuyPage() {
   return (
     <>
       <PageHeader
-        title="Buy Dashboard"
+        title="لوحة تحكم الشراء"
         action={
           <Button asChild>
             <Link href="/invoices/new">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create Buy Invoice
+              <PlusCircle className="ml-2 h-4 w-4" />
+              إنشاء فاتورة شراء
             </Link>
           </Button>
         }
@@ -75,54 +75,54 @@ export default function BuyPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cost (Buy)</CardTitle>
+            <CardTitle className="text-sm font-medium">إجمالي التكلفة (شراء)</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${totalCost.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">From all buy invoices</p>
+            <p className="text-xs text-muted-foreground">من جميع فواتير الشراء</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+            <CardTitle className="text-sm font-medium">إجمالي المدفوعات</CardTitle>
             <Receipt className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${paidAmount.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Paid to sellers</p>
+            <p className="text-xs text-muted-foreground">المدفوعة للبائعين</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Sellers</CardTitle>
+            <CardTitle className="text-sm font-medium">إجمالي البائعين</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{sellers.length}</div>
-            <p className="text-xs text-muted-foreground">Active seller accounts</p>
+            <p className="text-xs text-muted-foreground">حسابات البائعين النشطة</p>
           </CardContent>
         </Card>
       </div>
       <div className="grid gap-4 mt-4">
         <Card>
           <CardHeader>
-            <CardTitle>Buy Invoices</CardTitle>
+            <CardTitle>فواتير الشراء</CardTitle>
             <CardDescription>
-              All invoices for fish purchased from sellers.
+              جميع فواتير الأسماك المشتراة من البائعين.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Invoice #</TableHead>
-                  <TableHead>Seller</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>رقم الفاتورة</TableHead>
+                  <TableHead>البائع</TableHead>
+                  <TableHead>التاريخ</TableHead>
+                  <TableHead>المبلغ</TableHead>
+                  <TableHead>الحالة</TableHead>
                   <TableHead>
-                    <span className="sr-only">Actions</span>
+                    <span className="sr-only">الإجراءات</span>
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -137,7 +137,7 @@ export default function BuyPage() {
                     <TableCell>${invoice.totalAmount.toLocaleString()}</TableCell>
                     <TableCell>
                       <Badge variant={invoice.status === 'Paid' ? 'secondary' : invoice.status === 'Overdue' ? 'destructive' : 'outline'}>
-                        {invoice.status}
+                         {invoice.status === 'Paid' ? 'مدفوعة' : invoice.status === 'Overdue' ? 'متأخرة' : 'غير مدفوعة'}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -145,14 +145,14 @@ export default function BuyPage() {
                         <DropdownMenuTrigger asChild>
                           <Button aria-haspopup="true" size="icon" variant="ghost">
                             <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
+                            <span className="sr-only">تبديل القائمة</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                           <DropdownMenuItem asChild><Link href={`/invoices/${invoice.id}`}>View Details</Link></DropdownMenuItem>
-                           <DropdownMenuItem asChild><Link href={`/invoices/${invoice.id}/edit`}>Edit</Link></DropdownMenuItem>
-                          <DropdownMenuItem>Mark as Paid</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(invoice.id)}>Delete</DropdownMenuItem>
+                           <DropdownMenuItem asChild><Link href={`/invoices/${invoice.id}`}>عرض التفاصيل</Link></DropdownMenuItem>
+                           <DropdownMenuItem asChild><Link href={`/invoices/${invoice.id}/edit`}>تعديل</Link></DropdownMenuItem>
+                          <DropdownMenuItem>وضع علامة كمدفوع</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(invoice.id)}>حذف</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -166,14 +166,14 @@ export default function BuyPage() {
        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete this invoice?</AlertDialogTitle>
+            <AlertDialogTitle>هل أنت متأكد من حذف هذه الفاتورة؟</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the invoice.
+               لا يمكن التراجع عن هذا الإجراء. سيؤدي هذا إلى حذف الفاتورة بشكل دائم.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>حذف</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { invoices } from '@/lib/data';
-import { ArrowLeft, Edit, Printer } from 'lucide-react';
+import { ArrowRight, Edit, Printer } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
@@ -18,20 +18,22 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
   }
   
   const backUrl = invoice.type === 'buy' ? '/buy' : '/sell';
+  const statusArabic = invoice.status === 'Paid' ? 'مدفوعة' : invoice.status === 'Overdue' ? 'متأخرة' : 'غير مدفوعة';
+
 
   return (
     <>
       <PageHeader 
-        title={`Invoice ${invoice.invoiceNumber}`} 
+        title={`فاتورة ${invoice.invoiceNumber}`} 
         action={
             <div className="flex gap-2">
                 <Button variant="outline" asChild>
-                    <Link href={backUrl}><ArrowLeft className="mr-2 h-4 w-4" />Back to List</Link>
+                    <Link href={backUrl}><ArrowRight className="ml-2 h-4 w-4" />العودة إلى القائمة</Link>
                 </Button>
                 <Button asChild>
-                    <Link href={`/invoices/${invoice.id}/edit`}><Edit className="mr-2 h-4 w-4" />Edit</Link>
+                    <Link href={`/invoices/${invoice.id}/edit`}><Edit className="ml-2 h-4 w-4" />تعديل</Link>
                 </Button>
-                 <Button variant="outline"><Printer className="mr-2 h-4 w-4" />Print</Button>
+                 <Button variant="outline"><Printer className="ml-2 h-4 w-4" />طباعة</Button>
             </div>
         }
       />
@@ -43,16 +45,16 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
               <h1 className="text-2xl font-bold tracking-tight">AquaTrade CRM</h1>
               <p className="text-muted-foreground">123 Fishery Road, Ocean City, 12345</p>
             </div>
-            <div className="text-left md:text-right">
-                <h2 className="text-xl font-semibold">Invoice {invoice.invoiceNumber}</h2>
+            <div className="text-right md:text-left">
+                <h2 className="text-xl font-semibold">فاتورة {invoice.invoiceNumber}</h2>
                 <Badge variant={invoice.status === 'Paid' ? 'secondary' : invoice.status === 'Overdue' ? 'destructive' : 'outline'}>
-                    {invoice.status}
+                    {statusArabic}
                 </Badge>
             </div>
           </div>
            <div className="mt-6 grid grid-cols-2 gap-4">
                 <div>
-                    <h3 className="font-semibold mb-1">Bill To</h3>
+                    <h3 className="font-semibold mb-1">فاتورة إلى</h3>
                     <p className="text-sm text-muted-foreground">
                         {invoice.party.name}<br/>
                         {invoice.party.company}<br/>
@@ -60,10 +62,10 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
                         {invoice.party.email}
                     </p>
                 </div>
-                <div className="text-right">
-                    <h3 className="font-semibold mb-1">Invoice Date</h3>
+                <div className="text-left">
+                    <h3 className="font-semibold mb-1">تاريخ الفاتورة</h3>
                     <p className="text-sm text-muted-foreground">{invoice.date}</p>
-                    <h3 className="font-semibold mb-1 mt-2">Due Date</h3>
+                    <h3 className="font-semibold mb-1 mt-2">تاريخ الاستحقاق</h3>
                     <p className="text-sm text-muted-foreground">{invoice.dueDate}</p>
                 </div>
            </div>
@@ -72,11 +74,11 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Item</TableHead>
-                        <TableHead className="text-center">Length</TableHead>
-                        <TableHead className="text-center">Weight (kg)</TableHead>
-                        <TableHead className="text-right">Price/kg</TableHead>
-                        <TableHead className="text-right">Total</TableHead>
+                        <TableHead>البند</TableHead>
+                        <TableHead className="text-center">الطول</TableHead>
+                        <TableHead className="text-center">الوزن (كغ)</TableHead>
+                        <TableHead className="text-left">السعر/كغ</TableHead>
+                        <TableHead className="text-left">الإجمالي</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -85,34 +87,34 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
                             <TableCell className="font-medium">{item.fish.name} ({item.fish.category})</TableCell>
                             <TableCell className="text-center uppercase">{item.length}</TableCell>
                             <TableCell className="text-center">{item.weight}</TableCell>
-                            <TableCell className="text-right">${item.pricePerKilo.toFixed(2)}</TableCell>
-                            <TableCell className="text-right">${item.total.toFixed(2)}</TableCell>
+                            <TableCell className="text-left">${item.pricePerKilo.toFixed(2)}</TableCell>
+                            <TableCell className="text-left">${item.total.toFixed(2)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
             <Separator className="my-4" />
              <div className="flex justify-end">
-                <div className="w-full max-w-xs space-y-2">
+                <div className="w-full max-w-xs space-y-2 text-left">
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Subtotal</span>
+                        <span className="text-muted-foreground">المجموع الفرعي</span>
                         <span>${invoice.totalAmount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Tax (0%)</span>
+                        <span className="text-muted-foreground">الضريبة (0%)</span>
                         <span>$0.00</span>
                     </div>
                      <Separator />
                     <div className="flex justify-between font-semibold text-lg">
-                        <span>Total</span>
+                        <span>الإجمالي</span>
                         <span>${invoice.totalAmount.toFixed(2)}</span>
                     </div>
                 </div>
              </div>
         </CardContent>
          <CardFooter className="flex justify-between">
-            <p className="text-xs text-muted-foreground">Thank you for your business!</p>
-            {invoice.status !== 'Paid' && <Button>Mark as Paid</Button>}
+            <p className="text-xs text-muted-foreground">شكراً لتعاملكم معنا!</p>
+            {invoice.status !== 'Paid' && <Button>وضع علامة كمدفوع</Button>}
         </CardFooter>
       </Card>
     </>

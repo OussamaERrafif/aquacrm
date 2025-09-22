@@ -28,8 +28,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [suggestion, setSuggestion] = useState<{ timeout: string; reasoning: string } | null>(null);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string>('');
-  const [policy, setPolicy] = useState<string>('Standard company policy is to retain financial records for 7 years for tax and audit purposes. Non-critical data may be archived sooner.');
-  const [legalReqs, setLegalReqs] = useState<string>('GDPR and CCPA regulations apply to customer data. Financial transaction data must comply with SOX requirements.');
+  const [policy, setPolicy] = useState<string>('سياسة الشركة القياسية هي الاحتفاظ بالسجلات المالية لمدة 7 سنوات لأغراض الضرائب والمراجعة. يمكن أرشفة البيانات غير الهامة في وقت أقرب.');
+  const [legalReqs, setLegalReqs] = useState<string>('تنطبق لوائح GDPR و CCPA على بيانات العملاء. يجب أن تمتثل بيانات المعاملات المالية لمتطلبات SOX.');
 
   const handleSuggestTimeout = async () => {
     if (!selectedInvoiceId) return;
@@ -57,20 +57,20 @@ export default function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="Settings" />
+      <PageHeader title="الإعدادات" />
       <Card>
         <CardHeader>
-          <CardTitle>AI Invoice Archiving</CardTitle>
+          <CardTitle>أرشفة الفواتير بالذكاء الاصطناعي</CardTitle>
           <CardDescription>
-            Get AI-powered suggestions for optimal invoice archive timeouts based on company policy and legal requirements.
+            احصل على اقتراحات مدعومة بالذكاء الاصطناعي لفترات أرشفة الفواتير المثلى بناءً على سياسة الشركة والمتطلبات القانونية.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="invoice-select">Select Invoice to Analyze</Label>
-            <Select onValueChange={setSelectedInvoiceId}>
+            <Label htmlFor="invoice-select">اختر فاتورة لتحليلها</Label>
+            <Select onValueChange={setSelectedInvoiceId} dir="rtl">
               <SelectTrigger id="invoice-select">
-                <SelectValue placeholder="Select an invoice" />
+                <SelectValue placeholder="اختر فاتورة" />
               </SelectTrigger>
               <SelectContent>
                 {invoices.map(inv => (
@@ -82,30 +82,30 @@ export default function SettingsPage() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="company-policy">Company Data Retention Policy</Label>
+            <Label htmlFor="company-policy">سياسة الاحتفاظ بالبيانات للشركة</Label>
             <Textarea id="company-policy" value={policy} onChange={(e) => setPolicy(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="legal-reqs">Legal Requirements</Label>
+            <Label htmlFor="legal-reqs">المتطلبات القانونية</Label>
             <Textarea id="legal-reqs" value={legalReqs} onChange={(e) => setLegalReqs(e.target.value)} />
           </div>
           <Button onClick={handleSuggestTimeout} disabled={loading || !selectedInvoiceId}>
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Suggest Timeout
+            {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+            اقترح مهلة
           </Button>
           
           {suggestion && (
             <div className="space-y-4 pt-4">
-              <h3 className="text-lg font-semibold">AI Suggestion:</h3>
+              <h3 className="text-lg font-semibold">اقتراح الذكاء الاصطناعي:</h3>
               <div className="p-4 border rounded-md bg-muted/50 space-y-2">
-                <p><strong>Suggested Timeout:</strong> {suggestion.timeout}</p>
-                <p><strong>Reasoning:</strong> {suggestion.reasoning}</p>
+                <p><strong>المهلة المقترحة:</strong> {suggestion.timeout}</p>
+                <p><strong>السبب:</strong> {suggestion.reasoning}</p>
               </div>
             </div>
           )}
         </CardContent>
          <CardFooter>
-            <p className="text-xs text-muted-foreground">Note: This is a demonstration. Policies can be edited in the text fields.</p>
+            <p className="text-xs text-muted-foreground">ملاحظة: هذا عرض توضيحي. يمكن تعديل السياسات في حقول النص.</p>
         </CardFooter>
       </Card>
     </>

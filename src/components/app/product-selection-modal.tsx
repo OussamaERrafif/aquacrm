@@ -70,17 +70,17 @@ export function ProductSelectionModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Select Products</DialogTitle>
+          <DialogTitle>اختيار المنتجات</DialogTitle>
           <DialogDescription>
-            Choose products to add to the invoice.
+            اختر المنتجات لإضافتها إلى الفاتورة.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search products..."
-              className="pl-10"
+              placeholder="بحث عن منتجات..."
+              className="pr-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -90,9 +90,9 @@ export function ProductSelectionModal({
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[50px]"></TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead className="text-right">Price</TableHead>
+                  <TableHead>المنتج</TableHead>
+                  <TableHead>الفئة</TableHead>
+                  <TableHead className="text-left">السعر</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -117,7 +117,7 @@ export function ProductSelectionModal({
                       </div>
                     </TableCell>
                     <TableCell>{product.category}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">
                       ${product.price.toFixed(2)}
                     </TableCell>
                   </TableRow>
@@ -128,10 +128,10 @@ export function ProductSelectionModal({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            Cancel
+            إلغاء
           </Button>
           <Button onClick={handleAddProducts} disabled={selectedProducts.length === 0}>
-            Add Selected ({selectedProducts.length})
+            إضافة المحدد ({selectedProducts.length})
           </Button>
         </DialogFooter>
       </DialogContent>

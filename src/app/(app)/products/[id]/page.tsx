@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { fish } from '@/lib/data';
-import { ArrowLeft, Edit, Package, TrendingDown, TrendingUp } from 'lucide-react';
+import { ArrowRight, Edit, Package, TrendingDown, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -30,6 +30,17 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
     }
   };
 
+  const getStatusArabic = (status: 'In Stock' | 'Low Stock' | 'Out of Stock') => {
+    switch (status) {
+      case 'In Stock':
+        return 'متوفر';
+      case 'Low Stock':
+        return 'مخزون منخفض';
+      case 'Out of Stock':
+        return 'نفذ المخزون';
+    }
+  }
+
   const stockPercentage = product.stock > 0 ? (product.stock / (product.stock + product.minStock * 1.5)) * 100 : 0;
 
 
@@ -40,10 +51,10 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
         action={
             <div className="flex gap-2">
                 <Button variant="outline" asChild>
-                    <Link href="/products"><ArrowLeft className="mr-2 h-4 w-4" />Back to Products</Link>
+                    <Link href="/products"><ArrowRight className="ml-2 h-4 w-4" />العودة إلى المنتجات</Link>
                 </Button>
                 <Button>
-                    <Edit className="mr-2 h-4 w-4" />Edit Product
+                    <Edit className="ml-2 h-4 w-4" />تعديل المنتج
                 </Button>
             </div>
         }
@@ -67,7 +78,7 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
                     />
                 </div>
                 <CardFooter className="p-4 bg-muted/50">
-                    <p className="text-sm text-muted-foreground w-full text-center">Image of {product.name}</p>
+                    <p className="text-sm text-muted-foreground w-full text-center">صورة {product.name}</p>
                 </CardFooter>
             </Card>
         </div>
@@ -75,42 +86,42 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
              <Card>
                 <CardHeader>
                     <div className="flex justify-between items-start">
-                        <CardTitle>Product Details</CardTitle>
+                        <CardTitle>تفاصيل المنتج</CardTitle>
                         {product.id === 'F002' ? <TrendingUp className="h-6 w-6 text-green-500" /> : <TrendingDown className="h-6 w-6 text-yellow-500" />}
                     </div>
-                    <CardDescription>All information about this product.</CardDescription>
+                    <CardDescription>جميع المعلومات حول هذا المنتج.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-2 gap-6">
                         <div>
-                            <h3 className="text-sm font-medium text-muted-foreground">Price per kg</h3>
+                            <h3 className="text-sm font-medium text-muted-foreground">السعر لكل كيلو</h3>
                             <p className="text-2xl font-bold">${product.price.toFixed(2)}</p>
                         </div>
                         <div>
-                            <h3 className="text-sm font-medium text-muted-foreground">Status</h3>
-                            <Badge className={cn("text-base", getStatusColor(product.status))}>{product.status}</Badge>
+                            <h3 className="text-sm font-medium text-muted-foreground">الحالة</h3>
+                            <Badge className={cn("text-base", getStatusColor(product.status))}>{getStatusArabic(product.status)}</Badge>
                         </div>
                     </div>
                      <Separator />
                     <div className="space-y-4">
-                        <h3 className="text-lg font-semibold">Inventory Details</h3>
+                        <h3 className="text-lg font-semibold">تفاصيل المخزون</h3>
                         <div className="space-y-2">
                              <div className="flex justify-between text-sm">
-                                <span className="text-muted-foreground">Current Stock</span>
-                                <span>{product.stock} kg</span>
+                                <span className="text-muted-foreground">المخزون الحالي</span>
+                                <span>{product.stock} كغ</span>
                             </div>
-                            <Progress value={stockPercentage} />
+                            <Progress value={stockPercentage} dir="rtl" />
                              <div className="flex justify-between text-xs text-muted-foreground">
-                                <span>0 kg</span>
-                                <span>Minimum Stock: {product.minStock} kg</span>
+                                <span>0 كغ</span>
+                                <span>الحد الأدنى للمخزون: {product.minStock} كغ</span>
                             </div>
                         </div>
                     </div>
                     <Separator />
                      <div>
-                        <h3 className="text-lg font-semibold mb-2">Supplier Information</h3>
+                        <h3 className="text-lg font-semibold mb-2">معلومات المورد</h3>
                          <p className="text-sm">
-                            <span className="text-muted-foreground">Supplier: </span>
+                            <span className="text-muted-foreground">المورد: </span>
                             {product.supplier}
                          </p>
                     </div>

@@ -5,17 +5,17 @@ import Link from 'next/link';
 export default function FinancingPage() {
   return (
     <>
-      <PageHeader title="Financing" />
+      <PageHeader title="التمويل" />
       <Card className="text-center">
         <CardHeader>
-          <CardTitle>Financing & Credit Management</CardTitle>
+          <CardTitle>إدارة التمويل والائتمan</CardTitle>
           <CardDescription>
-            Financing options, credit limits, and terms are managed within individual party profiles.
+            تتم إدارة خيارات التمويل وحدود الائتمan والشروط ضمن ملفات الأطراف الفردية.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Please navigate to the <Link href="/parties" className="text-primary underline">Parties</Link> section to view or edit financing details.
+            يرجى الانتقال إلى قسم <Link href="/parties" className="text-primary underline">الأطراف</Link> لعرض أو تعديل تفاصيل التمويل.
           </p>
         </CardContent>
       </Card>

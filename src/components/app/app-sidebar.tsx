@@ -32,13 +32,13 @@ const useActivePath = () => {
 export function AppSidebar() {
   const isActive = useActivePath();
   const navItems: NavItem[] = [
-    { title: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard /> },
-    { title: 'Sell', href: '/sell', icon: <ShoppingBag /> },
-    { title: 'Buy', href: '/buy', icon: <ShoppingCart /> },
-    { title: 'Parties', href: '/parties', icon: <Users /> },
-    { title: 'Products', href: '/products', icon: <Package /> },
-    { title: 'Loans', href: '/loans', icon: <Landmark /> },
-    { title: 'Financing', href: '/financing', icon: <Handshake /> },
+    { title: 'لوحة التحكم', href: '/dashboard', icon: <LayoutDashboard /> },
+    { title: 'بيع', href: '/sell', icon: <ShoppingBag /> },
+    { title: 'شراء', href: '/buy', icon: <ShoppingCart /> },
+    { title: 'الأطراف', href: '/parties', icon: <Users /> },
+    { title: 'المنتجات', href: '/products', icon: <Package /> },
+    { title: 'القروض', href: '/loans', icon: <Landmark /> },
+    { title: 'التمويل', href: '/financing', icon: <Handshake /> },
   ];
 
   return (
@@ -77,11 +77,11 @@ export function AppSidebar() {
               <SidebarMenuButton
                   asChild
                   isActive={isActive('/settings')}
-                  tooltip="Settings"
+                  tooltip="الإعدادات"
               >
                 <Link href="/settings">
                   <Settings />
-                  <span>Settings</span>
+                  <span>الإعدادات</span>
                 </Link>
               </SidebarMenuButton>
           </SidebarMenuItem>

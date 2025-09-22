@@ -34,46 +34,46 @@ export default function DashboardPage() {
   
   return (
     <>
-      <PageHeader title="Dashboard" />
+      <PageHeader title="لوحة التحكم" />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">إجمالي الإيرادات</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+            <p className="text-xs text-muted-foreground">20.1% من الشهر الماضي</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding Loans</CardTitle>
+            <CardTitle className="text-sm font-medium">القروض المستحقة</CardTitle>
             <Landmark className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${outstandingLoans.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+            <p className="text-xs text-muted-foreground">180.1% من الشهر الماضي</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">New Invoices</CardTitle>
+            <CardTitle className="text-sm font-medium">فواتير جديدة</CardTitle>
             <Receipt className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+12</div>
-            <p className="text-xs text-muted-foreground">+19% from last month</p>
+            <p className="text-xs text-muted-foreground">19% من الشهر الماضي</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+            <CardTitle className="text-sm font-medium">النشطون الآن</CardTitle>
              <div className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">+201 since last hour</p>
+            <p className="text-xs text-muted-foreground">201+ منذ الساعة الماضية</p>
           </CardContent>
         </Card>
       </div>
@@ -83,17 +83,17 @@ export default function DashboardPage() {
         </div>
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
+            <CardTitle>المعاملات الأخيرة</CardTitle>
             <CardDescription>
-              You made {invoices.length} transactions this month.
+              لقد قمت بـ {invoices.length} معاملات هذا الشهر.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Customer</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>العميل</TableHead>
+                  <TableHead className="text-left">المبلغ</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -105,7 +105,7 @@ export default function DashboardPage() {
                         {invoice.party.email}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">
                       ${invoice.totalAmount.toLocaleString()}
                     </TableCell>
                   </TableRow>

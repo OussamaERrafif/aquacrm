@@ -19,9 +19,9 @@ import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
 
 const partySchema = z.object({
-  name: z.string().min(1, 'Name is required.'),
+  name: z.string().min(1, 'الاسم مطلوب.'),
   company: z.string().optional(),
-  email: z.string().email('Invalid email address.'),
+  email: z.string().email('عنوان بريد إلكتروني غير صالح.'),
   phone: z.string().optional(),
   address: z.string().optional(),
 });
@@ -42,16 +42,15 @@ export default function NewPartyPage() {
 
   const onSubmit = (data: PartyFormValues) => {
     console.log(data);
-    // Here you would typically send the data to your backend
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <PageHeader title="Create New Party" />
+        <PageHeader title="إنشاء طرف جديد" />
         <Card>
           <CardHeader>
-            <CardTitle>Party Details</CardTitle>
+            <CardTitle>تفاصيل الطرف</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -60,7 +59,7 @@ export default function NewPartyPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>الاسم</FormLabel>
                     <FormControl>
                       <Input placeholder="John Doe" {...field} />
                     </FormControl>
@@ -73,7 +72,7 @@ export default function NewPartyPage() {
                 name="company"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company (Optional)</FormLabel>
+                    <FormLabel>الشركة (اختياري)</FormLabel>
                     <FormControl>
                       <Input placeholder="Global Seafoods Inc." {...field} />
                     </FormControl>
@@ -86,7 +85,7 @@ export default function NewPartyPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>البريد الإلكتروني</FormLabel>
                     <FormControl>
                       <Input placeholder="contact@globalseafoods.com" {...field} />
                     </FormControl>
@@ -99,7 +98,7 @@ export default function NewPartyPage() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone (Optional)</FormLabel>
+                    <FormLabel>الهاتف (اختياري)</FormLabel>
                     <FormControl>
                       <Input placeholder="123-456-7890" {...field} />
                     </FormControl>
@@ -112,7 +111,7 @@ export default function NewPartyPage() {
                 name="address"
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
-                    <FormLabel>Address (Optional)</FormLabel>
+                    <FormLabel>العنوان (اختياري)</FormLabel>
                     <FormControl>
                       <Input placeholder="123 Ocean Ave, Seattle, WA" {...field} />
                     </FormControl>
@@ -123,8 +122,8 @@ export default function NewPartyPage() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Button variant="outline" asChild><Link href="/parties">Cancel</Link></Button>
-            <Button type="submit">Save Party</Button>
+            <Button variant="outline" asChild><Link href="/parties">إلغاء</Link></Button>
+            <Button type="submit">حفظ الطرف</Button>
           </CardFooter>
         </Card>
       </form>

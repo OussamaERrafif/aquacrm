@@ -57,34 +57,42 @@ export default function LoansPage() {
     setShowDeleteDialog(true);
   }
 
+  const getStatusArabic = (status: 'Active' | 'Paid Off' | 'Defaulted') => {
+      switch (status) {
+        case 'Active': return 'نشط';
+        case 'Paid Off': return 'مدفوع بالكامل';
+        case 'Defaulted': return 'متعثر';
+      }
+  }
+
   return (
     <>
       <PageHeader
-        title="Loans"
+        title="القروض"
         action={
           <Button asChild>
             <Link href="/loans/new">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Loan
-            </Link>
+              <PlusCircle className="ml-2 h-4 w-4" />
+              إضافة قرض
+            </Link>          
           </Button>
         }
       />
       <Card>
         <CardHeader>
-          <CardTitle>Loan Management</CardTitle>
+          <CardTitle>إدارة القروض</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Loan ID</TableHead>
-                <TableHead>Fisher</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Outstanding</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>معرف القرض</TableHead>
+                <TableHead>الصياد</TableHead>
+                <TableHead>المبلغ</TableHead>
+                <TableHead>المبلغ المستحق</TableHead>
+                <TableHead>الحالة</TableHead>
                 <TableHead>
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">الإجراءات</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -99,7 +107,7 @@ export default function LoansPage() {
                   <TableCell>${loan.outstandingBalance.toLocaleString()}</TableCell>
                   <TableCell>
                     <Badge variant={loan.status === 'Paid Off' ? 'secondary' : loan.status === 'Defaulted' ? 'destructive' : 'default'}>
-                      {loan.status}
+                      {getStatusArabic(loan.status)}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -107,15 +115,15 @@ export default function LoansPage() {
                       <DropdownMenuTrigger asChild>
                         <Button aria-haspopup="true" size="icon" variant="ghost">
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
+                          <span className="sr-only">تبديل القائمة</span>
                         </Button>                      
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild><Link href={`/loans/${loan.id}`}>View Details</Link></DropdownMenuItem>
-                        <DropdownMenuItem asChild><Link href={`/loans/${loan.id}/edit`}>Edit</Link></DropdownMenuItem>
-                        <DropdownMenuItem>Record Repayment</DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href={`/loans/${loan.id}`}>عرض التفاصيل</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href={`/loans/${loan.id}/edit`}>تعديل</Link></DropdownMenuItem>
+                        <DropdownMenuItem>تسجيل سداد</DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(loan.id)}>
-                          Delete
+                          حذف
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -129,14 +137,14 @@ export default function LoansPage() {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete this loan?</AlertDialogTitle>
+            <AlertDialogTitle>هل أنت متأكد من حذف هذا القرض؟</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the loan record.
+              لا يمكن التراجع عن هذا الإجراء. سيؤدي هذا إلى حذف سجل القرض بشكل دائم.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>حذف</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
