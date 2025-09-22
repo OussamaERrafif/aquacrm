@@ -24,13 +24,14 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
-import { sellers, loans } from '@/lib/data';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import type { Party, Loan } from '@/lib/types';
 
 const loanSchema = z.object({
   fisherId: z.string().min(1, 'الرجاء اختيار صياد.'),
@@ -46,28 +47,58 @@ const loanSchema = z.object({
 type LoanFormValues = z.infer<typeof loanSchema>;
 
 export default function EditLoanPage() {
+  const router = useRouter();
   const params = useParams<{ id: string }>();
-  const loan = loans.find(l => l.id === params.id);
-
-  if (!loan) {
-    notFound();
-  }
+  const [parties, setParties] = useState<Party[]>([]);
+  const [loan, setLoan] = useState<Loan | null>(null);
 
   const form = useForm<LoanFormValues>({
     resolver: zodResolver(loanSchema),
-    defaultValues: {
-      fisherId: loan.fisher.id,
-      amount: loan.amount,
-      disbursementDate: new Date(loan.disbursementDate),
-      repaymentSchedule: loan.repaymentSchedule,
-      outstandingBalance: loan.outstandingBalance,
-      status: loan.status,
-    },
   });
 
-  const onSubmit = (data: LoanFormValues) => {
-    console.log(data);
+  useEffect(() => {
+    async function fetchParties() {
+        const res = await fetch('/api/parties');
+        const data = await res.json();
+        setParties(data);
+    }
+    fetchParties();
+  }, []);
+
+  useEffect(() => {
+    async function fetchLoan() {
+      const res = await fetch(`/api/loans/${params.id}`);
+      if (res.ok) {
+        const data: Loan = await res.json();
+        setLoan(data);
+        form.reset({
+          fisherId: data.fisher.id,
+          amount: data.amount,
+          disbursementDate: new Date(data.disbursementDate),
+          repaymentSchedule: data.repaymentSchedule,
+          outstandingBalance: data.outstandingBalance,
+          status: data.status,
+        });
+      } else {
+        notFound();
+      }
+    }
+    fetchLoan();
+  }, [params.id, form]);
+
+  const onSubmit = async (data: LoanFormValues) => {
+    await fetch(`/api/loans/${params.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    router.push(`/loans/${params.id}`);
+    router.refresh();
   };
+  
+  if (!loan) {
+      return <div>Loading...</div>
+  }
 
   return (
     <Form {...form}>
@@ -92,8 +123,8 @@ export default function EditLoanPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {sellers.map(s => (
-                          <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                        {parties.map(p => (
+                          <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -223,5 +254,3 @@ export default function EditLoanPage() {
     </Form>
   );
 }
-
-    

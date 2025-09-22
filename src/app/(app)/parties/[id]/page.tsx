@@ -1,25 +1,33 @@
 
-'use client';
-
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { parties, invoices } from '@/lib/data';
 import { ArrowRight, Edit } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
+import type { Party, Invoice } from '@/lib/types';
 
-export default function PartyDetailsPage() {
-  const params = useParams<{ id: string }>();
-  const party = parties.find((p) => p.id === params.id);
+interface PartyWithRelations extends Party {
+  invoices: Invoice[];
+}
 
-  if (!party) {
-    notFound();
-  }
+async function getParty(id: string) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/parties/${id}`, { cache: 'no-store' });
+    if (!res.ok) {
+        if (res.status === 404) {
+            return notFound();
+        }
+        throw new Error('Failed to fetch party');
+    }
+    return res.json();
+}
 
-  const partyInvoices = invoices.filter(inv => inv.party.id === party.id);
+export default async function PartyDetailsPage({ params }: { params: { id: string } }) {
+  const party: PartyWithRelations = await getParty(params.id);
+
+  const partyInvoices = party.invoices || [];
   
   let currentBalance = 0;
   const transactions = partyInvoices.map(inv => {
@@ -39,7 +47,8 @@ export default function PartyDetailsPage() {
           description: `فاتورة ${inv.invoiceNumber}`,
           debit,
           credit,
-          balance: currentBalance
+          balance: currentBalance,
+          id: inv.id,
       }
   });
 
@@ -105,10 +114,14 @@ export default function PartyDetailsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {transactions.map((t, i) => (
-                                <TableRow key={i}>
-                                    <TableCell>{t.date}</TableCell>
-                                    <TableCell>{t.description}</TableCell>
+                            {transactions.map((t) => (
+                                <TableRow key={t.id}>
+                                    <TableCell>{new Date(t.date).toLocaleDateString()}</TableCell>
+                                    <TableCell>
+                                        <Link href={`/invoices/${t.id}`} className="hover:underline">
+                                            {t.description}
+                                        </Link>
+                                    </TableCell>
                                     <TableCell className="text-left">{t.debit > 0 ? t.debit.toFixed(2) : '-'} د.م.</TableCell>
                                     <TableCell className="text-left">{t.credit > 0 ? t.credit.toFixed(2) : '-'} د.م.</TableCell>
                                     <TableCell className="text-left">{t.balance.toFixed(2)} د.م.</TableCell>
@@ -140,5 +153,3 @@ export default function PartyDetailsPage() {
     </>
   );
 }
-
-    

@@ -31,14 +31,13 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { PageHeader } from "@/components/app/page-header";
-import { parties, fish, invoices } from "@/lib/data";
 import { PlusCircle, Trash2, Package } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
-import React from "react";
+import { notFound, useParams, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 import { ProductSelectionModal } from "@/components/app/product-selection-modal";
-import type { Fish } from "@/lib/types";
+import type { Fish, Party, Invoice } from "@/lib/types";
 
 const invoiceItemSchema = z.object({
   fishId: z.string().min(1, "الرجاء اختيار سمكة."),
@@ -58,38 +57,62 @@ type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 const sizeOptions: z.infer<typeof invoiceItemSchema.shape.length>[] = ["xs", "s", "m", "l", "xl", "xxl"];
 
 export default function EditInvoicePage() {
+  const router = useRouter();
   const params = useParams<{ id: string }>();
-  const invoice = invoices.find(inv => inv.id === params.id);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [partyList, setPartyList] = React.useState<Party[]>([]);
+  const [fishList, setFishList] = React.useState<Fish[]>([]);
+  const [invoice, setInvoice] = React.useState<Invoice | null>(null);
   
-  if (!invoice) {
-    notFound();
-  }
-
   const form = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceSchema),
-    defaultValues: {
-      type: invoice.type,
-      partyId: invoice.party.id,
-      status: invoice.status,
-      items: invoice.items.map(item => ({
-          fishId: item.fish.id,
-          length: item.length,
-          weight: item.weight,
-          pricePerKilo: item.pricePerKilo
-      })),
-    },
   });
+
+  useEffect(() => {
+    async function fetchData() {
+        const resParties = await fetch('/api/parties');
+        setPartyList(await resParties.json());
+
+        const resFish = await fetch('/api/products');
+        setFishList(await resFish.json());
+
+        if (params.id) {
+            const resInvoice = await fetch(`/api/invoices/${params.id}`);
+            if (resInvoice.ok) {
+                const invoiceData: Invoice = await resInvoice.json();
+                setInvoice(invoiceData);
+                form.reset({
+                    type: invoiceData.type,
+                    partyId: invoiceData.party.id,
+                    status: invoiceData.status,
+                    items: invoiceData.items.map(item => ({
+                        fishId: item.fish.id,
+                        length: item.length,
+                        weight: item.weight,
+                        pricePerKilo: item.pricePerKilo
+                    })),
+                });
+            } else {
+                notFound();
+            }
+        }
+    }
+    fetchData();
+  }, [params.id, form]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items",
   });
 
-  const partyList = parties;
-
-  const onSubmit = (data: InvoiceFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: InvoiceFormValues) => {
+    await fetch(`/api/invoices/${params.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    router.push(`/invoices/${params.id}`);
+    router.refresh();
   };
   
   const handleSelectProducts = (selectedProducts: Fish[]) => {
@@ -109,6 +132,10 @@ export default function EditInvoicePage() {
   const totalAmount = form.watch("items").reduce((acc, item) => {
     return acc + (item.weight || 0) * (item.pricePerKilo || 0);
   }, 0);
+
+  if (!invoice) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -232,7 +259,7 @@ export default function EditInvoicePage() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {fish.map(f => <SelectItem key={f.id} value={f.id}>{f.name} ({f.category})</SelectItem>)}
+                                    {fishList.map(f => <SelectItem key={f.id} value={f.id}>{f.name} ({f.category})</SelectItem>)}
                                   </SelectContent>
                                 </Select>
                               </FormItem>
@@ -302,5 +329,3 @@ export default function EditInvoicePage() {
     </>
   );
 }
-
-    

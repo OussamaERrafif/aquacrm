@@ -1,7 +1,9 @@
 
+'use client';
+
+import * as React from 'react';
 import { PageHeader } from '@/components/app/page-header';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { fish } from '@/lib/data';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,8 +12,19 @@ import { PlusCircle, Search, Filter, TrendingUp, TrendingDown, ArrowLeft } from 
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import type { Fish } from '@/lib/types';
 
 export default function ProductsPage() {
+  const [products, setProducts] = React.useState<Fish[]>([]);
+  
+  React.useEffect(() => {
+    async function fetchProducts() {
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      setProducts(data);
+    }
+    fetchProducts();
+  }, []);
 
   const getStatusColor = (status: 'In Stock' | 'Low Stock' | 'Out of Stock') => {
     switch (status) {
@@ -35,7 +48,7 @@ export default function ProductsPage() {
     }
   }
   
-  const categories = [...new Set(fish.map(f => f.category))];
+  const categories = [...new Set(products.map(f => f.category))];
   const statuses = ['In Stock', 'Low Stock', 'Out of Stock'];
 
 
@@ -89,7 +102,7 @@ export default function ProductsPage() {
       </Card>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {fish.map((f, index) => (
+        {products.map((f, index) => (
           <Card key={f.id} className="overflow-hidden flex flex-col">
             <CardHeader className="p-0">
                 <Link href={`/products/${f.id}`} className="block relative h-48 w-full">

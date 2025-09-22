@@ -17,8 +17,9 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
-import { parties } from '@/lib/data';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import type { Party } from '@/lib/types';
 
 const partySchema = z.object({
   name: z.string().min(1, 'الاسم مطلوب.'),
@@ -31,32 +32,48 @@ const partySchema = z.object({
 type PartyFormValues = z.infer<typeof partySchema>;
 
 export default function EditPartyPage() {
+    const router = useRouter();
     const params = useParams<{ id: string }>();
-    const party = parties.find(p => p.id === params.id);
 
-    if (!party) {
-        notFound();
-    }
+    const form = useForm<PartyFormValues>({
+      resolver: zodResolver(partySchema),
+    });
 
-  const form = useForm<PartyFormValues>({
-    resolver: zodResolver(partySchema),
-    defaultValues: {
-        name: party.name,
-        company: party.company,
-        email: party.email,
-        phone: party.phone,
-        address: party.address,
-    },
-  });
+    useEffect(() => {
+        async function fetchParty() {
+            const res = await fetch(`/api/parties/${params.id}`);
+            if (res.ok) {
+                const party: Party = await res.json();
+                form.reset({
+                    name: party.name,
+                    company: party.company,
+                    email: party.email,
+                    phone: party.phone,
+                    address: party.address,
+                });
+            } else {
+                notFound();
+            }
+        }
+        fetchParty();
+    }, [params.id, form]);
 
-  const onSubmit = (data: PartyFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: PartyFormValues) => {
+    await fetch(`/api/parties/${params.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    router.push(`/parties/${params.id}`);
+    router.refresh();
   };
+
+  const partyName = form.watch('name');
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <PageHeader title={`تعديل ${party.name}`} />
+        <PageHeader title={`تعديل ${partyName || '...'}`} />
         <Card>
           <CardHeader>
             <CardTitle>تفاصيل الطرف</CardTitle>
@@ -139,5 +156,3 @@ export default function EditPartyPage() {
     </Form>
   );
 }
-
-    

@@ -25,7 +25,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/app/page-header';
-import { loans } from '@/lib/data';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -40,18 +39,32 @@ import {
 } from '@/components/ui/alert-dialog';
 import { PaymentRegistrationDialog } from '@/components/app/payment-registration-dialog';
 import type { Loan } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 
 export default function LoansPage() {
+  const router = useRouter();
+  const [loans, setLoans] = React.useState<Loan[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedLoan, setSelectedLoan] = React.useState<Loan | null>(null);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = React.useState(false);
 
-  const handleDelete = () => {
+  React.useEffect(() => {
+    async function fetchLoans() {
+      const res = await fetch('/api/loans');
+      const data = await res.json();
+      setLoans(data);
+    }
+    fetchLoans();
+  }, []);
+
+  const handleDelete = async () => {
     if (selectedLoan) {
-      console.log(`Deleting loan with id: ${selectedLoan.id}`);
+      await fetch(`/api/loans/${selectedLoan.id}`, { method: 'DELETE' });
+      setLoans(loans.filter(l => l.id !== selectedLoan.id));
       setShowDeleteDialog(false);
       setSelectedLoan(null);
+      router.refresh();
     }
   };
   

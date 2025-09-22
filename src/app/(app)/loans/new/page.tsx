@@ -24,12 +24,15 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
-import { sellers } from '@/lib/data';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import type { Party } from '@/lib/types';
+
 
 const loanSchema = z.object({
   fisherId: z.string().min(1, 'الرجاء اختيار صياد.'),
@@ -43,6 +46,9 @@ const loanSchema = z.object({
 type LoanFormValues = z.infer<typeof loanSchema>;
 
 export default function NewLoanPage() {
+  const router = useRouter();
+  const [parties, setParties] = useState<Party[]>([]);
+
   const form = useForm<LoanFormValues>({
     resolver: zodResolver(loanSchema),
     defaultValues: {
@@ -52,8 +58,23 @@ export default function NewLoanPage() {
     },
   });
 
-  const onSubmit = (data: LoanFormValues) => {
-    console.log(data);
+  useEffect(() => {
+    async function fetchParties() {
+        const res = await fetch('/api/parties');
+        const data = await res.json();
+        setParties(data);
+    }
+    fetchParties();
+  }, []);
+
+  const onSubmit = async (data: LoanFormValues) => {
+    await fetch('/api/loans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    router.push('/loans');
+    router.refresh();
   };
 
   return (
@@ -79,8 +100,8 @@ export default function NewLoanPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {sellers.map(s => (
-                          <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                        {parties.map(p => (
+                          <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

@@ -4,7 +4,6 @@
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { fish } from '@/lib/data';
 import { ArrowRight, Edit, Package, TrendingDown, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
@@ -13,13 +12,31 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
+import React from 'react';
+import type { Fish } from '@/lib/types';
 
 export default function ProductDetailsPage() {
   const params = useParams<{ id: string }>();
-  const product = fish.find((f) => f.id === params.id);
+  const [product, setProduct] = React.useState<Fish | null>(null);
+
+  React.useEffect(() => {
+    async function fetchProduct() {
+      if(params.id) {
+        const res = await fetch(`/api/products/${params.id}`);
+        if(res.ok) {
+          const data = await res.json();
+          setProduct(data);
+        } else {
+          notFound();
+        }
+      }
+    }
+    fetchProduct();
+  }, [params.id]);
+
 
   if (!product) {
-    notFound();
+    return <div>Loading...</div>;
   }
 
   const getStatusColor = (status: 'In Stock' | 'Low Stock' | 'Out of Stock') => {
@@ -136,5 +153,3 @@ export default function ProductDetailsPage() {
     </>
   );
 }
-
-    

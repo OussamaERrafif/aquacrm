@@ -1,11 +1,10 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { loans } from '@/lib/data';
 import { ArrowRight, Edit } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
@@ -16,11 +15,27 @@ import type { Loan } from '@/lib/types';
 
 export default function LoanDetailsPage() {
   const params = useParams<{ id: string }>();
-  const loan = loans.find((l) => l.id === params.id);
+  const [loan, setLoan] = useState<Loan | null>(null);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
+  useEffect(() => {
+    async function fetchLoan() {
+      if (params.id) {
+        const res = await fetch(`/api/loans/${params.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setLoan(data);
+        } else {
+          notFound();
+        }
+      }
+    }
+    fetchLoan();
+  }, [params.id]);
+
+
   if (!loan) {
-    notFound();
+    return <div>Loading...</div>; // Or a skeleton loader
   }
 
   const getStatusArabic = (status: 'Active' | 'Paid Off' | 'Defaulted') => {
@@ -76,7 +91,7 @@ export default function LoanDetailsPage() {
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">تاريخ الصرف</h3>
-              <p>{loan.disbursementDate}</p>
+              <p>{new Date(loan.disbursementDate).toLocaleDateString()}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">جدول السداد</h3>

@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { fish } from '@/lib/data';
 import type { Fish } from '@/lib/types';
 import { Search } from 'lucide-react';
 import Image from 'next/image';
@@ -40,8 +39,20 @@ export function ProductSelectionModal({
 }: ProductSelectionModalProps) {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [selectedProducts, setSelectedProducts] = React.useState<Fish[]>([]);
+  const [allProducts, setAllProducts] = React.useState<Fish[]>([]);
 
-  const filteredProducts = fish.filter((product) =>
+  React.useEffect(() => {
+    if (isOpen) {
+        async function fetchProducts() {
+            const res = await fetch('/api/products');
+            const data = await res.json();
+            setAllProducts(data);
+        }
+        fetchProducts();
+    }
+  }, [isOpen]);
+
+  const filteredProducts = allProducts.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

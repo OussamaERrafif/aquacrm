@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/app/page-header';
-import { parties, invoices } from '@/lib/data';
 import { PlusCircle, Edit, Trash2 } from 'lucide-react';
 import {
   AlertDialog,
@@ -18,10 +17,28 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import type { Party, Invoice } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 export default function PartiesPage() {
+  const router = useRouter();
+  const [parties, setParties] = React.useState<Party[]>([]);
+  const [invoices, setInvoices] = React.useState<Invoice[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedPartyId, setSelectedPartyId] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const resParties = await fetch('/api/parties');
+      const partiesData = await resParties.json();
+      setParties(partiesData);
+
+      const resInvoices = await fetch('/api/invoices');
+      const invoicesData = await resInvoices.json();
+      setInvoices(invoicesData);
+    }
+    fetchData();
+  }, []);
 
   const getPartyBalance = (partyId: string) => {
     const partyInvoices = invoices.filter(inv => inv.party.id === partyId);
@@ -38,11 +55,15 @@ export default function PartiesPage() {
     return balance;
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedPartyId) {
-      console.log(`Deleting party with id: ${selectedPartyId}`);
+      await fetch(`/api/parties/${selectedPartyId}`, {
+        method: 'DELETE',
+      });
+      setParties(parties.filter(p => p.id !== selectedPartyId));
       setShowDeleteDialog(false);
       setSelectedPartyId(null);
+      router.refresh();
     }
   };
   

@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
 }
 
 datasource db {
@@ -11,92 +12,70 @@ datasource db {
 }
 
 model Party {
-  id      String @id @default(cuid())
-  name    String
-  company String?
-  email   String @unique
-  phone   String?
-  address String?
-  
-  // Relation to Invoices
+  id       String    @id @default(uuid())
+  name     String
+  company  String?
+  email    String    @unique
+  phone    String?
+  address  String?
   invoices Invoice[]
-
-  // Relation to Loans
-  loans   Loan[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  loans    Loan[]
 }
 
 model Fish {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   name      String
   category  String
-  status    String // "In Stock", "Low Stock", "Out of Stock"
+  status    String // 'In Stock', 'Low Stock', 'Out of Stock'
   price     Float
   stock     Int
   minStock  Int
   supplier  String
   imageUrl  String
   imageHint String
-  
+
   invoiceItems InvoiceItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Invoice {
-  id            String  @id @default(cuid())
-  invoiceNumber String  @unique
-  type          String // "buy" or "sell"
-  date          DateTime
-  dueDate       DateTime
-  totalAmount   Float
-  status        String // "Paid", "Unpaid", "Overdue"
-
-  // Relation to Party
-  partyId String
-  party   Party  @relation(fields: [partyId], references: [id])
-
-  items InvoiceItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model InvoiceItem {
-  id           String @id @default(cuid())
-  length       String // "xs", "s", "m", "l", "xl", "xxl"
+  id           String  @id @default(uuid())
+  invoiceId    String
+  invoice      Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  fishId       String
+  fish         Fish    @relation(fields: [fishId], references: [id])
+  length       String // 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl'
   weight       Float
   pricePerKilo Float
-  total        Float
 
-  // Relation to Fish
-  fishId String
-  fish   Fish   @relation(fields: [fishId], references: [id])
+  @@index([invoiceId])
+  @@index([fishId])
+}
 
-  // Relation to Invoice
-  invoiceId String
-  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+model Invoice {
+  id            String        @id @default(uuid())
+  invoiceNumber String        @unique @default(cuid())
+  type          String // 'buy' | 'sell'
+  date          DateTime      @default(now())
+  dueDate       DateTime
+  partyId       String
+  party         Party         @relation(fields: [partyId], references: [id])
+  items         InvoiceItem[]
+  totalAmount   Float
+  status        String // 'Paid', 'Unpaid', 'Overdue'
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@index([partyId])
 }
 
 model Loan {
-  id                  String   @id @default(cuid())
-  loanId              String   @unique
+  id                  String   @id @default(uuid())
+  loanId              String   @unique @default(cuid())
+  fisherId            String
+  fisher              Party    @relation(fields: [fisherId], references: [id])
   amount              Float
   disbursementDate    DateTime
   repaymentSchedule   String
   outstandingBalance  Float
-  status              String // "Active", "Paid Off", "Defaulted"
+  status              String // 'Active', 'Paid Off', 'Defaulted'
 
-  // Relation to Party (Fisher)
-  fisherId            String
-  fisher              Party    @relation(fields: [fisherId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@index([fisherId])
 }

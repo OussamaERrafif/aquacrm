@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const partySchema = z.object({
   name: z.string().min(1, 'الاسم مطلوب.'),
@@ -29,6 +30,7 @@ const partySchema = z.object({
 type PartyFormValues = z.infer<typeof partySchema>;
 
 export default function NewPartyPage() {
+  const router = useRouter();
   const form = useForm<PartyFormValues>({
     resolver: zodResolver(partySchema),
     defaultValues: {
@@ -40,8 +42,16 @@ export default function NewPartyPage() {
     },
   });
 
-  const onSubmit = (data: PartyFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: PartyFormValues) => {
+    await fetch('/api/parties', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    router.push('/parties');
+    router.refresh();
   };
 
   return (

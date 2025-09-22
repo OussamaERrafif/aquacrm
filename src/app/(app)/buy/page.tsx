@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/app/page-header';
-import { invoices, sellers } from '@/lib/data';
 import { DollarSign, Receipt, Users, PlusCircle, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -33,24 +32,43 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import type { Invoice, Party } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 export default function BuyPage() {
-  const buyInvoices = invoices.filter((inv) => inv.type === 'buy');
-  const totalCost = buyInvoices
-    .reduce((sum, inv) => sum + inv.totalAmount, 0);
-  
-  const paidAmount = buyInvoices
-    .filter((inv) => inv.status === 'Paid')
-    .reduce((sum, inv) => sum + inv.totalAmount, 0);
-
+  const router = useRouter();
+  const [invoices, setInvoices] = React.useState<Invoice[]>([]);
+  const [sellers, setSellers] = React.useState<Party[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = React.useState<string | null>(null);
 
-  const handleDelete = () => {
+  React.useEffect(() => {
+    async function fetchData() {
+      const resInvoices = await fetch('/api/invoices');
+      const invoicesData: Invoice[] = await resInvoices.json();
+      setInvoices(invoicesData.filter(inv => inv.type === 'buy'));
+      
+      const resParties = await fetch('/api/parties');
+      const partiesData: Party[] = await resParties.json();
+      // This is a simplification. In a real app, you'd filter parties who are sellers.
+      setSellers(partiesData); 
+    }
+    fetchData();
+  }, []);
+
+  const totalCost = invoices.reduce((sum, inv) => sum + inv.totalAmount, 0);
+  
+  const paidAmount = invoices
+    .filter((inv) => inv.status === 'Paid')
+    .reduce((sum, inv) => sum + inv.totalAmount, 0);
+
+  const handleDelete = async () => {
     if (selectedInvoiceId) {
-      console.log(`Deleting invoice with id: ${selectedInvoiceId}`);
+      await fetch(`/api/invoices/${selectedInvoiceId}`, { method: 'DELETE' });
+      setInvoices(invoices.filter(inv => inv.id !== selectedInvoiceId));
       setShowDeleteDialog(false);
       setSelectedInvoiceId(null);
+      router.refresh();
     }
   };
   
@@ -127,13 +145,13 @@ export default function BuyPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {buyInvoices.map((invoice) => (
+                {invoices.map((invoice) => (
                   <TableRow key={invoice.id}>
                     <TableCell className="font-medium">
                       <Link href={`/invoices/${invoice.id}`} className="hover:underline">{invoice.invoiceNumber}</Link>
                     </TableCell>
                     <TableCell>{invoice.party.name}</TableCell>
-                    <TableCell>{invoice.date}</TableCell>
+                    <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
                     <TableCell>{invoice.totalAmount.toLocaleString()} د.م.</TableCell>
                     <TableCell>
                       <Badge variant={invoice.status === 'Paid' ? 'secondary' : invoice.status === 'Overdue' ? 'destructive' : 'outline'}>

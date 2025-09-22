@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -16,18 +17,28 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/app/page-header';
 import { DashboardChart } from '@/components/app/dashboard-chart';
-import { invoices, loans } from '@/lib/data';
 import { ArrowUpRight, DollarSign, Landmark, Receipt } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import type { Invoice, Loan } from '@/lib/types';
+import { getInvoices, getLoans } from '@/lib/data';
 
-export default function DashboardPage() {
+async function getData() {
+    const invoices = await getInvoices();
+    const loans = await getLoans();
+    return { invoices, loans };
+}
+
+
+export default async function DashboardPage() {
+  const { invoices, loans } = await getData() as { invoices: Invoice[], loans: Loan[] };
+
   const totalRevenue = invoices
-    .filter((inv) => inv.type === 'sell' && inv.status === 'Paid')
+    .filter((inv: Invoice) => inv.type === 'sell' && inv.status === 'Paid')
     .reduce((sum, inv) => sum + inv.totalAmount, 0);
 
   const outstandingLoans = loans
-    .filter((loan) => loan.status === 'Active')
+    .filter((loan: Loan) => loan.status === 'Active')
     .reduce((sum, loan) => sum + loan.outstandingBalance, 0);
 
   const recentTransactions = invoices.slice(0, 5);

@@ -4,20 +4,36 @@
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { invoices } from '@/lib/data';
 import { ArrowRight, Edit, Printer } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useEffect, useState } from 'react';
+import type { Invoice } from '@/lib/types';
 
 export default function InvoiceDetailsPage() {
   const params = useParams<{ id: string }>();
-  const invoice = invoices.find((inv) => inv.id === params.id);
+  const [invoice, setInvoice] = useState<Invoice | null>(null);
+
+  useEffect(() => {
+    if (params.id) {
+        async function fetchInvoice() {
+            const res = await fetch(`/api/invoices/${params.id}`);
+            if (res.ok) {
+                const data = await res.json();
+                setInvoice(data);
+            } else {
+                notFound();
+            }
+        }
+        fetchInvoice();
+    }
+  }, [params.id]);
 
   if (!invoice) {
-    notFound();
+    return <div>Loading...</div>; // Or a skeleton loader
   }
   
   const backUrl = invoice.type === 'buy' ? '/buy' : '/sell';
@@ -67,9 +83,9 @@ export default function InvoiceDetailsPage() {
                 </div>
                 <div className="text-left">
                     <h3 className="font-semibold mb-1">تاريخ الفاتورة</h3>
-                    <p className="text-sm text-muted-foreground">{invoice.date}</p>
+                    <p className="text-sm text-muted-foreground">{new Date(invoice.date).toLocaleDateString()}</p>
                     <h3 className="font-semibold mb-1 mt-2">تاريخ الاستحقاق</h3>
-                    <p className="text-sm text-muted-foreground">{invoice.dueDate}</p>
+                    <p className="text-sm text-muted-foreground">{new Date(invoice.dueDate).toLocaleDateString()}</p>
                 </div>
            </div>
         </CardHeader>
@@ -91,7 +107,7 @@ export default function InvoiceDetailsPage() {
                             <TableCell className="text-center uppercase">{item.length}</TableCell>
                             <TableCell className="text-center">{item.weight}</TableCell>
                             <TableCell className="text-left">{item.pricePerKilo.toFixed(2)} د.م.</TableCell>
-                            <TableCell className="text-left">{item.total.toFixed(2)} د.م.</TableCell>
+                            <TableCell className="text-left">{(item.weight * item.pricePerKilo).toFixed(2)} د.م.</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -123,5 +139,3 @@ export default function InvoiceDetailsPage() {
     </>
   );
 }
-
-    

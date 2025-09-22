@@ -31,13 +31,13 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { PageHeader } from "@/components/app/page-header";
-import { parties, fish } from "@/lib/data";
 import { PlusCircle, Trash2, Package } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { ProductSelectionModal } from "@/components/app/product-selection-modal";
-import React from "react";
-import type { Fish } from "@/lib/types";
+import React, { useEffect } from "react";
+import type { Fish, Party } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 const invoiceItemSchema = z.object({
   fishId: z.string().min(1, "الرجاء اختيار سمكة."),
@@ -64,7 +64,23 @@ type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 const sizeOptions: z.infer<typeof invoiceItemSchema.shape.length>[] = ["xs", "s", "m", "l", "xl", "xxl"];
 
 export default function NewInvoicePage() {
+    const router = useRouter();
     const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [partyList, setPartyList] = React.useState<Party[]>([]);
+    const [fishList, setFishList] = React.useState<Fish[]>([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            const resParties = await fetch('/api/parties');
+            const partiesData = await resParties.json();
+            setPartyList(partiesData);
+            
+            const resFish = await fetch('/api/products');
+            const fishData = await resFish.json();
+            setFishList(fishData);
+        }
+        fetchData();
+    }, []);
 
   const form = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceSchema),
@@ -86,10 +102,15 @@ export default function NewInvoicePage() {
     name: "charges",
   });
 
-  const partyList = parties;
-
-  const onSubmit = (data: InvoiceFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: InvoiceFormValues) => {
+    await fetch('/api/invoices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const redirectUrl = data.type === 'buy' ? '/buy' : '/sell';
+    router.push(redirectUrl);
+    router.refresh();
   };
 
   const handleSelectProducts = (selectedProducts: Fish[]) => {
@@ -234,7 +255,7 @@ export default function NewInvoicePage() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {fish.map(f => <SelectItem key={f.id} value={f.id}>{f.name} ({f.category})</SelectItem>)}
+                                    {fishList.map(f => <SelectItem key={f.id} value={f.id}>{f.name} ({f.category})</SelectItem>)}
                                   </SelectContent>
                                 </Select>
                               </FormItem>
@@ -357,9 +378,3 @@ export default function NewInvoicePage() {
     </>
   );
 }
-
-    
-
-    
-
-    

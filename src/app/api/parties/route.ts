@@ -3,16 +3,12 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-  // In a real app, you'd fetch from the database
-  // const parties = await prisma.party.findMany();
-  // For now, return empty array
-  return NextResponse.json([]);
+  const parties = await prisma.party.findMany();
+  return NextResponse.json(parties);
 }
 
 export async function POST(request: Request) {
   const body = await request.json();
-  // In a real app, you'd create a new party in the database
-  // const newParty = await prisma.party.create({ data: body });
-  // For now, return the created data
-  return NextResponse.json(body, { status: 201 });
+  const newParty = await prisma.party.create({ data: body });
+  return NextResponse.json(newParty, { status: 201 });
 }
