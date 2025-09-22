@@ -168,7 +168,7 @@ export default function SellPage() {
         <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to delete this invoice?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the invoice.
             </AlertDialogDescription>

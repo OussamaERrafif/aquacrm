@@ -131,7 +131,7 @@ export default function LoansPage() {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to delete this loan?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the loan record.
             </AlertDialogDescription>

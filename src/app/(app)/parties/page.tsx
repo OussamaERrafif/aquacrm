@@ -114,7 +114,7 @@ export default function PartiesPage() {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to delete this party?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the party and all associated data.
             </AlertDialogDescription>
