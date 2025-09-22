@@ -326,12 +326,12 @@ export default function NewInvoicePage() {
                     </div>
                     <div className="flex justify-between">
                         <span className="text-muted-foreground">إجمالي الخصومات والرسوم</span>
-                        <span>-${totalCharges.toFixed(2)}</span>
+                        <span>-${Number(totalCharges).toFixed(2)}</span>
                     </div>
                      <Separator />
                     <div className="flex justify-between font-semibold text-lg">
                         <span>الإجمالي</span>
-                        <span>${totalAmount.toFixed(2)}</span>
+                        <span>${Number(totalAmount).toFixed(2)}</span>
                     </div>
                 </div>
              </div>
@@ -347,5 +347,7 @@ export default function NewInvoicePage() {
     </>
   );
 }
+
+    
 
     
