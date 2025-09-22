@@ -145,17 +145,27 @@ export default function NewInvoicePage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>نوع الفاتورة</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="اختر نوع الفاتورة" />
-                        </SelectTrigger>
+                     <FormControl>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant={field.value === 'sell' ? 'default' : 'outline'}
+                            className="w-full"
+                            onClick={() => field.onChange('sell')}
+                          >
+                            فاتورة بيع
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={field.value === 'buy' ? 'default' : 'outline'}
+                            className="w-full"
+                            onClick={() => field.onChange('buy')}
+                          >
+                            فاتورة شراء
+                          </Button>
+                        </div>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="sell">فاتورة بيع</SelectItem>
-                        <SelectItem value="buy">فاتورة شراء</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -347,6 +357,8 @@ export default function NewInvoicePage() {
     </>
   );
 }
+
+    
 
     
 
