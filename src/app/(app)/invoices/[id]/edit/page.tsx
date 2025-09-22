@@ -243,7 +243,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
 
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
-            <Link href={`/invoices/${params.id}`}><Button variant="outline">Cancel</Button></Link>
+            <Button variant="outline" asChild><Link href={`/invoices/${params.id}`}>Cancel</Link></Button>
             <Button type="submit">Save Changes</Button>
           </CardFooter>
         </Card>

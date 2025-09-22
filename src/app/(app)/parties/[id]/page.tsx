@@ -20,12 +20,12 @@ export default function PartyDetailsPage({ params }: { params: { id: string } })
         title={party.name} 
         action={
             <div className="flex gap-2">
-                <Link href="/parties" passHref>
-                    <Button variant="outline"><ArrowLeft className="mr-2 h-4 w-4" />Back to Parties</Button>
-                </Link>
-                <Link href={`/parties/${party.id}/edit`} passHref>
-                    <Button><Edit className="mr-2 h-4 w-4" />Edit Party</Button>
-                </Link>
+                <Button variant="outline" asChild>
+                    <Link href="/parties"><ArrowLeft className="mr-2 h-4 w-4" />Back to Parties</Link>
+                </Button>
+                <Button asChild>
+                    <Link href={`/parties/${party.id}/edit`}><Edit className="mr-2 h-4 w-4" />Edit Party</Link>
+                </Button>
             </div>
         }
       />

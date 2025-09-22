@@ -22,12 +22,12 @@ export default function LoanDetailsPage({ params }: { params: { id: string } }) 
         title={`Loan ${loan.loanId}`} 
         action={
             <div className="flex gap-2">
-                <Link href="/loans" passHref>
-                    <Button variant="outline"><ArrowLeft className="mr-2 h-4 w-4" />Back to Loans</Button>
-                </Link>
-                <Link href={`/loans/${loan.id}/edit`} passHref>
-                    <Button><Edit className="mr-2 h-4 w-4" />Edit Loan</Button>
-                </Link>
+                <Button variant="outline" asChild>
+                    <Link href="/loans"><ArrowLeft className="mr-2 h-4 w-4" />Back to Loans</Link>
+                </Button>
+                <Button asChild>
+                    <Link href={`/loans/${loan.id}/edit`}><Edit className="mr-2 h-4 w-4" />Edit Loan</Link>
+                </Button>
             </div>
         }
       />

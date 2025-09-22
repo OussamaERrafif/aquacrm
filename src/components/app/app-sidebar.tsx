@@ -1,3 +1,4 @@
+
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -57,8 +58,9 @@ export function AppSidebar() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <Link href={item.href}>
+              <Link href={item.href} legacyBehavior passHref>
                 <SidebarMenuButton
+                  as="a"
                   isActive={isActive(item.href)}
                   tooltip={item.title}
                 >
@@ -73,14 +75,15 @@ export function AppSidebar() {
       <SidebarFooter className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href="/settings">
-              <SidebarMenuButton
-                isActive={isActive('/settings')}
-                tooltip="Settings"
-              >
-                <Settings />
-                <span>Settings</span>
-              </SidebarMenuButton>
+             <Link href="/settings" legacyBehavior passHref>
+                <SidebarMenuButton
+                    as="a"
+                    isActive={isActive('/settings')}
+                    tooltip="Settings"
+                >
+                    <Settings />
+                    <span>Settings</span>
+                </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
         </SidebarMenu>

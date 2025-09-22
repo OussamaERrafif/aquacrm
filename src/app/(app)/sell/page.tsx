@@ -66,12 +66,12 @@ export default function SellPage() {
       <PageHeader
         title="Sell Dashboard"
         action={
-          <Link href="/invoices/new">
-            <Button>
+          <Button asChild>
+            <Link href="/invoices/new">
               <PlusCircle className="mr-2 h-4 w-4" />
               Create Sell Invoice
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         }
       />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

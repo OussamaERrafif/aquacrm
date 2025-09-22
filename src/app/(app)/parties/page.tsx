@@ -56,12 +56,12 @@ export default function PartiesPage() {
       <PageHeader
         title="Parties"
         action={
-          <Link href="/parties/new">
-            <Button>
+          <Button asChild>
+            <Link href="/parties/new">
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Party
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         }
       />
       <Card>

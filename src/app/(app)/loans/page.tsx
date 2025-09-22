@@ -62,12 +62,12 @@ export default function LoansPage() {
       <PageHeader
         title="Loans"
         action={
-          <Link href="/loans/new">
-            <Button>
+          <Button asChild>
+            <Link href="/loans/new">
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Loan
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         }
       />
       <Card>
@@ -110,7 +110,7 @@ export default function LoansPage() {
                         <Button aria-haspopup="true" size="icon" variant="ghost">
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Toggle menu</span>
-                        </Button>
+                        </Button>                      
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild><Link href={`/loans/${loan.id}`}>View Details</Link></DropdownMenuItem>

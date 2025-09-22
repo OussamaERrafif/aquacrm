@@ -25,12 +25,12 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
         title={`Invoice ${invoice.invoiceNumber}`} 
         action={
             <div className="flex gap-2">
-                <Link href={backUrl} passHref>
-                    <Button variant="outline"><ArrowLeft className="mr-2 h-4 w-4" />Back to List</Button>
-                </Link>
-                <Link href={`/invoices/${invoice.id}/edit`} passHref>
-                    <Button><Edit className="mr-2 h-4 w-4" />Edit</Button>
-                </Link>
+                <Button variant="outline" asChild>
+                    <Link href={backUrl}><ArrowLeft className="mr-2 h-4 w-4" />Back to List</Link>
+                </Button>
+                <Button asChild>
+                    <Link href={`/invoices/${invoice.id}/edit`}><Edit className="mr-2 h-4 w-4" />Edit</Link>
+                </Button>
                  <Button variant="outline"><Printer className="mr-2 h-4 w-4" />Print</Button>
             </div>
         }
