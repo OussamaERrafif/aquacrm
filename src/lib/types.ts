@@ -33,7 +33,7 @@ export type Fish = {
 export type InvoiceItem = {
   id: string;
   fish: Fish;
-  length: number;
+  length: 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
   weight: number;
   pricePerKilo: number;
   total: number;

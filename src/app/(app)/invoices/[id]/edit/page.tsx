@@ -40,21 +40,22 @@ import React from "react";
 import { ProductSelectionModal } from "@/components/app/product-selection-modal";
 import type { Fish } from "@/lib/types";
 
+const invoiceItemSchema = z.object({
+  fishId: z.string().min(1, "Please select a fish."),
+  length: z.enum(["xs", "s", "m", "l", "xl", "xxl"]),
+  weight: z.coerce.number().min(1, "Weight is required."),
+  pricePerKilo: z.coerce.number().min(0.01, "Price is required."),
+});
+
 const invoiceSchema = z.object({
   type: z.enum(["buy", "sell"]),
   partyId: z.string().min(1, "Please select a party."),
   status: z.enum(["Paid", "Unpaid", "Overdue"]),
-  items: z.array(
-    z.object({
-      fishId: z.string().min(1, "Please select a fish."),
-      length: z.coerce.number().min(1, "Length is required."),
-      weight: z.coerce.number().min(1, "Weight is required."),
-      pricePerKilo: z.coerce.number().min(0.01, "Price is required."),
-    })
-  ).min(1, "Please add at least one item."),
+  items: z.array(invoiceItemSchema).min(1, "Please add at least one item."),
 });
 
 type InvoiceFormValues = z.infer<typeof invoiceSchema>;
+const sizeOptions: z.infer<typeof invoiceItemSchema.shape.length>[] = ["xs", "s", "m", "l", "xl", "xxl"];
 
 export default function EditInvoicePage({ params }: { params: { id: string } }) {
   const invoice = invoices.find(inv => inv.id === params.id);
@@ -98,7 +99,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
     newProducts.forEach(product => {
       append({
         fishId: product.id,
-        length: 0,
+        length: 'm',
         weight: 0,
         pricePerKilo: product.price,
       });
@@ -204,7 +205,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
                 <TableHeader>
                   <TableRow>
                     <TableHead>Fish</TableHead>
-                    <TableHead>Length (cm)</TableHead>
+                    <TableHead>Length</TableHead>
                     <TableHead>Weight (kg)</TableHead>
                     <TableHead>Price/kg</TableHead>
                     <TableHead>Total</TableHead>
@@ -238,7 +239,26 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
                             )}
                           />
                         </TableCell>
-                        <TableCell><FormField control={form.control} name={`items.${index}.length`} render={({ field }) => <Input {...field} type="number" placeholder="0" />} /></TableCell>
+                        <TableCell>
+                          <FormField
+                            control={form.control}
+                            name={`items.${index}.length`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Size" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {sizeOptions.map(s => <SelectItem key={s} value={s}>{s.toUpperCase()}</SelectItem>)}
+                                  </SelectContent>
+                                </Select>
+                              </FormItem>
+                            )}
+                          />
+                        </TableCell>
                         <TableCell><FormField control={form.control} name={`items.${index}.weight`} render={({ field }) => <Input {...field} type="number" placeholder="0" />} /></TableCell>
                         <TableCell><FormField control={form.control} name={`items.${index}.pricePerKilo`} render={({ field }) => <Input {...field} type="number" placeholder="0.00" />} /></TableCell>
                         <TableCell>${itemTotal.toFixed(2)}</TableCell>
@@ -248,7 +268,7 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
                   })}
                 </TableBody>
               </Table>
-              <Button type="button" variant="outline" size="sm" onClick={() => append({ fishId: "", length: 0, weight: 0, pricePerKilo: 0 })}><PlusCircle className="mr-2 h-4 w-4" />Add Item</Button>
+              <Button type="button" variant="outline" size="sm" onClick={() => append({ fishId: "", length: 'm', weight: 0, pricePerKilo: 0 })}><PlusCircle className="mr-2 h-4 w-4" />Add Item</Button>
             </div>
             
              <Separator />

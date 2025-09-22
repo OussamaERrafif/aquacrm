@@ -73,7 +73,7 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
                 <TableHeader>
                     <TableRow>
                         <TableHead>Item</TableHead>
-                        <TableHead className="text-center">Length (cm)</TableHead>
+                        <TableHead className="text-center">Length</TableHead>
                         <TableHead className="text-center">Weight (kg)</TableHead>
                         <TableHead className="text-right">Price/kg</TableHead>
                         <TableHead className="text-right">Total</TableHead>
@@ -83,7 +83,7 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
                     {invoice.items.map(item => (
                         <TableRow key={item.id}>
                             <TableCell className="font-medium">{item.fish.name} ({item.fish.category})</TableCell>
-                            <TableCell className="text-center">{item.length}</TableCell>
+                            <TableCell className="text-center uppercase">{item.length}</TableCell>
                             <TableCell className="text-center">{item.weight}</TableCell>
                             <TableCell className="text-right">${item.pricePerKilo.toFixed(2)}</TableCell>
                             <TableCell className="text-right">${item.total.toFixed(2)}</TableCell>

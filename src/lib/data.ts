@@ -92,36 +92,36 @@ export const invoices: Invoice[] = [
   {
     id: 'INV-001', invoiceNumber: '2024-001', type: 'sell', date: '2024-07-15', dueDate: '2024-08-14', party: parties[0],
     items: [
-      { id: 'I001', fish: fish[0], length: 75, weight: 10, pricePerKilo: 25, total: 250 },
-      { id: 'I002', fish: fish[1], length: 150, weight: 50, pricePerKilo: 40, total: 2000 },
+      { id: 'I001', fish: fish[0], length: 'm', weight: 10, pricePerKilo: 25, total: 250 },
+      { id: 'I002', fish: fish[1], length: 'xl', weight: 50, pricePerKilo: 40, total: 2000 },
     ],
     totalAmount: 2250, status: 'Paid',
   },
   {
     id: 'INV-002', invoiceNumber: '2024-002', type: 'buy', date: '2024-07-18', dueDate: '2024-08-17', party: parties[4],
     items: [
-      { id: 'I003', fish: fish[5], length: 40, weight: 5, pricePerKilo: 15, total: 75 },
+      { id: 'I003', fish: fish[5], length: 's', weight: 5, pricePerKilo: 15, total: 75 },
     ],
     totalAmount: 75, status: 'Unpaid',
   },
   {
     id: 'INV-003', invoiceNumber: '2024-003', type: 'sell', date: '2024-07-20', dueDate: '2024-08-19', party: parties[1],
     items: [
-      { id: 'I004', fish: fish[3], length: 60, weight: 8, pricePerKilo: 18, total: 144 },
+      { id: 'I004', fish: fish[3], length: 'm', weight: 8, pricePerKilo: 18, total: 144 },
     ],
     totalAmount: 144, status: 'Unpaid',
   },
   {
     id: 'INV-004', invoiceNumber: '2024-004', type: 'sell', date: '2024-06-10', dueDate: '2024-07-10', party: parties[2],
     items: [
-      { id: 'I005', fish: fish[4], length: 120, weight: 30, pricePerKilo: 22, total: 660 },
+      { id: 'I005', fish: fish[4], length: 'l', weight: 30, pricePerKilo: 22, total: 660 },
     ],
     totalAmount: 660, status: 'Overdue',
   },
    {
     id: 'INV-005', invoiceNumber: '2024-005', type: 'buy', date: '2024-05-01', dueDate: '2024-05-31', party: parties[3],
     items: [
-      { id: 'I006', fish: fish[0], length: 80, weight: 12, pricePerKilo: 23, total: 276 },
+      { id: 'I006', fish: fish[0], length: 'm', weight: 12, pricePerKilo: 23, total: 276 },
     ],
     totalAmount: 276, status: 'Paid',
   },
