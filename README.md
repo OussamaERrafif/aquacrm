@@ -50,3 +50,4 @@ To get the application running locally, follow these steps:
 
 3.  **Open the application**:
     Open [http://localhost:9002](http://localhost:9002) in your browser to see the result.
+# aquacrm
