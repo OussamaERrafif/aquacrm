@@ -42,7 +42,7 @@ export default function DashboardPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{totalRevenue.toLocaleString()} د.م.</div>
             <p className="text-xs text-muted-foreground">20.1% من الشهر الماضي</p>
           </CardContent>
         </Card>
@@ -52,7 +52,7 @@ export default function DashboardPage() {
             <Landmark className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${outstandingLoans.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{outstandingLoans.toLocaleString()} د.م.</div>
             <p className="text-xs text-muted-foreground">180.1% من الشهر الماضي</p>
           </CardContent>
         </Card>
@@ -106,7 +106,7 @@ export default function DashboardPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-left">
-                      ${invoice.totalAmount.toLocaleString()}
+                      {invoice.totalAmount.toLocaleString()} د.م.
                     </TableCell>
                   </TableRow>
                 ))}

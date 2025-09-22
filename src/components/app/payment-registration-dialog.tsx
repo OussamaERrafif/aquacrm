@@ -83,7 +83,7 @@ export function PaymentRegistrationDialog({
         <DialogHeader>
           <DialogTitle>تسجيل سداد للقرض {loan.loanId}</DialogTitle>
           <DialogDescription>
-            المبلغ المستحق: ${loan.outstandingBalance.toLocaleString()}
+            المبلغ المستحق: {loan.outstandingBalance.toLocaleString()} د.م.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

@@ -72,7 +72,7 @@ export default function LoanDetailsPage() {
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">المبلغ الأصلي</h3>
-              <p>${loan.amount.toLocaleString()}</p>
+              <p>{loan.amount.toLocaleString()} د.م.</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">تاريخ الصرف</h3>
@@ -84,7 +84,7 @@ export default function LoanDetailsPage() {
             </div>
              <div>
               <h3 className="text-sm font-medium text-muted-foreground">المبلغ المستحق</h3>
-              <p className="text-lg font-semibold">${loan.outstandingBalance.toLocaleString()}</p>
+              <p className="text-lg font-semibold">{loan.outstandingBalance.toLocaleString()} د.م.</p>
             </div>
           </div>
            <Separator />

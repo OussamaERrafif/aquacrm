@@ -98,7 +98,7 @@ export default function ProductDetailsPage() {
                     <div className="grid grid-cols-2 gap-6">
                         <div>
                             <h3 className="text-sm font-medium text-muted-foreground">السعر لكل كيلو</h3>
-                            <p className="text-2xl font-bold">${product.price.toFixed(2)}</p>
+                            <p className="text-2xl font-bold">{product.price.toFixed(2)} د.م.</p>
                         </div>
                         <div>
                             <h3 className="text-sm font-medium text-muted-foreground">الحالة</h3>

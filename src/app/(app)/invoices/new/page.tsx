@@ -253,7 +253,7 @@ export default function NewInvoicePage() {
                         </TableCell>
                         <TableCell><FormField control={form.control} name={`items.${index}.weight`} render={({ field }) => <Input {...field} type="number" placeholder="0" className="text-right" />} /></TableCell>
                         <TableCell><FormField control={form.control} name={`items.${index}.pricePerKilo`} render={({ field }) => <Input {...field} type="number" placeholder="0.00" className="text-right" />} /></TableCell>
-                        <TableCell>${itemTotal.toFixed(2)}</TableCell>
+                        <TableCell>{itemTotal.toFixed(2)} د.م.</TableCell>
                         <TableCell><Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                       </TableRow>
                     );
@@ -322,16 +322,16 @@ export default function NewInvoicePage() {
                 <div className="w-full max-w-xs space-y-2 text-left">
                     <div className="flex justify-between">
                         <span className="text-muted-foreground">المجموع الفرعي</span>
-                        <span>${subtotal.toFixed(2)}</span>
+                        <span>{subtotal.toFixed(2)} د.م.</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-muted-foreground">إجمالي الخصومات والرسوم</span>
-                        <span>-${Number(totalCharges).toFixed(2)}</span>
+                        <span>-{Number(totalCharges).toFixed(2)} د.م.</span>
                     </div>
                      <Separator />
                     <div className="flex justify-between font-semibold text-lg">
                         <span>الإجمالي</span>
-                        <span>${Number(totalAmount).toFixed(2)}</span>
+                        <span>{Number(totalAmount).toFixed(2)} د.م.</span>
                     </div>
                 </div>
              </div>

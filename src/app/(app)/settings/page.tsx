@@ -63,11 +63,12 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="currency">العملة</Label>
-              <Select defaultValue="usd" dir="rtl">
+              <Select defaultValue="mad" dir="rtl">
                 <SelectTrigger id="currency" className="w-full md:w-[280px]">
                   <SelectValue placeholder="اختر العملة" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="mad">MAD - درهم مغربي</SelectItem>
                   <SelectItem value="usd">USD - دولار أمريكي</SelectItem>
                   <SelectItem value="eur">EUR - يورو</SelectItem>
                   <SelectItem value="sar">SAR - ريال سعودي</SelectItem>

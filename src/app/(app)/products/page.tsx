@@ -113,7 +113,7 @@ export default function ProductsPage() {
               
               <div className="flex justify-between items-center mt-4">
                 <Badge className={cn("text-xs", getStatusColor(f.status))}>{getStatusArabic(f.status)}</Badge>
-                <p className="text-lg font-semibold">${f.price.toFixed(2)}/كغ</p>
+                <p className="text-lg font-semibold">{f.price.toFixed(2)} د.م./كغ</p>
               </div>
 
                <div className="text-sm text-muted-foreground mt-2 space-y-1">

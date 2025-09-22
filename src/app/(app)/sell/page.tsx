@@ -81,7 +81,7 @@ export default function SellPage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{totalRevenue.toLocaleString()} د.م.</div>
             <p className="text-xs text-muted-foreground">من الفواتير المدفوعة</p>
           </CardContent>
         </Card>
@@ -91,7 +91,7 @@ export default function SellPage() {
             <Receipt className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${pendingAmount.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{pendingAmount.toLocaleString()} د.م.</div>
             <p className="text-xs text-muted-foreground">من الفواتير غير المدفوعة والمتأخرة</p>
           </CardContent>
         </Card>
@@ -136,7 +136,7 @@ export default function SellPage() {
                     </TableCell>
                     <TableCell>{invoice.party.name}</TableCell>
                     <TableCell>{invoice.date}</TableCell>
-                    <TableCell>${invoice.totalAmount.toLocaleString()}</TableCell>
+                    <TableCell>{invoice.totalAmount.toLocaleString()} د.م.</TableCell>
                     <TableCell>
                       <Badge variant={invoice.status === 'Paid' ? 'secondary' : invoice.status === 'Overdue' ? 'destructive' : 'outline'}>
                         {invoice.status === 'Paid' ? 'مدفوعة' : invoice.status === 'Overdue' ? 'متأخرة' : 'غير مدفوعة'}

@@ -111,8 +111,8 @@ export default function LoansPage() {
                      <Link href={`/loans/${loan.id}`} className="hover:underline">{loan.loanId}</Link>
                   </TableCell>
                   <TableCell>{loan.fisher.name}</TableCell>
-                  <TableCell>${loan.amount.toLocaleString()}</TableCell>
-                  <TableCell>${loan.outstandingBalance.toLocaleString()}</TableCell>
+                  <TableCell>{loan.amount.toLocaleString()} د.م.</TableCell>
+                  <TableCell>{loan.outstandingBalance.toLocaleString()} د.م.</TableCell>
                   <TableCell>
                     <Badge variant={loan.status === 'Paid Off' ? 'secondary' : loan.status === 'Defaulted' ? 'destructive' : 'default'}>
                       {getStatusArabic(loan.status)}

@@ -84,7 +84,7 @@ export default function PartiesPage() {
                  <div className="mt-4">
                     <p className="text-sm font-medium">حالة الرصيد</p>
                     <p className={`text-lg font-bold ${balanceColor}`}>
-                      ${Math.abs(balance).toLocaleString()} <span className="text-sm font-normal">({balanceStatus})</span>
+                      {Math.abs(balance).toLocaleString()} د.م. <span className="text-sm font-normal">({balanceStatus})</span>
                     </p>
                 </div>
               </CardContent>

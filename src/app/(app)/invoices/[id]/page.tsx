@@ -90,8 +90,8 @@ export default function InvoiceDetailsPage() {
                             <TableCell className="font-medium">{item.fish.name} ({item.fish.category})</TableCell>
                             <TableCell className="text-center uppercase">{item.length}</TableCell>
                             <TableCell className="text-center">{item.weight}</TableCell>
-                            <TableCell className="text-left">${item.pricePerKilo.toFixed(2)}</TableCell>
-                            <TableCell className="text-left">${item.total.toFixed(2)}</TableCell>
+                            <TableCell className="text-left">{item.pricePerKilo.toFixed(2)} د.م.</TableCell>
+                            <TableCell className="text-left">{item.total.toFixed(2)} د.م.</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -101,16 +101,16 @@ export default function InvoiceDetailsPage() {
                 <div className="w-full max-w-xs space-y-2 text-left">
                     <div className="flex justify-between">
                         <span className="text-muted-foreground">المجموع الفرعي</span>
-                        <span>${invoice.totalAmount.toFixed(2)}</span>
+                        <span>{invoice.totalAmount.toFixed(2)} د.م.</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-muted-foreground">الضريبة (0%)</span>
-                        <span>$0.00</span>
+                        <span>0.00 د.م.</span>
                     </div>
                      <Separator />
                     <div className="flex justify-between font-semibold text-lg">
                         <span>الإجمالي</span>
-                        <span>${invoice.totalAmount.toFixed(2)}</span>
+                        <span>{invoice.totalAmount.toFixed(2)} د.م.</span>
                     </div>
                 </div>
              </div>

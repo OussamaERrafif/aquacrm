@@ -109,9 +109,9 @@ export default function PartyDetailsPage() {
                                 <TableRow key={i}>
                                     <TableCell>{t.date}</TableCell>
                                     <TableCell>{t.description}</TableCell>
-                                    <TableCell className="text-left">${t.debit > 0 ? t.debit.toFixed(2) : '-'}</TableCell>
-                                    <TableCell className="text-left">${t.credit > 0 ? t.credit.toFixed(2) : '-'}</TableCell>
-                                    <TableCell className="text-left">${t.balance.toFixed(2)}</TableCell>
+                                    <TableCell className="text-left">{t.debit > 0 ? t.debit.toFixed(2) : '-'} د.م.</TableCell>
+                                    <TableCell className="text-left">{t.credit > 0 ? t.credit.toFixed(2) : '-'} د.م.</TableCell>
+                                    <TableCell className="text-left">{t.balance.toFixed(2)} د.م.</TableCell>
                                 </TableRow>
                             ))}
                              {transactions.length === 0 && (
@@ -126,7 +126,7 @@ export default function PartyDetailsPage() {
                         <div className="w-full max-w-sm space-y-2">
                              <div className="flex justify-between">
                                 <span>الرصيد النهائي</span>
-                                <span>${currentBalance.toFixed(2)}</span>
+                                <span>{currentBalance.toFixed(2)} د.م.</span>
                              </div>
                               <p className="text-sm text-muted-foreground text-left">
                                 {currentBalance > 0 ? "الطرف مدين لك." : currentBalance < 0 ? "أنت مدين للطرف." : "تمت التسوية."}

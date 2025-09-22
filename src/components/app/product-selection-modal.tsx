@@ -118,7 +118,7 @@ export function ProductSelectionModal({
                     </TableCell>
                     <TableCell>{product.category}</TableCell>
                     <TableCell className="text-left">
-                      ${product.price.toFixed(2)}
+                      {product.price.toFixed(2)} د.م.
                     </TableCell>
                   </TableRow>
                 ))}
