@@ -46,10 +46,17 @@ const invoiceItemSchema = z.object({
   pricePerKilo: z.coerce.number().min(0.01, "السعر مطلوب."),
 });
 
+const chargeSchema = z.object({
+  description: z.string().min(1, "الوصف مطلوب."),
+  type: z.enum(["fixed", "percentage"]),
+  value: z.coerce.number().min(0.01, "القيمة مطلوبة."),
+});
+
 const invoiceSchema = z.object({
   type: z.enum(["buy", "sell"]),
   partyId: z.string().min(1, "الرجاء اختيار طرف."),
   items: z.array(invoiceItemSchema).min(1, "الرجاء إضافة عنصر واحد على الأقل."),
+  charges: z.array(chargeSchema).optional(),
 });
 
 type InvoiceFormValues = z.infer<typeof invoiceSchema>;
@@ -65,12 +72,18 @@ export default function NewInvoicePage() {
       type: "sell",
       partyId: "",
       items: [],
+      charges: [],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items",
+  });
+  
+  const { fields: chargeFields, append: appendCharge, remove: removeCharge } = useFieldArray({
+    control: form.control,
+    name: "charges",
   });
 
   const partyList = parties;
@@ -94,9 +107,21 @@ export default function NewInvoicePage() {
     });
   };
 
-  const totalAmount = form.watch("items").reduce((acc, item) => {
+  const subtotal = form.watch("items").reduce((acc, item) => {
     return acc + (item.weight || 0) * (item.pricePerKilo || 0);
   }, 0);
+
+  const totalCharges = form.watch("charges")?.reduce((acc, charge) => {
+    if (charge.type === 'fixed') {
+        return acc + (charge.value || 0);
+    }
+    if (charge.type === 'percentage') {
+        return acc + (subtotal * (charge.value || 0) / 100);
+    }
+    return acc;
+  }, 0) || 0;
+  
+  const totalAmount = subtotal - totalCharges;
 
   return (
     <>
@@ -239,16 +264,69 @@ export default function NewInvoicePage() {
             </div>
             
              <Separator />
+
+             <div className="space-y-4">
+                <h3 className="text-lg font-medium">الضرائب والرسوم الأخرى</h3>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>الوصف</TableHead>
+                            <TableHead>النوع</TableHead>
+                            <TableHead>القيمة</TableHead>
+                            <TableHead></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {chargeFields.map((field, index) => (
+                            <TableRow key={field.id}>
+                                <TableCell>
+                                    <FormField control={form.control} name={`charges.${index}.description`} render={({ field }) => <Input {...field} placeholder="مثال: ضريبة القيمة المضافة" />} />
+                                </TableCell>
+                                <TableCell>
+                                     <FormField
+                                        control={form.control}
+                                        name={`charges.${index}.type`}
+                                        render={({ field }) => (
+                                        <FormItem>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                <SelectValue placeholder="النوع" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="fixed">مبلغ ثابت</SelectItem>
+                                                <SelectItem value="percentage">نسبة مئوية</SelectItem>
+                                            </SelectContent>
+                                            </Select>
+                                        </FormItem>
+                                        )}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <FormField control={form.control} name={`charges.${index}.value`} render={({ field }) => <Input {...field} type="number" placeholder="0" />} />
+                                </TableCell>
+                                <TableCell>
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => removeCharge(index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                <Button type="button" variant="outline" size="sm" onClick={() => appendCharge({ description: "", type: 'fixed', value: 0 })}><PlusCircle className="ml-2 h-4 w-4" />إضافة خصم أو رسم</Button>
+             </div>
+             
+             <Separator />
              
              <div className="flex justify-end">
                 <div className="w-full max-w-xs space-y-2 text-left">
                     <div className="flex justify-between">
                         <span className="text-muted-foreground">المجموع الفرعي</span>
-                        <span>${totalAmount.toFixed(2)}</span>
+                        <span>${subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">الضريبة (0%)</span>
-                        <span>$0.00</span>
+                        <span className="text-muted-foreground">إجمالي الخصومات والرسوم</span>
+                        <span>-${totalCharges.toFixed(2)}</span>
                     </div>
                      <Separator />
                     <div className="flex justify-between font-semibold text-lg">
@@ -269,3 +347,5 @@ export default function NewInvoicePage() {
     </>
   );
 }
+
+    
