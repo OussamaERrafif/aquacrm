@@ -11,6 +11,7 @@ import { notFound, useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { PaymentRegistrationDialog } from '@/components/app/payment-registration-dialog';
+import { LoanPDFExportButton } from '@/components/app/loan-pdf-export-button';
 import type { Loan } from '@/lib/types';
 
 export default function LoanDetailsPage() {
@@ -64,14 +65,16 @@ export default function LoanDetailsPage() {
                 <Button variant="outline" asChild>
                     <Link href="/loans"><ArrowRight className="ml-2 h-4 w-4" />العودة إلى القروض</Link>
                 </Button>
+import { LoanPDFExportButton } from '@/components/app/loan-pdf-export-button';
                 <Button asChild>
                     <Link href={`/loans/${loan.id}/edit`}><Edit className="ml-2 h-4 w-4" />تعديل القرض</Link>
                 </Button>
+                <LoanPDFExportButton loan={loan} cardId="loan-card" />
             </div>
         }
       />
       
-      <Card>
+      <Card id="loan-card">
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>

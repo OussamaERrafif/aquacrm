@@ -1,29 +1,43 @@
+
+'use client';
+
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Edit } from 'lucide-react';
+import { ArrowRight, Edit, Printer } from 'lucide-react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
+import { PartyPDFExportButton } from '@/components/app/party-pdf-export-button';
 import type { Party, Invoice } from '@/lib/types';
-import { getParty } from '@/lib/data';
+import { useEffect, useState } from 'react';
 
 interface PartyWithRelations extends Party {
   invoices: Invoice[];
 }
 
-export default async function PartyDetailsPage({ params }: { params: { id: string } }) {
-  const id = params?.id;
+export default function PartyDetailsPage() {
+  const params = useParams<{ id: string }>();
+  const [party, setParty] = useState<PartyWithRelations | null>(null);
 
-  if (!id) {
-    return notFound();
-  }
-
-  const party: PartyWithRelations | null = await getParty(id);
+  useEffect(() => {
+    if (params.id) {
+      async function fetchParty() {
+        const res = await fetch(`/api/parties/${params.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setParty(data);
+        } else {
+          notFound();
+        }
+      }
+      fetchParty();
+    }
+  }, [params.id]);
 
   if (!party) {
-    return notFound();
+    return <div>Loading...</div>; // Or a skeleton loader
   }
 
   const partyInvoices = party.invoices || [];
@@ -64,13 +78,14 @@ export default async function PartyDetailsPage({ params }: { params: { id: strin
                 <Button asChild>
                     <Link href={`/parties/${party.id}/edit`}><Edit className="ml-2 h-4 w-4" />تعديل الطرف</Link>
                 </Button>
+                <PartyPDFExportButton party={party} />
             </div>
         }
       />
       
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-1 space-y-6">
-            <Card>
+            <Card id="party-details-card">
                 <CardHeader>
                 <CardTitle>معلومات الطرف</CardTitle>
                 <CardDescription>تفاصيل الاتصال والشركة.</CardDescription>
@@ -96,7 +111,7 @@ export default async function PartyDetailsPage({ params }: { params: { id: strin
             </Card>
         </div>
         <div className="md:col-span-2">
-            <Card>
+            <Card id="party-transactions-card">
                 <CardHeader>
                     <CardTitle>سجل المعاملات</CardTitle>
                     <CardDescription>سجل بجميع الديون والائتمانات مع هذا الطرف.</CardDescription>

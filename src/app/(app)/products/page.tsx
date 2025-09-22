@@ -12,6 +12,7 @@ import { PlusCircle, Search, Filter, TrendingUp, TrendingDown, ArrowLeft } from 
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { ProductPDFExportButton } from '@/components/app/product-pdf-export-button';
 import type { Fish } from '@/lib/types';
 
 export default function ProductsPage() {
@@ -57,10 +58,13 @@ export default function ProductsPage() {
       <PageHeader 
         title="كتالوج المنتجات"
         action={
+            <div className="flex gap-2">
             <Button>
                 <PlusCircle className="ml-2 h-4 w-4" />
                 إضافة منتج
             </Button>
+            <ProductPDFExportButton products={products} />
+            </div>
         }
        >
         <p className="text-sm text-muted-foreground mt-2">تصفح وأدر مخزونك من المأكولات البحرية</p>
@@ -101,7 +105,7 @@ export default function ProductsPage() {
         </CardContent>
       </Card>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div id="product-grid" className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {products.map((f, index) => (
           <Card key={f.id} className="overflow-hidden flex flex-col">
             <CardHeader className="p-0">

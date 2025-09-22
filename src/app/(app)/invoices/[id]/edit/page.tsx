@@ -69,7 +69,7 @@ export default function EditInvoicePage() {
 
   useEffect(() => {
     async function fetchData() {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
         const resParties = await fetch(`${baseUrl}/api/parties`);
         setPartyList(await resParties.json());
@@ -130,7 +130,7 @@ export default function EditInvoicePage() {
     });
   };
 
-  const totalAmount = form.watch("items").reduce((acc, item) => {
+  const totalAmount = (form.watch("items") || []).reduce((acc, item) => {
     return acc + (item.weight || 0) * (item.pricePerKilo || 0);
   }, 0);
 

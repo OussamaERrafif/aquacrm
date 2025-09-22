@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
+import { InvoicePDFExportButton } from '@/components/app/invoice-pdf-export-button';
 import type { Invoice } from '@/lib/types';
 
 export default function InvoiceDetailsPage() {
@@ -49,15 +50,15 @@ export default function InvoiceDetailsPage() {
                 <Button variant="outline" asChild>
                     <Link href={backUrl}><ArrowRight className="ml-2 h-4 w-4" />العودة إلى القائمة</Link>
                 </Button>
-                <Button asChild>
-                    <Link href={`/invoices/${invoice.id}/edit`}><Edit className="ml-2 h-4 w-4" />تعديل</Link>
-                </Button>
-                 <Button variant="outline"><Printer className="ml-2 h-4 w-4" />طباعة</Button>
-            </div>
+    <Button asChild>
+        <Link href={`/invoices/${invoice.id}/edit`}><Edit className="ml-2 h-4 w-4" />تعديل</Link>
+    </Button>
+    <InvoicePDFExportButton invoice={invoice} cardId="invoice-card" />
+</div>
         }
       />
       
-      <Card>
+      <Card id="invoice-card">
         <CardHeader>
           <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
             <div>

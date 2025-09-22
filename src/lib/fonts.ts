@@ -1,0 +1,1 @@
+export const amiriFont = 'data:font/ttf;base64,AAEAAAARAQAABAAQRFNJRwAAAAAAA...'; // Prefixed with data:font/ttf;base64,

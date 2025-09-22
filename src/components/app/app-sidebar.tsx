@@ -37,6 +37,7 @@ export function AppSidebar() {
     { title: 'شراء', href: '/buy', icon: <ShoppingCart /> },
     { title: 'الأطراف', href: '/parties', icon: <Users /> },
     { title: 'المنتجات', href: '/products', icon: <Package /> },
+    { title: 'الأسماك المشتراة', href: '/tracability', icon: <Package /> },
     { title: 'القروض', href: '/loans', icon: <Landmark /> },
     { title: 'التمويل', href: '/financing', icon: <Handshake /> },
   ];
