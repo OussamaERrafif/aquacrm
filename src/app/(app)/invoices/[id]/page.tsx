@@ -1,16 +1,19 @@
 
+'use client';
+
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { invoices } from '@/lib/data';
 import { ArrowRight, Edit, Printer } from 'lucide-react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-export default function InvoiceDetailsPage({ params }: { params: { id: string } }) {
+export default function InvoiceDetailsPage() {
+  const params = useParams<{ id: string }>();
   const invoice = invoices.find((inv) => inv.id === params.id);
 
   if (!invoice) {
@@ -120,3 +123,5 @@ export default function InvoiceDetailsPage({ params }: { params: { id: string } 
     </>
   );
 }
+
+    

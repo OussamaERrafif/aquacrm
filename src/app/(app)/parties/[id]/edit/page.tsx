@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
 import { parties } from '@/lib/data';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 
 const partySchema = z.object({
   name: z.string().min(1, 'الاسم مطلوب.'),
@@ -30,7 +30,8 @@ const partySchema = z.object({
 
 type PartyFormValues = z.infer<typeof partySchema>;
 
-export default function EditPartyPage({ params }: { params: { id: string } }) {
+export default function EditPartyPage() {
+    const params = useParams<{ id: string }>();
     const party = parties.find(p => p.id === params.id);
 
     if (!party) {
@@ -138,3 +139,5 @@ export default function EditPartyPage({ params }: { params: { id: string } }) {
     </Form>
   );
 }
+
+    

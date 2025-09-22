@@ -30,7 +30,7 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 
 const loanSchema = z.object({
   fisherId: z.string().min(1, 'الرجاء اختيار صياد.'),
@@ -45,7 +45,8 @@ const loanSchema = z.object({
 
 type LoanFormValues = z.infer<typeof loanSchema>;
 
-export default function EditLoanPage({ params }: { params: { id: string } }) {
+export default function EditLoanPage() {
+  const params = useParams<{ id: string }>();
   const loan = loans.find(l => l.id === params.id);
 
   if (!loan) {
@@ -222,3 +223,5 @@ export default function EditLoanPage({ params }: { params: { id: string } }) {
     </Form>
   );
 }
+
+    

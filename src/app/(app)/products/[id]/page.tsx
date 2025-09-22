@@ -1,18 +1,21 @@
 
+'use client';
+
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { fish } from '@/lib/data';
 import { ArrowRight, Edit, Package, TrendingDown, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 
-export default function ProductDetailsPage({ params }: { params: { id: string } }) {
+export default function ProductDetailsPage() {
+  const params = useParams<{ id: string }>();
   const product = fish.find((f) => f.id === params.id);
 
   if (!product) {
@@ -133,3 +136,5 @@ export default function ProductDetailsPage({ params }: { params: { id: string } 
     </>
   );
 }
+
+    

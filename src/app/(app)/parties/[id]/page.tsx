@@ -1,15 +1,18 @@
 
+'use client';
+
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { parties, invoices } from '@/lib/data';
 import { ArrowRight, Edit } from 'lucide-react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 
-export default function PartyDetailsPage({ params }: { params: { id: string } }) {
+export default function PartyDetailsPage() {
+  const params = useParams<{ id: string }>();
   const party = parties.find((p) => p.id === params.id);
 
   if (!party) {
@@ -137,3 +140,5 @@ export default function PartyDetailsPage({ params }: { params: { id: string } })
     </>
   );
 }
+
+    

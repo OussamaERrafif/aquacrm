@@ -1,15 +1,18 @@
 
+'use client';
+
 import { PageHeader } from '@/components/app/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { loans } from '@/lib/data';
 import { ArrowRight, Edit } from 'lucide-react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 
-export default function LoanDetailsPage({ params }: { params: { id: string } }) {
+export default function LoanDetailsPage() {
+  const params = useParams<{ id: string }>();
   const loan = loans.find((l) => l.id === params.id);
 
   if (!loan) {
@@ -94,3 +97,5 @@ export default function LoanDetailsPage({ params }: { params: { id: string } }) 
     </>
   );
 }
+
+    

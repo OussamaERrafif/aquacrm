@@ -35,7 +35,7 @@ import { parties, fish, invoices } from "@/lib/data";
 import { PlusCircle, Trash2, Package } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import React from "react";
 import { ProductSelectionModal } from "@/components/app/product-selection-modal";
 import type { Fish } from "@/lib/types";
@@ -57,7 +57,8 @@ const invoiceSchema = z.object({
 type InvoiceFormValues = z.infer<typeof invoiceSchema>;
 const sizeOptions: z.infer<typeof invoiceItemSchema.shape.length>[] = ["xs", "s", "m", "l", "xl", "xxl"];
 
-export default function EditInvoicePage({ params }: { params: { id: string } }) {
+export default function EditInvoicePage() {
+  const params = useParams<{ id: string }>();
   const invoice = invoices.find(inv => inv.id === params.id);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   
@@ -301,3 +302,5 @@ export default function EditInvoicePage({ params }: { params: { id: string } }) 
     </>
   );
 }
+
+    
