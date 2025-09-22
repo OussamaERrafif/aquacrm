@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuChe
 import { PlusCircle, Search, Filter, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function ProductsPage() {
 
@@ -78,9 +79,9 @@ export default function ProductsPage() {
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {fish.map((f, index) => (
-          <Card key={f.id} className="overflow-hidden">
+          <Card key={f.id} className="overflow-hidden flex flex-col">
             <CardHeader className="p-0">
-                <div className="relative h-48 w-full">
+                <Link href={`/products/${f.id}`} className="block relative h-48 w-full">
                     <Image 
                         src={f.imageUrl} 
                         alt={f.name} 
@@ -88,11 +89,13 @@ export default function ProductsPage() {
                         className="object-cover"
                         data-ai-hint={f.imageHint}
                     />
-                </div>
+                </Link>
             </CardHeader>
-            <CardContent className="p-4">
+            <CardContent className="p-4 flex-grow">
                 <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-bold">{f.name}</h3>
+                    <h3 className="text-lg font-bold hover:underline">
+                        <Link href={`/products/${f.id}`}>{f.name}</Link>
+                    </h3>
                     {index % 2 === 0 ? <TrendingUp className="h-5 w-5 text-green-500" /> : <TrendingDown className="h-5 w-5 text-yellow-500" />}
                 </div>
               <p className="text-sm text-muted-foreground">{f.category}</p>
@@ -110,7 +113,9 @@ export default function ProductsPage() {
 
             </CardContent>
              <CardFooter className="p-4 bg-muted/50">
-                 <Button variant="ghost" size="sm" className="w-full justify-center">View Details <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                 <Button variant="ghost" size="sm" className="w-full justify-center" asChild>
+                    <Link href={`/products/${f.id}`}>View Details <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                </Button>
             </CardFooter>
           </Card>
         ))}
