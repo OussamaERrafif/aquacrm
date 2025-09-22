@@ -7,20 +7,10 @@ import { notFound } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import type { Party, Invoice } from '@/lib/types';
+import { getParty } from '@/lib/data';
 
 interface PartyWithRelations extends Party {
   invoices: Invoice[];
-}
-
-async function getParty(id: string) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/parties/${id}`, { cache: 'no-store' });
-    if (!res.ok) {
-        if (res.status === 404) {
-            return notFound();
-        }
-        throw new Error('Failed to fetch party');
-    }
-    return res.json();
 }
 
 export default async function PartyDetailsPage({ params }: { params: { id: string } }) {
@@ -30,7 +20,11 @@ export default async function PartyDetailsPage({ params }: { params: { id: strin
     return notFound();
   }
 
-  const party: PartyWithRelations = await getParty(id);
+  const party: PartyWithRelations | null = await getParty(id);
+
+  if (!party) {
+    return notFound();
+  }
 
   const partyInvoices = party.invoices || [];
   

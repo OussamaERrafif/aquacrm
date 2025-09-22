@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import type { Invoice, Loan } from './types';
+import type { Invoice, Loan, Party, Person } from './types';
 
 // This file is now empty as the application is connected to the database.
 // The data is fetched from the API routes which use Prisma.
@@ -36,6 +36,32 @@ export async function getLoans() {
         },
         orderBy: {
             disbursementDate: 'desc'
+        }
+    });
+}
+
+export async function getParty(id: string) {
+    return prisma.party.findUnique({
+        where: { id },
+        include: {
+            invoices: {
+                orderBy: {
+                    date: 'desc'
+                }
+            },
+            loans: {
+                orderBy: {
+                    disbursementDate: 'desc'
+                }
+            },
+        }
+    });
+}
+
+export async function getParties(includeInvoices = false) {
+    return prisma.party.findMany({
+        include: {
+            invoices: includeInvoices,
         }
     });
 }

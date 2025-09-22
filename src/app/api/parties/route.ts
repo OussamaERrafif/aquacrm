@@ -1,17 +1,13 @@
 
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { NextApiRequest } from 'next';
+import { getParties } from '@/lib/data';
+
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const include_invoices = searchParams.get('include_invoices')
+  const include_invoices = searchParams.get('include_invoices') === 'true'
 
-  const parties = await prisma.party.findMany({
-    include: {
-        invoices: include_invoices === 'true'
-    }
-  });
+  const parties = await getParties(include_invoices);
   return NextResponse.json(parties);
 }
 
