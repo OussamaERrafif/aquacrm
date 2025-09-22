@@ -19,8 +19,11 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/app/page-header';
+import { useTheme } from '@/components/app/theme-provider';
 
 export default function SettingsPage() {
+  const { theme, setTheme } = useTheme();
+
   return (
     <>
       <PageHeader title="الإعدادات" />
@@ -35,7 +38,7 @@ export default function SettingsPage() {
           <CardContent>
             <div className="space-y-2">
               <Label htmlFor="theme">السمة</Label>
-              <Select defaultValue="system" dir="rtl">
+              <Select value={theme} onValueChange={setTheme} dir="rtl">
                 <SelectTrigger id="theme" className="w-full md:w-[280px]">
                   <SelectValue placeholder="اختر سمة" />
                 </SelectTrigger>
