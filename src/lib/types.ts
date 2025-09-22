@@ -1,0 +1,61 @@
+export type NavItem = {
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+  active?: boolean;
+};
+
+export type Person = {
+  id: string;
+  name: string;
+  company: string;
+  email:string;
+  phone: string;
+  address: string;
+  credit: {
+    limit: number;
+    balance: number;
+  }
+};
+
+export type Buyer = Person;
+export type Seller = Person;
+
+export type Fish = {
+  id: string;
+  name: string;
+  type: string;
+};
+
+export type InvoiceItem = {
+  id: string;
+  fish: Fish;
+  length: number;
+  weight: number;
+  pricePerKilo: number;
+  total: number;
+};
+
+export type Invoice = {
+  id: string;
+  invoiceNumber: string;
+  type: 'buy' | 'sell';
+  date: string;
+  dueDate: string;
+  party: Person;
+  items: InvoiceItem[];
+  totalAmount: number;
+  status: 'Paid' | 'Unpaid' | 'Overdue';
+};
+
+export type Loan = {
+  id: string;
+  loanId: string;
+  fisher: Person;
+  amount: number;
+  interestRate: number;
+  disbursementDate: string;
+  repaymentSchedule: string;
+  outstandingBalance: number;
+  status: 'Active' | 'Paid Off' | 'Defaulted';
+};
