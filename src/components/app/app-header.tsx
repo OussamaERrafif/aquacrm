@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, UserCircle } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import Link from 'next/link';
 
 export function AppHeader() {
   return (
@@ -37,7 +38,8 @@ export function AppHeader() {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>حسابي</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>الإعدادات</DropdownMenuItem>
+          <DropdownMenuItem asChild><Link href="/account">ملف التعريف</Link></DropdownMenuItem>
+          <DropdownMenuItem asChild><Link href="/settings">الإعدادات</Link></DropdownMenuItem>
           <DropdownMenuItem>الدعم</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>تسجيل الخروج</DropdownMenuItem>
