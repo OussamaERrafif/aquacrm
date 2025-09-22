@@ -6,79 +6,87 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model Party {
-  id      String @id @default(cuid())
+  id      String    @id @default(cuid())
   name    String
   company String?
-  email   String @unique
+  email   String    @unique
   phone   String?
   address String?
 
-  buyInvoices  Invoice[] @relation("BuyInvoices")
-  sellInvoices Invoice[] @relation("SellInvoices")
-  loans        Loan[]
-}
+  invoices Invoice[]
 
-model Fish {
-  id       String  @id @default(cuid())
-  name     String
-  category String
-  status   String // "In Stock", "Low Stock", "Out of Stock"
-  price    Float
-  stock    Float
-  minStock Float
-  supplier String
-  imageUrl String
-  imageHint String
-
-  invoiceItems InvoiceItem[]
-}
-
-model InvoiceItem {
-  id           String @id @default(cuid())
-  length       String // 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl'
-  weight       Float
-  pricePerKilo Float
-  total        Float
-
-  fishId String
-  fish   Fish   @relation(fields: [fishId], references: [id])
-
-  invoiceId String
-  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Invoice {
-  id            String      @id @default(cuid())
-  invoiceNumber String      @unique
+  id            String    @id @default(cuid())
+  invoiceNumber String    @unique
   type          String // "buy" or "sell"
   date          DateTime
   dueDate       DateTime
+  
+  partyId String
+  party   Party     @relation(fields: [partyId], references: [id])
+
+  items         InvoiceItem[]
   totalAmount   Float
   status        String // "Paid", "Unpaid", "Overdue"
 
-  partyId String
-  party   Party  @relation(name: "BuyInvoices", fields: [partyId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
 
-  sellerId String
-  seller   Party @relation(name: "SellInvoices", fields: [sellerId], references: [id])
+model InvoiceItem {
+  id           String  @id @default(cuid())
+  invoiceId    String
+  invoice      Invoice @relation(fields: [invoiceId], references: [id])
+  
+  fishId       String
+  fish         Fish    @relation(fields: [fishId], references: [id])
+  
+  length       String
+  weight       Float
+  pricePerKilo Float
+  total        Float
+}
 
-  items InvoiceItem[]
+model Fish {
+  id        String   @id @default(cuid())
+  name      String
+  category  String
+  status    String // "In Stock", "Low Stock", "Out of Stock"
+  price     Float
+  stock     Float
+  minStock  Float
+  supplier  String
+  imageUrl  String
+  imageHint String
+
+  invoiceItems InvoiceItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Loan {
   id                  String   @id @default(cuid())
   loanId              String   @unique
+  
+  fisherId            String
+  fisher              Party    @relation(fields: [fisherId], references: [id])
+  
   amount              Float
   disbursementDate    DateTime
   repaymentSchedule   String
   outstandingBalance  Float
   status              String // "Active", "Paid Off", "Defaulted"
 
-  fisherId String
-  fisher   Party  @relation(fields: [fisherId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
