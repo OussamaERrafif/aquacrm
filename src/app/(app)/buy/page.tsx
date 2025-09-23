@@ -44,14 +44,33 @@ export default function BuyPage() {
 
   React.useEffect(() => {
     async function fetchData() {
-      const resInvoices = await fetch('/api/invoices');
-      const invoicesData: Invoice[] = await resInvoices.json();
-      setInvoices(invoicesData.filter(inv => inv.type === 'buy'));
-      
+      const token = localStorage.getItem('token');
+      const resInvoices = await fetch('/api/invoices', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (resInvoices.ok) {
+        const invoicesData: Invoice[] = await resInvoices.json();
+        setInvoices(invoicesData.filter(inv => inv.type === 'buy'));
+      } else {
+        if (resInvoices.status === 401) {
+          localStorage.removeItem('token');
+          router.push('/login');
+          return;
+        }
+        console.error('Failed to fetch invoices');
+        console.log(resInvoices.status);
+      }
+
       const resParties = await fetch('/api/parties');
-      const partiesData: any[] = await resParties.json();
-      // This is a simplification. In a real app, you'd filter parties who are sellers.
-      setSellers(partiesData); 
+      if (resParties.ok) {
+        const partiesData: any[] = await resParties.json();
+        // This is a simplification. In a real app, you'd filter parties who are sellers.
+        setSellers(partiesData);
+      } else {
+        console.error('Failed to fetch parties');
+      }
     }
     fetchData();
   }, []);

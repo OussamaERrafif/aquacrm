@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import type { Party, Loan } from '@/lib/types';
 
@@ -65,7 +65,8 @@ export default function EditLoanPage() {
     fetchParties();
   }, []);
 
-  useEffect(() => {
+    const [error, setError] = useState<string | null>(null);
+    useEffect(() => {
     async function fetchLoan() {
       const res = await fetch(`/api/loans/${params.id}`);
       if (res.ok) {
@@ -79,8 +80,10 @@ export default function EditLoanPage() {
           outstandingBalance: data.outstandingBalance,
           status: data.status,
         });
+      } else if (res.status === 404) {
+        setError('Loan not found');
       } else {
-        notFound();
+        setError('Failed to load loan');
       }
     }
     fetchLoan();
@@ -96,6 +99,7 @@ export default function EditLoanPage() {
     router.refresh();
   };
   
+  if (error) return <div className="p-6">{error}</div>;
   if (!loan) {
       return <div>Loading...</div>
   }

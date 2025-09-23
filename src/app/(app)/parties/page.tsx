@@ -33,8 +33,12 @@ export default function PartiesPage() {
   React.useEffect(() => {
     async function fetchData() {
       const resParties = await fetch('/api/parties?include_invoices=true');
-      const partiesData = await resParties.json();
-      setParties(partiesData);
+      if (resParties.ok) {
+        const partiesData = await resParties.json();
+        setParties(partiesData);
+      } else {
+        console.error('Failed to fetch parties');
+      }
     }
     fetchData();
   }, []);

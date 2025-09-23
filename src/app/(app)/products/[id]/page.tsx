@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { ArrowRight, Edit, Package, TrendingDown, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,7 @@ export default function ProductDetailsPage() {
   const params = useParams<{ id: string }>();
   const [product, setProduct] = React.useState<Fish | null>(null);
 
+  const [error, setError] = React.useState<string | null>(null);
   React.useEffect(() => {
     async function fetchProduct() {
       if(params.id) {
@@ -25,8 +26,10 @@ export default function ProductDetailsPage() {
         if(res.ok) {
           const data = await res.json();
           setProduct(data);
+        } else if (res.status === 404) {
+          setError('Product not found');
         } else {
-          notFound();
+          setError('Failed to load product');
         }
       }
     }
@@ -34,6 +37,7 @@ export default function ProductDetailsPage() {
   }, [params.id]);
 
 
+  if (error) return <div className="p-6">{error}</div>;
   if (!product) {
     return <div>Loading...</div>;
   }

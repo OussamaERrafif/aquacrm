@@ -33,7 +33,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { PlusCircle, Trash2, Package } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { notFound, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { ProductSelectionModal } from "@/components/app/product-selection-modal";
 import type { Fish, Party, Invoice } from "@/lib/types";
@@ -72,31 +72,41 @@ export default function EditInvoicePage() {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
         const resParties = await fetch(`${baseUrl}/api/parties`);
-        setPartyList(await resParties.json());
+        if (resParties.ok) {
+          setPartyList(await resParties.json());
+        } else {
+          console.error('Failed to fetch parties');
+        }
 
         const resFish = await fetch(`${baseUrl}/api/products`);
-        setFishList(await resFish.json());
-
-        if (params.id) {
-            const resInvoice = await fetch(`${baseUrl}/api/invoices/${params.id}`);
-            if (resInvoice.ok) {
-                const invoiceData: Invoice = await resInvoice.json();
-                setInvoice(invoiceData);
-                form.reset({
-                    type: invoiceData.type,
-                    partyId: invoiceData.party.id,
-                    status: invoiceData.status,
-                    items: invoiceData.items.map(item => ({
-                        fishId: item.fish.id,
-                        length: item.length,
-                        weight: item.weight,
-                        pricePerKilo: item.pricePerKilo
-                    })),
-                });
-            } else {
-                notFound();
-            }
+        if (resFish.ok) {
+          setFishList(await resFish.json());
+        } else {
+          console.error('Failed to fetch products');
         }
+
+    if (params.id) {
+      const resInvoice = await fetch(`${baseUrl}/api/invoices/${params.id}`);
+      if (resInvoice.ok) {
+        const invoiceData: Invoice = await resInvoice.json();
+        setInvoice(invoiceData);
+        form.reset({
+          type: invoiceData.type,
+          partyId: invoiceData.party.id,
+          status: invoiceData.status,
+          items: invoiceData.items.map(item => ({
+            fishId: item.fish.id,
+            length: item.length,
+            weight: item.weight,
+            pricePerKilo: item.pricePerKilo
+          })),
+        });
+      } else if (resInvoice.status === 404) {
+        setError('Invoice not found');
+      } else {
+        setError('Failed to load invoice');
+      }
+    }
     }
     fetchData();
   }, [params.id, form]);

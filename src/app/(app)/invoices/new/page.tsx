@@ -72,12 +72,20 @@ export default function NewInvoicePage() {
     useEffect(() => {
         async function fetchData() {
             const resParties = await fetch('/api/parties');
-            const partiesData = await resParties.json();
-            setPartyList(partiesData);
+            if (resParties.ok) {
+              const partiesData = await resParties.json();
+              setPartyList(partiesData);
+            } else {
+              console.error('Failed to fetch parties');
+            }
             
             const resFish = await fetch('/api/products');
-            const fishData = await resFish.json();
-            setFishList(fishData);
+            if (resFish.ok) {
+              const fishData = await resFish.json();
+              setFishList(fishData);
+            } else {
+              console.error('Failed to fetch products');
+            }
         }
         fetchData();
     }, []);

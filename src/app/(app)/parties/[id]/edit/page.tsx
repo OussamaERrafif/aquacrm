@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import type { Party } from '@/lib/types';
 
@@ -39,24 +39,27 @@ export default function EditPartyPage() {
       resolver: zodResolver(partySchema),
     });
 
-    useEffect(() => {
-        async function fetchParty() {
-            const res = await fetch(`/api/parties/${params.id}`);
-            if (res.ok) {
-                const party: Party = await res.json();
-                form.reset({
-                    name: party.name,
-                    company: party.company,
-                    email: party.email,
-                    phone: party.phone,
-                    address: party.address,
-                });
-            } else {
-                notFound();
-            }
-        }
-        fetchParty();
-    }, [params.id, form]);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    async function fetchParty() {
+      const res = await fetch(`/api/parties/${params.id}`);
+      if (res.ok) {
+        const party: Party = await res.json();
+        form.reset({
+          name: party.name,
+          company: party.company,
+          email: party.email,
+          phone: party.phone,
+          address: party.address,
+        });
+      } else if (res.status === 404) {
+        setError('Party not found');
+      } else {
+        setError('Failed to load party');
+      }
+    }
+    fetchParty();
+  }, [params.id, form]);
 
   const onSubmit = async (data: PartyFormValues) => {
     await fetch(`/api/parties/${params.id}`, {
@@ -69,6 +72,8 @@ export default function EditPartyPage() {
   };
 
   const partyName = form.watch('name');
+
+  if (error) return <div className="p-6">{error}</div>;
 
   return (
     <Form {...form}>

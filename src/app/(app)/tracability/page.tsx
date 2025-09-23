@@ -36,8 +36,12 @@ export default function TracabilityPage() {
   React.useEffect(() => {
     async function fetchData() {
       const res = await fetch('/api/tracability');
-      const data = await res.json();
-      setTracabilityEntries(data);
+      if (res.ok) {
+        const data = await res.json();
+        setTracabilityEntries(data);
+      } else {
+        console.error('Failed to fetch tracability entries');
+      }
     }
     fetchData();
   }, []);

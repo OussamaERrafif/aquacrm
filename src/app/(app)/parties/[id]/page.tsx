@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Edit, Printer } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
 import { PartyPDFExportButton } from '@/components/app/party-pdf-export-button';
@@ -19,26 +19,31 @@ interface PartyWithRelations extends Party {
 
 export default function PartyDetailsPage() {
   const params = useParams<{ id: string }>();
-  const [party, setParty] = useState<PartyWithRelations | null>(null);
+    const [party, setParty] = useState<PartyWithRelations | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (params.id) {
-      async function fetchParty() {
-        const res = await fetch(`/api/parties/${params.id}`);
-        if (res.ok) {
-          const data = await res.json();
-          setParty(data);
-        } else {
-          notFound();
-        }
-      }
+            async function fetchParty() {
+                const res = await fetch(`/api/parties/${params.id}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setParty(data);
+                } else if (res.status === 404) {
+                    setError('Party not found');
+                } else {
+                    setError('Failed to load party');
+                }
+            }
       fetchParty();
     }
   }, [params.id]);
 
-  if (!party) {
-    return <div>Loading...</div>; // Or a skeleton loader
-  }
+    if (error) return <div className="p-6">{error}</div>;
+
+    if (!party) {
+        return <div>Loading...</div>; // Or a skeleton loader
+    }
 
   const partyInvoices = party.invoices || [];
   

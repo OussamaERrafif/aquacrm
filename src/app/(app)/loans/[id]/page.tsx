@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { ArrowRight, Edit } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { PaymentRegistrationDialog } from '@/components/app/payment-registration-dialog';
@@ -19,6 +19,7 @@ export default function LoanDetailsPage() {
   const [loan, setLoan] = useState<Loan | null>(null);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     async function fetchLoan() {
       if (params.id) {
@@ -26,8 +27,10 @@ export default function LoanDetailsPage() {
         if (res.ok) {
           const data = await res.json();
           setLoan(data);
+        } else if (res.status === 404) {
+          setError('Loan not found');
         } else {
-          notFound();
+          setError('Failed to load loan');
         }
       }
     }
@@ -35,6 +38,7 @@ export default function LoanDetailsPage() {
   }, [params.id]);
 
 
+  if (error) return <div className="p-6">{error}</div>;
   if (!loan) {
     return <div>Loading...</div>; // Or a skeleton loader
   }

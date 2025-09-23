@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import type { Tracability } from '@prisma/client';
 
@@ -43,23 +43,26 @@ export default function EditTracabilityPage() {
       },
     });
 
-    useEffect(() => {
-        async function fetchTracability() {
-            const res = await fetch(`/api/tracability/${params.id}`);
-            if (res.ok) {
-                const tracability: Tracability = await res.json();
-                form.reset({
-                    codeMareyeur: tracability.codeMareyeur,
-                    nomMareyeur: tracability.nomMareyeur,
-                    poidsAchete: tracability.poidsAchete,
-                    poidsVendu: tracability.poidsVendu,
-                });
-            } else {
-                notFound();
-            }
-        }
-        fetchTracability();
-    }, [params.id, form]);
+  const [error, setError] = React.useState<string | null>(null);
+  useEffect(() => {
+    async function fetchTracability() {
+      const res = await fetch(`/api/tracability/${params.id}`);
+      if (res.ok) {
+        const tracability: Tracability = await res.json();
+        form.reset({
+          codeMareyeur: tracability.codeMareyeur,
+          nomMareyeur: tracability.nomMareyeur,
+          poidsAchete: tracability.poidsAchete,
+          poidsVendu: tracability.poidsVendu,
+        });
+      } else if (res.status === 404) {
+        setError('Tracability record not found');
+      } else {
+        setError('Failed to load tracability record');
+      }
+    }
+    fetchTracability();
+  }, [params.id, form]);
 
   const onSubmit = async (data: TracabilityFormValues) => {
     await fetch(`/api/tracability/${params.id}`, {
@@ -70,6 +73,8 @@ export default function EditTracabilityPage() {
     router.push('/tracability');
     router.refresh();
   };
+
+  if (error) return <div className="p-6">{error}</div>;
 
   return (
     <Form {...form}>

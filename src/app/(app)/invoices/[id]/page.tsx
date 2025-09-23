@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { ArrowRight, Edit, Printer } from 'lucide-react';
 import Link from 'next/link';
-import { notFound, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -18,24 +18,40 @@ export default function InvoiceDetailsPage() {
   const params = useParams<{ id: string }>();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
 
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     if (params.id) {
         async function fetchInvoice() {
-            const res = await fetch(`/api/invoices/${params.id}`);
+            const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+            const res = await fetch(`/api/invoices/${params.id}`, {
+                headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+            });
             if (res.ok) {
                 const data = await res.json();
                 setInvoice(data);
+            } else if (res.status === 401) {
+                // token missing/invalid/expired
+                if (typeof window !== 'undefined') localStorage.removeItem('token');
+                router.push('/login');
+            } else if (res.status === 404) {
+                setError('Invoice not found');
             } else {
-                notFound();
+                setError('Failed to load invoice');
             }
         }
         fetchInvoice();
     }
   }, [params.id]);
 
-  if (!invoice) {
-    return <div>Loading...</div>; // Or a skeleton loader
-  }
+    if (error) {
+        return <div className="p-6">{error}</div>;
+    }
+
+    if (!invoice) {
+        return <div>Loading...</div>; // Or a skeleton loader
+    }
   
   const backUrl = invoice.type === 'buy' ? '/buy' : '/sell';
   const statusArabic = invoice.status === 'Paid' ? 'مدفوعة' : invoice.status === 'Overdue' ? 'متأخرة' : 'غير مدفوعة';

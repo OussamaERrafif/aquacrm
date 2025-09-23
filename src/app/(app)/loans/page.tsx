@@ -51,9 +51,24 @@ export default function LoansPage() {
 
   React.useEffect(() => {
     async function fetchLoans() {
-      const res = await fetch('/api/loans');
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/loans', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+      if (!res.ok) {
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          router.push('/login');
+          return;
+        }
+        console.error('Failed to fetch loans', res.status);
+        return;
+      }
       const data = await res.json();
-      setLoans(data);
+      // Ensure we set an array to avoid runtime errors
+      setLoans(Array.isArray(data) ? data : []);
     }
     fetchLoans();
   }, []);
