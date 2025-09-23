@@ -100,7 +100,7 @@ export function InvoicePDFExportButton({ invoice }: InvoicePDFExportButtonProps)
     invoice.items.forEach(item => {
         const itemData = [
             `${item.fish.name} (${item.fish.category})`,
-            `${item.length} cm`,
+            `${item.length} `,
             item.weight.toFixed(2),
             `${item.pricePerKilo.toFixed(2)} MAD`,
             `${(item.weight * item.pricePerKilo).toFixed(2)} MAD`
@@ -184,12 +184,12 @@ export function InvoicePDFExportButton({ invoice }: InvoicePDFExportButtonProps)
     pdf.text(`${invoice.totalAmount.toFixed(2)} MAD`, pageWidth - 15, totalsStartY + 20, { align: 'right' });
 
     // Footer with stamp and signature boxes
-    pdf.setLineWidth(0.3);
-    pdf.line(15, pageHeight - 60, pageWidth - 15, pageHeight - 60);
+    // pdf.setLineWidth(0.3);
+    // pdf.line(15, pageHeight - 60, pageWidth - 15, pageHeight - 60);
     
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'italic');
-    pdf.text('Merci pour votre confiance !', pageWidth / 2, pageHeight - 50, { align: 'center' });
+    // pdf.setFontSize(10);
+    // pdf.setFont('helvetica', 'italic');
+    // pdf.text('Merci pour votre confiance !', pageWidth / 2, pageHeight - 50, { align: 'center' });
     
     // Stamp box
     pdf.setFont('helvetica', 'normal');
@@ -198,8 +198,8 @@ export function InvoicePDFExportButton({ invoice }: InvoicePDFExportButtonProps)
     pdf.text('Cachet de l\'entreprise', 45, pageHeight - 35, { align: 'center' });
     
     // Signature box
-    pdf.rect(pageWidth - 75, pageHeight - 40, 60, 25);
-    pdf.text('Signature', pageWidth - 45, pageHeight - 35, { align: 'center' });
+    // pdf.rect(pageWidth - 75, pageHeight - 40, 60, 25);
+    // pdf.text('Signature', pageWidth - 45, pageHeight - 35, { align: 'center' });
 
     // Save the PDF
     pdf.save(`facture-${invoice.invoiceNumber}.pdf`);
