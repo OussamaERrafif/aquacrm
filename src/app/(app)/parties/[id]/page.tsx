@@ -40,14 +40,22 @@ export default function PartyDetailsPage() {
     }
   }, [params.id]);
 
+    // Keep hooks in a stable order: declare all hooks before any early returns.
+    const [filters, setFilters] = useState<FilterValue | null>(null);
+    const partyInvoices: Invoice[] = party?.invoices ?? [];
+
     if (error) return <div className="p-6">{error}</div>;
 
     if (!party) {
         return <div>Loading...</div>; // Or a skeleton loader
     }
 
-  const partyInvoices = party.invoices || [];
-        const [filters, setFilters] = useState<FilterValue | null>(null);
+        // Safely compute categories from invoices, guarding against missing items/fish
+        const categories: string[] = Array.from(
+            new Set(
+                partyInvoices.flatMap((i) => (i.items ?? []).map((it) => it.fish?.category).filter(Boolean) as string[])
+            )
+        );
 
         const filteredTransactions = partyInvoices.filter((inv) => {
             if (!filters) return true;
@@ -140,8 +148,8 @@ export default function PartyDetailsPage() {
                 </CardHeader>
                 <CardContent>
                                         <div className="mb-4">
-                                            <TableFilters categories={Array.from(new Set(partyInvoices.flatMap(i => i.items.map(it => it.fish.category))))} onChange={(v) => setFilters(v)} />
-                                        </div>
+                                                                    <TableFilters categories={categories} onChange={(v) => setFilters(v)} />
+                                                                </div>
                                         <Table>
                         <TableHeader>
                             <TableRow>

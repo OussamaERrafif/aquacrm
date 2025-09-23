@@ -121,18 +121,14 @@ export default function NewInvoicePage() {
     router.refresh();
   };
 
-  const handleSelectProducts = (selectedProducts: Fish[]) => {
-    const currentFishIds = new Set(form.getValues('items').map(item => item.fishId));
-    
-    const newProducts = selectedProducts.filter(product => !currentFishIds.has(product.id));
-    
-    newProducts.forEach(product => {
-      append({
-        fishId: product.id,
-        length: "m",
-        weight: 0,
-        pricePerKilo: product.price,
-      });
+  const handleSelectProducts = (selectedProducts: { fishId: string; length: string; price: number }[]) => {
+    const currentItems = form.getValues('items');
+
+    selectedProducts.forEach((p) => {
+      const exists = currentItems.some((it: any) => it.fishId === p.fishId && it.length === p.length);
+      if (!exists) {
+        append({ fishId: p.fishId, length: p.length as any, weight: 0, pricePerKilo: p.price });
+      }
     });
   };
 
@@ -269,9 +265,17 @@ export default function NewInvoicePage() {
                               </FormItem>
                             )}
                           />
+                          {/* Show name-length preview */}
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {(() => {
+                              const f = fishList.find(x => x.id === form.getValues(`items.${index}.fishId`));
+                              const len = form.getValues(`items.${index}.length`);
+                              return f ? `${f.name}-${(len || 'm').toUpperCase()}` : null;
+                            })()}
+                          </div>
                         </TableCell>
                         <TableCell>
-                           <FormField
+                          <FormField
                             control={form.control}
                             name={`items.${index}.length`}
                             render={({ field }) => (

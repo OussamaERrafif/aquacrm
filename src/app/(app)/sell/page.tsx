@@ -22,7 +22,7 @@ import { PageHeader } from '@/components/app/page-header';
 import TableFilters, { FilterValue } from '@/components/ui/table-filters';
 import { DollarSign, Receipt, Users, PlusCircle, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -131,6 +131,28 @@ export default function SellPage() {
     setShowDeleteDialog(true);
   }
 
+  const updateInvoiceStatus = async (invoiceId: string, status: Invoice['status']) => {
+    // optimistic UI update
+    setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, status } : inv));
+    try {
+      const token = localStorage.getItem('token');
+      await fetch(`/api/invoices/${invoiceId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ status }),
+      });
+    } catch (e) {
+      console.error('Failed to update status', e);
+      // rollback on error
+      // (a real app would refetch or show an error toast)
+      // For now we'll refresh the page to get authoritative data
+      router.refresh();
+    }
+  }
+
   return (
     <>
       <PageHeader
@@ -227,7 +249,14 @@ export default function SellPage() {
                         <DropdownMenuContent align="end">
                            <DropdownMenuItem asChild><Link href={`/invoices/${invoice.id}`}>عرض التفاصيل</Link></DropdownMenuItem>
                            <DropdownMenuItem asChild><Link href={`/invoices/${invoice.id}/edit`}>تعديل</Link></DropdownMenuItem>
-                          <DropdownMenuItem>وضع علامة كمدفوع</DropdownMenuItem>
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>الحالة</DropdownMenuSubTrigger>
+                            <DropdownMenuSubContent>
+                              <DropdownMenuItem onClick={() => updateInvoiceStatus(invoice.id, 'Paid')}>مدفوعة</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => updateInvoiceStatus(invoice.id, 'Unpaid')}>غير مدفوعة</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => updateInvoiceStatus(invoice.id, 'Overdue')}>متأخرة</DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuSub>
                           <DropdownMenuItem className="text-destructive" onClick={() => openDeleteDialog(invoice.id)}>حذف</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

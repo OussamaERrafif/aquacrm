@@ -24,12 +24,22 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Fish } from '@/lib/types';
 import { Search } from 'lucide-react';
-import Image from 'next/image';
+// image removed: we only display names with lengths
+
+interface SelectedEntry {
+  id: string; // entry id = `${fishId}-${length}`
+  fishId: string;
+  name: string;
+  category: string;
+  price: number;
+  length: string;
+}
 
 interface ProductSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectProducts: (selectedProducts: Fish[]) => void;
+  // return array of selections with fishId and length
+  onSelectProducts: (selectedProducts: { fishId: string; length: string; price: number }[]) => void;
 }
 
 export function ProductSelectionModal({
@@ -38,43 +48,56 @@ export function ProductSelectionModal({
   onSelectProducts,
 }: ProductSelectionModalProps) {
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [selectedProducts, setSelectedProducts] = React.useState<Fish[]>([]);
-  const [allProducts, setAllProducts] = React.useState<Fish[]>([]);
+  const [selectedEntries, setSelectedEntries] = React.useState<SelectedEntry[]>([]);
+  const [allEntries, setAllEntries] = React.useState<SelectedEntry[]>([]);
 
   React.useEffect(() => {
     if (isOpen) {
-        async function fetchProducts() {
-            const res = await fetch('/api/products');
-            const data = await res.json();
-            setAllProducts(data);
-        }
-        fetchProducts();
+      async function fetchProducts() {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        // flatten products into entries for each length so user can pick length at selection time
+        const lengths = ['xs','s','m','l','xl','xxl'];
+        const entries: SelectedEntry[] = data.flatMap((p: Fish) =>
+          lengths.map(len => ({
+            id: `${p.id}-${len}`,
+            fishId: p.id,
+            name: `${p.name}-${len}`,
+            category: p.category,
+            price: p.price,
+            length: len,
+          }))
+        );
+        setAllEntries(entries);
+      }
+      fetchProducts();
     }
   }, [isOpen]);
 
-  const filteredProducts = allProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredEntries = allEntries.filter((entry) =>
+    entry.name.toLowerCase().includes(searchTerm.toLowerCase()) || entry.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleSelect = (product: Fish) => {
-    setSelectedProducts((prev) => {
-      const isSelected = prev.some((p) => p.id === product.id);
+  const handleSelect = (entry: SelectedEntry) => {
+    setSelectedEntries((prev) => {
+      const isSelected = prev.some((p) => p.id === entry.id);
       if (isSelected) {
-        return prev.filter((p) => p.id !== product.id);
+        return prev.filter((p) => p.id !== entry.id);
       } else {
-        return [...prev, product];
+        return [...prev, entry];
       }
     });
   };
 
   const handleAddProducts = () => {
-    onSelectProducts(selectedProducts);
-    setSelectedProducts([]);
+    const mapped = selectedEntries.map(e => ({ fishId: e.fishId, length: e.length, price: e.price }));
+    onSelectProducts(mapped);
+    setSelectedEntries([]);
     onClose();
   };
 
-  const isProductSelected = (productId: string) => {
-    return selectedProducts.some((p) => p.id === productId);
+  const isEntrySelected = (entryId: string) => {
+    return selectedEntries.some((p) => p.id === entryId);
   }
 
   return (
@@ -101,35 +124,26 @@ export function ProductSelectionModal({
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[50px]"></TableHead>
-                  <TableHead>المنتج</TableHead>
+                  <TableHead>المنتج (الطول)</TableHead>
                   <TableHead>الفئة</TableHead>
                   <TableHead className="text-left">السعر</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((product) => (
-                  <TableRow key={product.id} onClick={() => handleSelect(product)} className="cursor-pointer">
+                {filteredEntries.map((entry) => (
+                  <TableRow key={entry.id} onClick={() => handleSelect(entry)} className="cursor-pointer">
                     <TableCell>
                       <Checkbox
-                        checked={isProductSelected(product.id)}
-                        onCheckedChange={() => handleSelect(product)}
+                        checked={isEntrySelected(entry.id)}
+                        onCheckedChange={() => handleSelect(entry)}
                       />
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-4">
-                        <Image
-                            src={product.imageUrl}
-                            alt={product.name}
-                            width={40}
-                            height={40}
-                            className="rounded-md object-cover"
-                        />
-                        <span className="font-medium">{product.name}</span>
-                      </div>
+                      <span className="font-medium">{entry.name}</span>
                     </TableCell>
-                    <TableCell>{product.category}</TableCell>
+                    <TableCell>{entry.category}</TableCell>
                     <TableCell className="text-left">
-                      {product.price.toFixed(2)} د.م.
+                      {entry.price.toFixed(2)} د.م.
                     </TableCell>
                   </TableRow>
                 ))}
@@ -137,12 +151,12 @@ export function ProductSelectionModal({
             </Table>
           </ScrollArea>
         </div>
-        <DialogFooter>
+          <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             إلغاء
           </Button>
-          <Button onClick={handleAddProducts} disabled={selectedProducts.length === 0}>
-            إضافة المحدد ({selectedProducts.length})
+          <Button onClick={handleAddProducts} disabled={selectedEntries.length === 0}>
+            إضافة المحدد ({selectedEntries.length})
           </Button>
         </DialogFooter>
       </DialogContent>

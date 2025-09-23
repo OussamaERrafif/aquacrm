@@ -21,17 +21,24 @@ declare module 'jspdf' {
 
 export function InvoicePDFExportButton({ invoice }: InvoicePDFExportButtonProps) {
   const handleExport = async () => {
-    console.log('Attempting to create new jsPDF instance...');
+    console.log('Création de la facture PDF professionnelle...');
     const pdf = new jsPDF('p', 'mm', 'a4');
-    console.log('jsPDF instance created:', pdf);
+    const pageWidth = pdf.internal.pageSize.width;
+    const pageHeight = pdf.internal.pageSize.height;
 
-    // Add Amiri font - Temporarily commented out for debugging
-    // const base64AmiriFont = amiriFont.replace(/^data:font\/ttf;base64,/, '');
-    // pdf.addFileToVFS('Amiri-Regular.ttf', base64AmiriFont);
-    // pdf.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
-    // pdf.setFont('Amiri');
+    // Add Amiri font - commented out
+    // try {
+    //   const base64AmiriFont = amiriFont.replace(/^data:font\/ttf;base64,/, '');
+    //   pdf.addFileToVFS('Amiri-Regular.ttf', base64AmiriFont);
+    //   pdf.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+    //   pdf.setFont('Amiri');
+    // } catch (error) {
+    //   console.warn('Could not load Amiri font, using default font');
+    //   pdf.setFont('helvetica');
+    // }
+    pdf.setFont('helvetica');
 
-    // Add Logo - Temporarily commented out for debugging
+    // Logo section (commented out as requested)
     // const logoUrl = 'https://i.imgur.com/R81Lg2b.png';
     // const logoResponse = await fetch(logoUrl);
     // const logo = await logoResponse.blob();
@@ -40,48 +47,70 @@ export function InvoicePDFExportButton({ invoice }: InvoicePDFExportButtonProps)
     //     reader.onloadend = () => resolve(reader.result as string);
     //     reader.readAsDataURL(logo);
     // });
-    // pdf.addImage(logoDataUrl, 'PNG', 10, 10, 40, 20);
+    // pdf.addImage(logoDataUrl, 'PNG', 15, 15, 35, 18);
 
-    console.log('Setting font size for header...');
-    pdf.setFontSize(18);
-    pdf.text('AquaTrade CRM', 150, 20);
+    // Header Section
+    pdf.setFontSize(24);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('FACTURE', pageWidth - 15, 25, { align: 'right' });
+    
+    // Company Information
+    pdf.setFontSize(16);
+    pdf.text('AquaTrade CRM', 15, 25);
     pdf.setFontSize(10);
-    pdf.text('123 Fishery Road, Ocean City, 12345', 150, 26);
+    pdf.text('123 Rue de la Pêcherie', 15, 32);
+    pdf.text('Océan City, 12345', 15, 37);
+    pdf.text('Téléphone: +212 XXX XXX XXX', 15, 42);
+    pdf.text('Email: info@aquatrade.ma', 15, 47);
 
-    // Invoice Details
+    // Draw header separator line
+    pdf.setLineWidth(0.5);
+    pdf.line(15, 55, pageWidth - 15, 55);
+
+    // Invoice Details Section
     pdf.setFontSize(12);
-    pdf.text(`Invoice #${invoice.invoiceNumber}`, 10, 40);
-    pdf.text(`Date: ${new Date(invoice.date).toLocaleDateString()}`, 10, 46);
-    pdf.text(`Due Date: ${new Date(invoice.dueDate).toLocaleDateString()}`, 10, 52);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Détails de la facture:', 15, 68);
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(`Numéro de facture: ${invoice.invoiceNumber}`, 15, 76);
+    pdf.text(`Date de facture: ${new Date(invoice.date).toLocaleDateString('fr-FR')}`, 15, 82);
+    pdf.text(`Date d'échéance: ${new Date(invoice.dueDate).toLocaleDateString('fr-FR')}`, 15, 88);
 
-    // Bill To
-    pdf.text('Bill To:', 10, 62);
-    pdf.text(invoice.party.name, 10, 68);
-    pdf.text(invoice.party.company || '', 10, 74);
-    pdf.text(invoice.party.address || '', 10, 80);
+    // Bill To Section
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Facturer à:', pageWidth - 15, 68, { align: 'right' });
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.text(invoice.party.name, pageWidth - 15, 76, { align: 'right' });
+    if (invoice.party.company) {
+      pdf.text(invoice.party.company, pageWidth - 15, 82, { align: 'right' });
+    }
+    if (invoice.party.address) {
+      pdf.text(invoice.party.address, pageWidth - 15, 88, { align: 'right' });
+    }
 
-    // Table
-    const tableColumn = ["Item", "Length", "Weight (kg)", "Price/kg", "Total"];
+    // Items Table
+    const tableColumn = ["Description", "Longueur", "Poids (kg)", "Prix/kg", "Montant"];
     const tableRows: (string | number)[][] = [];
 
     invoice.items.forEach(item => {
         const itemData = [
             `${item.fish.name} (${item.fish.category})`,
-            item.length,
-            item.weight,
+            `${item.length} cm`,
+            item.weight.toFixed(2),
             `${item.pricePerKilo.toFixed(2)} MAD`,
-            (item.weight * item.pricePerKilo).toFixed(2) + ' MAD'
+            `${(item.weight * item.pricePerKilo).toFixed(2)} MAD`
         ];
         tableRows.push(itemData);
     });
 
-    // Debugging: Log tableColumn and tableRows
-    console.log('Table Columns:', tableColumn);
-    console.log('Table Rows:', tableRows);
-
     // Validate tableRows
     if (tableRows.length === 0) {
-      console.error('No data available for the table.');
+      console.error('Aucun article disponible pour la facture.');
       return;
     }
 
@@ -89,33 +118,92 @@ export function InvoicePDFExportButton({ invoice }: InvoicePDFExportButtonProps)
       autoTable(pdf, {
         head: [tableColumn],
         body: tableRows,
-        startY: 90,
-        theme: 'striped',
-        headStyles: { fillColor: [22, 160, 133] },
-        styles: { font: 'Amiri', halign: 'center' },
-        columnStyles: { 0: { halign: 'left' } },
+        startY: 100,
+        theme: 'grid',
+        headStyles: { 
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+          fontStyle: 'bold',
+          lineWidth: 0.5,
+          lineColor: [0, 0, 0]
+        },
+        bodyStyles: {
+          fillColor: [255, 255, 255],
+          textColor: [0, 0, 0],
+          lineWidth: 0.1,
+          lineColor: [128, 128, 128]
+        },
+        alternateRowStyles: {
+          fillColor: [248, 248, 248]
+        },
+        columnStyles: { 
+          0: { halign: 'left', cellWidth: 60 },
+          1: { halign: 'center', cellWidth: 25 },
+          2: { halign: 'center', cellWidth: 30 },
+          3: { halign: 'right', cellWidth: 35 },
+          4: { halign: 'right', cellWidth: 35 }
+        },
+        styles: {
+          fontSize: 9,
+          cellPadding: 4
+        }
       });
     } catch (error) {
-      console.error('Error generating table with autoTable:', error);
+      console.error('Erreur lors de la génération du tableau avec autoTable:', error);
       return;
     }
 
-    // Total
+    // Calculate totals section position
     const finalY = (pdf as any).lastAutoTable.finalY || 140;
-    pdf.setFontSize(12);
-    pdf.text('Subtotal:', 150, finalY + 10);
-    pdf.text(`${invoice.totalAmount.toFixed(2)} MAD`, 180, finalY + 10);
-    pdf.text('Tax (0%):', 150, finalY + 16);
-    pdf.text('0.00 MAD', 180, finalY + 16);
-    pdf.setFontSize(14);
-    pdf.text('Total:', 150, finalY + 22);
-    pdf.text(`${invoice.totalAmount.toFixed(2)} MAD`, 180, finalY + 22);
+    const totalsStartY = finalY + 15;
 
-    // Footer
+    // Draw line above totals
+    pdf.setLineWidth(0.3);
+    pdf.line(pageWidth - 80, totalsStartY - 5, pageWidth - 15, totalsStartY - 5);
+
+    // Totals Section
     pdf.setFontSize(10);
-    pdf.text('Thank you for your business!', 10, pdf.internal.pageSize.height - 10);
+    pdf.setFont('helvetica', 'normal');
+    
+    // Subtotal
+    pdf.text('Sous-total:', pageWidth - 60, totalsStartY);
+    pdf.text(`${invoice.totalAmount.toFixed(2)} MAD`, pageWidth - 15, totalsStartY, { align: 'right' });
+    
+    // Tax
+    pdf.text('Taxe (0%):', pageWidth - 60, totalsStartY + 8);
+    pdf.text('0,00 MAD', pageWidth - 15, totalsStartY + 8, { align: 'right' });
+    
+    // Draw line above total
+    pdf.setLineWidth(0.5);
+    pdf.line(pageWidth - 80, totalsStartY + 12, pageWidth - 15, totalsStartY + 12);
+    
+    // Total
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(12);
+    pdf.text('Total:', pageWidth - 60, totalsStartY + 20);
+    pdf.text(`${invoice.totalAmount.toFixed(2)} MAD`, pageWidth - 15, totalsStartY + 20, { align: 'right' });
 
-    pdf.save(`invoice-${invoice.invoiceNumber}.pdf`);
+    // Footer with stamp and signature boxes
+    pdf.setLineWidth(0.3);
+    pdf.line(15, pageHeight - 60, pageWidth - 15, pageHeight - 60);
+    
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'italic');
+    pdf.text('Merci pour votre confiance !', pageWidth / 2, pageHeight - 50, { align: 'center' });
+    
+    // Stamp box
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(9);
+    pdf.rect(15, pageHeight - 40, 60, 25);
+    pdf.text('Cachet de l\'entreprise', 45, pageHeight - 35, { align: 'center' });
+    
+    // Signature box
+    pdf.rect(pageWidth - 75, pageHeight - 40, 60, 25);
+    pdf.text('Signature', pageWidth - 45, pageHeight - 35, { align: 'center' });
+
+    // Save the PDF
+    pdf.save(`facture-${invoice.invoiceNumber}.pdf`);
+    console.log('Facture PDF générée avec succès!');
   };
 
   return (
