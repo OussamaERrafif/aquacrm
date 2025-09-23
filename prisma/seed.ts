@@ -23,7 +23,7 @@ async function main() {
   console.log('Created 20 parties.');
 
   // Create Fish products
-  const fishProducts = [];
+  const fishProducts: any[] = [];
   const fishNames = ['Sardine', 'Merlu', 'Sole', 'Thon', 'Dorade', 'Loup de mer', 'Crevette Royale', 'Calmar'];
   for (const name of fishNames) {
     const fish = await prisma.fish.create({

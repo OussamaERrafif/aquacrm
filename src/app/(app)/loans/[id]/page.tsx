@@ -66,10 +66,9 @@ export default function LoanDetailsPage() {
         title={`قرض ${loan.loanId}`} 
         action={
             <div className="flex gap-2">
-                <Button variant="outline" asChild>
-                    <Link href="/loans"><ArrowRight className="ml-2 h-4 w-4" />العودة إلى القروض</Link>
-                </Button>
-import { LoanPDFExportButton } from '@/components/app/loan-pdf-export-button';
+        <Button variant="outline" asChild>
+          <Link href="/loans"><ArrowRight className="ml-2 h-4 w-4" />العودة إلى القروض</Link>
+        </Button>
                 <Button asChild>
                     <Link href={`/loans/${loan.id}/edit`}><Edit className="ml-2 h-4 w-4" />تعديل القرض</Link>
                 </Button>

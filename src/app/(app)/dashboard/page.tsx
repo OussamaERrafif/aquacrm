@@ -26,7 +26,18 @@ import { getInvoices, getLoans } from '@/lib/data';
 async function getData() {
     const invoices = await getInvoices();
     const loans = await getLoans();
-    return { invoices, loans };
+    // Convert Date objects from Prisma to ISO strings to match our frontend types
+    const invoicesTyped = invoices.map(inv => ({
+      ...inv,
+      date: inv.date instanceof Date ? inv.date.toISOString() : (inv.date as any),
+      dueDate: inv.dueDate instanceof Date ? inv.dueDate.toISOString() : (inv.dueDate as any),
+    }));
+    const loansTyped = loans.map(ln => ({
+      ...ln,
+      disbursementDate: ln.disbursementDate instanceof Date ? ln.disbursementDate.toISOString() : (ln.disbursementDate as any),
+    }));
+
+    return { invoices: invoicesTyped, loans: loansTyped };
 }
 
 

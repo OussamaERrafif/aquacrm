@@ -9,6 +9,7 @@ import { Loan } from '@/lib/types';
 
 interface LoanPDFExportButtonProps {
   loan: Loan;
+  cardId?: string;
 }
 
 declare module 'jspdf' {

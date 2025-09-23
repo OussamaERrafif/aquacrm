@@ -9,6 +9,7 @@ import { Invoice } from '@/lib/types';
 
 interface InvoicePDFExportButtonProps {
   invoice: Invoice;
+  cardId?: string;
 }
 
 // Extend jsPDF with the autoTable method

@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import type { Invoice, Loan, Party, Person } from './types';
+import type { Invoice, Loan, Party, Person, Buyer, Seller, Fish } from './types';
 
 // This file is now empty as the application is connected to the database.
 // The data is fetched from the API routes which use Prisma.

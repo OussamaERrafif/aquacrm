@@ -36,15 +36,15 @@ export type InvoiceItem = {
   length: 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
   weight: number;
   pricePerKilo: number;
-  total: number;
+  total?: number;
 };
 
 export type Invoice = {
   id: string;
   invoiceNumber: string;
   type: 'buy' | 'sell';
-  date: string;
-  dueDate: string;
+  date: string | Date;
+  dueDate: string | Date;
   party: Person;
   items: InvoiceItem[];
   totalAmount: number;
@@ -56,7 +56,7 @@ export type Loan = {
   loanId: string;
   fisher: Person;
   amount: number;
-  disbursementDate: string;
+  disbursementDate: string | Date;
   repaymentSchedule: string;
   outstandingBalance: number;
   status: 'Active' | 'Paid Off' | 'Defaulted';
