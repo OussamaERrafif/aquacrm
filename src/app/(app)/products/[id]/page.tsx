@@ -1,4 +1,3 @@
-
 'use client';
 
 import { PageHeader } from '@/components/app/page-header';
@@ -89,13 +88,15 @@ export default function ProductDetailsPage() {
         <div className="md:col-span-1">
              <Card className="overflow-hidden">
                 <div className="relative h-80 w-full">
+                  {product.imageUrl && isValidUrl(product.imageUrl) ? (
                     <Image 
-                        src={product.imageUrl} 
-                        alt={product.name} 
-                        fill
-                        className="object-cover"
-                        data-ai-hint={product.imageHint}
+                      src={product.imageUrl} 
+                      alt={product.name} 
+                      fill
+                      className="object-cover"
+                      data-ai-hint={product.imageHint}
                     />
+                  ) : null}
                 </div>
                 <CardFooter className="p-4 bg-muted/50">
                     <p className="text-sm text-muted-foreground w-full text-center">صورة {product.name}</p>
@@ -152,4 +153,13 @@ export default function ProductDetailsPage() {
       </div>
     </>
   );
+}
+
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
 }

@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -109,15 +108,17 @@ export default function ProductsPage() {
         {products.map((f, index) => (
           <Card key={f.id} className="overflow-hidden flex flex-col">
             <CardHeader className="p-0">
+              {f.imageUrl && isValidUrl(f.imageUrl) ? (
                 <Link href={`/products/${f.id}`} className="block relative h-48 w-full">
-                    <Image 
-                        src={f.imageUrl} 
-                        alt={f.name} 
-                        fill
-                        className="object-cover"
-                        data-ai-hint={f.imageHint}
-                    />
+                  <Image 
+                    src={f.imageUrl} 
+                    alt={f.name} 
+                    fill
+                    className="object-cover"
+                    data-ai-hint={f.imageHint}
+                  />
                 </Link>
+              ) : null}
             </CardHeader>
             <CardContent className="p-4 flex-grow">
                 <div className="flex justify-between items-start">
@@ -152,4 +153,12 @@ export default function ProductsPage() {
   );
 }
 
-    
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
