@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/app/page-header';
+import { Input } from '@/components/ui/input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { PlusCircle, Edit, Trash2 } from 'lucide-react';
 import {
   AlertDialog,
@@ -27,6 +29,8 @@ interface PartyWithInvoices extends Party {
 export default function PartiesPage() {
   const router = useRouter();
   const [parties, setParties] = React.useState<PartyWithInvoices[]>([]);
+  const [query, setQuery] = React.useState('');
+  const [sortBy, setSortBy] = React.useState<'name:asc' | 'name:desc' | 'balance:asc' | 'balance:desc'>('name:asc');
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedPartyId, setSelectedPartyId] = React.useState<string | null>(null);
 
@@ -57,6 +61,39 @@ export default function PartiesPage() {
     return balance;
   };
 
+  const filteredParties = React.useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = parties.filter((p) => {
+      if (!q) return true;
+      return (
+        p.name.toLowerCase().includes(q) ||
+        (p.company || "").toLowerCase().includes(q) ||
+        (p.email || "").toLowerCase().includes(q)
+      );
+    });
+
+    // compute balances for sorting
+    const withBalance = list.map((p) => ({ p, balance: getPartyBalance(p) }));
+
+    switch (sortBy) {
+      case 'name:asc':
+        withBalance.sort((a, b) => a.p.name.localeCompare(b.p.name));
+        break;
+      case 'name:desc':
+        withBalance.sort((a, b) => b.p.name.localeCompare(a.p.name));
+        break;
+      case 'balance:asc':
+        withBalance.sort((a, b) => a.balance - b.balance);
+        break;
+      case 'balance:desc':
+        withBalance.sort((a, b) => b.balance - a.balance);
+        break;
+    }
+
+    return withBalance.map(w => w.p);
+  }, [parties, query, sortBy]);
+  
+
   const handleDelete = async () => {
     if (selectedPartyId) {
       await fetch(`/api/parties/${selectedPartyId}`, {
@@ -86,8 +123,24 @@ export default function PartiesPage() {
           </Button>
         }
       />
+      <div className="mb-4 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+        <Input placeholder="ابحث بالاسم أو الشركة أو البريد" value={query} onChange={(e) => setQuery(e.target.value)} className="min-w-[240px]" />
+        <div className="ml-auto">
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
+            <SelectTrigger className="min-w-[180px]">
+              <SelectValue placeholder="ترتيب حسب" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name:asc">الاسم (أ-ي)</SelectItem>
+              <SelectItem value="name:desc">الاسم (ي-أ)</SelectItem>
+              <SelectItem value="balance:asc">الرصيد (صاعد)</SelectItem>
+              <SelectItem value="balance:desc">الرصيد (تنازلي)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {parties.map((party) => {
+        {filteredParties.map((party) => {
            const balance = getPartyBalance(party);
            const balanceStatus = balance === 0 ? 'مسدد' : balance > 0 ? 'أنت مدين' : 'مدين لك';
            const balanceColor = balance === 0 ? 'text-green-600' : balance > 0 ? 'text-red-600' : 'text-blue-600';

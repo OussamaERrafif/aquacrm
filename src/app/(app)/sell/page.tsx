@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/app/page-header';
+import TableFilters, { FilterValue } from '@/components/ui/table-filters';
 import { DollarSign, Receipt, Users, PlusCircle, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -39,6 +40,7 @@ import { useRouter } from 'next/navigation';
 export default function SellPage() {
   const router = useRouter();
   const [invoices, setInvoices] = React.useState<Invoice[]>([]);
+  const [filters, setFilters] = React.useState<FilterValue | null>(null);
   const [buyers, setBuyers] = React.useState<any[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = React.useState<string | null>(null);
@@ -76,6 +78,35 @@ export default function SellPage() {
     }
     fetchData();
   }, []);
+
+  const categories = React.useMemo(() => {
+    const cats = new Set<string>();
+    invoices.forEach((inv) => inv.items.forEach((it) => cats.add(it.fish.category)));
+    return Array.from(cats).sort();
+  }, [invoices]);
+
+  const filteredInvoices = React.useMemo(() => {
+    if (!filters) return invoices;
+    const q = (filters.q || "").toLowerCase();
+    const from = filters.from ? new Date(filters.from) : null;
+    const to = filters.to ? new Date(filters.to) : null;
+
+    return invoices.filter((inv) => {
+      if (filters.category) {
+        const hasCat = inv.items.some((it) => it.fish.category === filters.category);
+        if (!hasCat) return false;
+      }
+      if (from && new Date(inv.date) < from) return false;
+      if (to && new Date(inv.date) > to) return false;
+      if (q) {
+        const inNumber = inv.invoiceNumber?.toLowerCase().includes(q);
+        const inParty = inv.party?.name?.toLowerCase().includes(q);
+        const inItems = inv.items.some((it) => it.fish.name.toLowerCase().includes(q) || it.fish.category.toLowerCase().includes(q));
+        if (!(inNumber || inParty || inItems)) return false;
+      }
+      return true;
+    });
+  }, [invoices, filters]);
 
   const totalRevenue = invoices
     .filter((inv) => inv.status === 'Paid')
@@ -154,6 +185,10 @@ export default function SellPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="mb-4">
+              <TableFilters categories={categories} onChange={(v) => setFilters(v)} />
+            </div>
+
             <Table>
               <TableHeader>
                 <TableRow>
@@ -168,7 +203,7 @@ export default function SellPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {invoices.map((invoice) => (
+                {filteredInvoices.map((invoice) => (
                   <TableRow key={invoice.id}>
                     <TableCell className="font-medium">
                       <Link href={`/invoices/${invoice.id}`} className="hover:underline">{invoice.invoiceNumber}</Link>

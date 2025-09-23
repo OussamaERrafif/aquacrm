@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Separator } from '@/components/ui/separator';
 import { PartyPDFExportButton } from '@/components/app/party-pdf-export-button';
 import type { Party, Invoice } from '@/lib/types';
+import TableFilters, { FilterValue } from '@/components/ui/table-filters';
 import { useEffect, useState } from 'react';
 
 interface PartyWithRelations extends Party {
@@ -46,7 +47,23 @@ export default function PartyDetailsPage() {
     }
 
   const partyInvoices = party.invoices || [];
-  
+        const [filters, setFilters] = useState<FilterValue | null>(null);
+
+        const filteredTransactions = partyInvoices.filter((inv) => {
+            if (!filters) return true;
+            const q = (filters.q || "").toLowerCase();
+            const from = filters.from ? new Date(filters.from) : null;
+            const to = filters.to ? new Date(filters.to) : null;
+            if (from && new Date(inv.date) < from) return false;
+            if (to && new Date(inv.date) > to) return false;
+            if (filters.category) {
+                return inv.items.some((it) => it.fish.category === filters.category);
+            }
+            if (q) {
+                return inv.invoiceNumber.toLowerCase().includes(q) || inv.items.some(it => it.fish.name.toLowerCase().includes(q));
+            }
+            return true;
+        });
   let currentBalance = 0;
   const transactions = partyInvoices.map(inv => {
       let debit = 0;
@@ -122,7 +139,10 @@ export default function PartyDetailsPage() {
                     <CardDescription>سجل بجميع الديون والائتمانات مع هذا الطرف.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Table>
+                                        <div className="mb-4">
+                                            <TableFilters categories={Array.from(new Set(partyInvoices.flatMap(i => i.items.map(it => it.fish.category))))} onChange={(v) => setFilters(v)} />
+                                        </div>
+                                        <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>التاريخ</TableHead>

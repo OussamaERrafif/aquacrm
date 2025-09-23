@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/app/page-header';
+import TableFilters, { FilterValue } from '@/components/ui/table-filters';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -45,6 +46,7 @@ import { useRouter } from 'next/navigation';
 export default function LoansPage() {
   const router = useRouter();
   const [loans, setLoans] = React.useState<Loan[]>([]);
+  const [filters, setFilters] = React.useState<FilterValue | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [selectedLoan, setSelectedLoan] = React.useState<Loan | null>(null);
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = React.useState(false);
@@ -72,6 +74,23 @@ export default function LoansPage() {
     }
     fetchLoans();
   }, []);
+
+  const filteredLoans = React.useMemo(() => {
+    if (!filters) return loans;
+    const q = (filters.q || "").toLowerCase();
+    const from = filters.from ? new Date(filters.from) : null;
+    const to = filters.to ? new Date(filters.to) : null;
+
+    return loans.filter((loan) => {
+      if (from && new Date(loan.disbursementDate) < from) return false;
+      if (to && new Date(loan.disbursementDate) > to) return false;
+      if (filters.category) return true; // loans don't have categories but keep API consistent
+      if (q) {
+        return loan.loanId.toLowerCase().includes(q) || loan.fisher.name.toLowerCase().includes(q);
+      }
+      return true;
+    });
+  }, [loans, filters]);
 
   const handleDelete = async () => {
     if (selectedLoan) {
@@ -114,7 +133,11 @@ export default function LoansPage() {
         }
       />
       <Card>
-        <CardHeader>
+          <CardHeader>
+            <div className="mb-4">
+              <TableFilters onChange={(v) => setFilters(v)} />
+            </div>
+          
           <CardTitle>إدارة القروض</CardTitle>
         </CardHeader>
         <CardContent>
