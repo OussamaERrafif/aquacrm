@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { Tracability } from '@prisma/client';
 
 const tracabilitySchema = z.object({
@@ -44,7 +44,7 @@ export default function EditTracabilityPage() {
       },
     });
 
-  const [error, setError] = React.useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     async function fetchTracability() {
       const res = await fetch(`/api/tracability/${params.id}`);

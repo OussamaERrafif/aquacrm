@@ -62,6 +62,7 @@ export default function EditInvoicePage() {
   const [partyList, setPartyList] = React.useState<Party[]>([]);
   const [fishList, setFishList] = React.useState<Fish[]>([]);
   const [invoice, setInvoice] = React.useState<Invoice | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
   
   const form = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceSchema),
@@ -70,23 +71,30 @@ export default function EditInvoicePage() {
   useEffect(() => {
     async function fetchData() {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-        const resParties = await fetch(`${baseUrl}/api/parties`);
+        const resParties = await fetch(`${baseUrl}/api/parties`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
+        });
         if (resParties.ok) {
           setPartyList(await resParties.json());
         } else {
           console.error('Failed to fetch parties');
         }
 
-        const resFish = await fetch(`${baseUrl}/api/products`);
+        const resFish = await fetch(`${baseUrl}/api/products`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
+        });
         if (resFish.ok) {
           setFishList(await resFish.json());
         } else {
           console.error('Failed to fetch products');
         }
 
-    if (params.id) {
-      const resInvoice = await fetch(`${baseUrl}/api/invoices/${params.id}`);
+      if (params.id) {
+      const resInvoice = await fetch(`${baseUrl}/api/invoices/${params.id}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
+      });
       if (resInvoice.ok) {
         const invoiceData: Invoice = await resInvoice.json();
         setInvoice(invoiceData);
@@ -103,7 +111,13 @@ export default function EditInvoicePage() {
         });
       } else if (resInvoice.status === 404) {
         setError('Invoice not found');
+      } else if (resInvoice.status === 401) {
+        // Unauthorized - clear token and redirect to login
+        if (typeof window !== 'undefined') localStorage.removeItem('token');
+        router.push('/login');
+        return;
       } else {
+        console.error('Failed to load invoice, status:', resInvoice.status);
         setError('Failed to load invoice');
       }
     }
@@ -117,11 +131,25 @@ export default function EditInvoicePage() {
   });
 
   const onSubmit = async (data: InvoiceFormValues) => {
-    await fetch(`/api/invoices/${params.id}`, {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const res = await fetch(`/api/invoices/${params.id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify(data),
     });
+    if (res.status === 401) {
+      if (typeof window !== 'undefined') localStorage.removeItem('token');
+      router.push('/login');
+      return;
+    }
+    if (!res.ok) {
+      console.error('Failed to save invoice, status:', res.status);
+      setError('Failed to save invoice');
+      return;
+    }
     router.push(`/invoices/${params.id}`);
     router.refresh();
   };
@@ -145,7 +173,8 @@ export default function EditInvoicePage() {
   }, 0);
 
   if (!invoice) {
-    return <div>Loading...</div>;
+  if (error) return <div className="p-6">{error}</div>;
+  return <div>Loading...</div>;
   }
 
   return (

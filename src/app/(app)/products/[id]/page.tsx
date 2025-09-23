@@ -76,9 +76,11 @@ export default function ProductDetailsPage() {
                 <Button variant="outline" asChild>
                     <Link href="/products"><ArrowRight className="ml-2 h-4 w-4" />العودة إلى المنتجات</Link>
                 </Button>
-                <Button>
-                    <Edit className="ml-2 h-4 w-4" />تعديل المنتج
-                </Button>
+        <Button asChild>
+          <Link href={`/products/${product.id}/edit`}>
+            <Edit className="ml-2 h-4 w-4" />تعديل المنتج
+          </Link>
+        </Button>
             </div>
         }
       >
