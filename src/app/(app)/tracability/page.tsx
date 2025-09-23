@@ -83,6 +83,7 @@ export default function TracabilityPage() {
           <TableRow>
             <TableHead>كود الموريور</TableHead>
             <TableHead>اسم الموريور</TableHead>
+            <TableHead>تاريخ العملية</TableHead>
             <TableHead>الوزن المشترى</TableHead>
             <TableHead>الوزن المباع</TableHead>
             <TableHead></TableHead>
@@ -93,6 +94,7 @@ export default function TracabilityPage() {
             <TableRow key={entry.id}>
               <TableCell>{entry.codeMareyeur}</TableCell>
               <TableCell>{entry.nomMareyeur}</TableCell>
+              <TableCell>{entry.tracabilityDate ? new Date(entry.tracabilityDate).toLocaleDateString() : ''}</TableCell>
               <TableCell>{entry.poidsAchete}</TableCell>
               <TableCell>{entry.poidsVendu}</TableCell>
               <TableCell className="text-right">

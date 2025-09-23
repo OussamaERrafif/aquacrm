@@ -96,6 +96,8 @@ model Tracability {
   nomMareyeur  String
   poidsAchete  Float
   poidsVendu   Float
+  // The date of the tracability operation (set by user), not the record creation time
+  tracabilityDate DateTime @default(now())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

@@ -11,16 +11,19 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const body = await request.json();
-  const { codeMareyeur, nomMareyeur, poidsAchete, poidsVendu } = body;
+  const { codeMareyeur, nomMareyeur, poidsAchete, poidsVendu, tracabilityDate } = body;
+
+  const data = {
+    codeMareyeur,
+    nomMareyeur,
+    poidsAchete,
+    poidsVendu,
+    ...(tracabilityDate ? { tracabilityDate: new Date(tracabilityDate) } : {}),
+  } as const;
 
   const updatedTracabilityEntry = await prisma.tracability.update({
     where: { id: params.id },
-    data: {
-      codeMareyeur,
-      nomMareyeur,
-      poidsAchete,
-      poidsVendu,
-    },
+    data,
   });
 
   return NextResponse.json(updatedTracabilityEntry);

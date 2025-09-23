@@ -7,8 +7,11 @@ import jsPDF from 'jspdf';
 import { autoTable } from 'jspdf-autotable';
 import { Tracability } from '@prisma/client';
 
+// Local extended type to include the new `tracabilityDate` field until Prisma client types are fully in sync
+type TracabilityWithDate = Tracability & { tracabilityDate?: Date | string | null };
+
 interface TracabilityPDFExportButtonProps {
-  tracabilityEntries: Tracability[];
+  tracabilityEntries: TracabilityWithDate[];
 }
 
 declare module 'jspdf' {
@@ -50,18 +53,19 @@ export function TracabilityPDFExportButton({ tracabilityEntries }: TracabilityPD
     pdf.text('Traceability Report', 10, 40);
 
     // Table
-    const tableColumn = ["Mareyeur Code", "Mareyeur Name", "Weight Purchased", "Weight Sold"];
+  const tableColumn = ["Mareyeur Code", "Mareyeur Name", "Date", "Weight Purchased", "Weight Sold"];
     const tableRows: (string | number)[][] = [];
 
-    tracabilityEntries.forEach(entry => {
-        const entryData = [
-            entry.codeMareyeur,
-            entry.nomMareyeur,
-            entry.poidsAchete,
-            entry.poidsVendu
-        ];
-        tableRows.push(entryData);
-    });
+  tracabilityEntries.forEach(entry => {
+    const entryData = [
+      entry.codeMareyeur,
+      entry.nomMareyeur,
+      entry.tracabilityDate ? new Date(entry.tracabilityDate).toLocaleDateString() : '',
+      entry.poidsAchete,
+      entry.poidsVendu
+    ];
+    tableRows.push(entryData);
+  });
 
     autoTable(pdf, {
         head: [tableColumn],

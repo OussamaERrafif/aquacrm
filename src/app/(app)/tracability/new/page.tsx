@@ -23,6 +23,7 @@ const tracabilitySchema = z.object({
   nomMareyeur: z.string().min(1, 'الاسم مطلوب.'),
   poidsAchete: z.coerce.number().min(0, 'الوزن المشترى يجب أن يكون رقمًا موجبًا.'),
   poidsVendu: z.coerce.number().min(0, 'الوزن المباع يجب أن يكون رقمًا موجبًا.'),
+  tracabilityDate: z.string().optional(),
 });
 
 type TracabilityFormValues = z.infer<typeof tracabilitySchema>;
@@ -35,7 +36,8 @@ export default function NewTracabilityPage() {
       codeMareyeur: '',
       nomMareyeur: '',
       poidsAchete: 0,
-      poidsVendu: 0,
+  poidsVendu: 0,
+  tracabilityDate: new Date().toISOString().slice(0, 10),
     },
   });
 
@@ -108,6 +110,19 @@ export default function NewTracabilityPage() {
                     <FormLabel>الوزن المباع</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tracabilityDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>تاريخ العملية</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

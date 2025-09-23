@@ -25,6 +25,7 @@ const tracabilitySchema = z.object({
     nomMareyeur: z.string().min(1, 'الاسم مطلوب.'),
     poidsAchete: z.coerce.number().min(0, 'الوزن المشترى يجب أن يكون رقمًا موجبًا.'),
     poidsVendu: z.coerce.number().min(0, 'الوزن المباع يجب أن يكون رقمًا موجبًا.'),
+  tracabilityDate: z.string().optional(),
 });
 
 type TracabilityFormValues = z.infer<typeof tracabilitySchema>;
@@ -54,6 +55,9 @@ export default function EditTracabilityPage() {
           nomMareyeur: tracability.nomMareyeur,
           poidsAchete: tracability.poidsAchete,
           poidsVendu: tracability.poidsVendu,
+            tracabilityDate: tracability.tracabilityDate
+              ? new Date(tracability.tracabilityDate).toISOString().slice(0, 10)
+              : undefined,
         });
       } else if (res.status === 404) {
         setError('Tracability record not found');
@@ -68,7 +72,7 @@ export default function EditTracabilityPage() {
     await fetch(`/api/tracability/${params.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+  body: JSON.stringify(data),
     });
     router.push('/tracability');
     router.refresh();
@@ -133,6 +137,19 @@ export default function EditTracabilityPage() {
                     <FormLabel>الوزن المباع</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tracabilityDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>تاريخ العملية</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
