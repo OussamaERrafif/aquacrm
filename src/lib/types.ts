@@ -1,8 +1,10 @@
 export type NavItem = {
   title: string;
-  href: string;
-  icon: React.ReactNode;
+  href?: string;
+  // icons are React components (ElementType) so they can be rendered as <Icon />
+  icon: React.ElementType;
   active?: boolean;
+  items?: NavItem[];
 };
 
 export type Person = {
@@ -74,3 +76,27 @@ export type Party = {
 export interface PartyWithRelations extends Party {
   invoices: Invoice[];
 }
+
+export type Collaborator = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  address?: string;
+};
+
+export type Charge = {
+  id: string;
+  title: string;
+  price: number;
+};
+
+export type ChargesInvoice = {
+  id: string;
+  invoiceNumber: string;
+  date: string | Date;
+  totalAmount: number;
+  status: 'Paid' | 'Unpaid';
+  collaborator: Collaborator;
+  charges: Charge[];
+};

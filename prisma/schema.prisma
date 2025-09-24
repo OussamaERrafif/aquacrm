@@ -7,6 +7,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum PartyType {
+  BUYER
+  SELLER
+}
+
 model Party {
   id      String   @id @default(cuid())
   name    String
@@ -14,6 +19,7 @@ model Party {
   email   String   @unique
   phone   String?
   address String?
+  type    PartyType
 
   invoices Invoice[]
   loans    Loan[]
@@ -42,7 +48,7 @@ model Fish {
 
 model Invoice {
   id            String   @id @default(cuid())
-  invoiceNumber String   @unique @default(cuid())
+  invoiceNumber String   @unique
   type          String // "buy" or "sell"
   date          DateTime @default(now())
   dueDate       DateTime
@@ -107,6 +113,46 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Collaborator {
+  id      String   @id @default(cuid())
+  name    String
+  email   String   @unique
+  phone   String?
+  address String?
+
+  chargesInvoices ChargesInvoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ChargesInvoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  date          DateTime @default(now())
+  totalAmount   Float
+  status        String // "Paid", "Unpaid"
+
+  collaboratorId String
+  collaborator   Collaborator @relation(fields: [collaboratorId], references: [id], onDelete: Cascade)
+
+  charges Charge[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Charge {
+  id               String         @id @default(cuid())
+  title            String
+  price            Float
+  chargesInvoiceId String
+  chargesInvoice   ChargesInvoice @relation(fields: [chargesInvoiceId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

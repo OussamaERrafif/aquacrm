@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
-import type { Invoice, Loan, Party, Person, Buyer, Seller, Fish } from './types';
+import type { Invoice, Loan, Party, Person, Buyer, Seller, Fish, Collaborator, ChargesInvoice } from './types';
+import { PartyType } from '@prisma/client';
 
 // This file is now empty as the application is connected to the database.
 // The data is fetched from the API routes which use Prisma.
@@ -58,10 +59,37 @@ export async function getParty(id: string) {
     });
 }
 
-export async function getParties(includeInvoices = false) {
+export async function getParties(includeInvoices = false, type?: PartyType) {
     return prisma.party.findMany({
+        where: {
+            ...(type && { type: type }),
+        },
         include: {
             invoices: includeInvoices,
+        }
+    });
+}
+
+export async function getCollaborators(includeChargesInvoices = false) {
+    return prisma.collaborator.findMany({
+        include: {
+            chargesInvoices: includeChargesInvoices,
+        }
+    });
+}
+
+export async function getCollaborator(id: string) {
+    return prisma.collaborator.findUnique({
+        where: { id },
+        include: {
+            chargesInvoices: {
+                include: {
+                    charges: true,
+                },
+                orderBy: {
+                    date: 'desc'
+                }
+            },
         }
     });
 }

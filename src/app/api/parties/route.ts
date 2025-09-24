@@ -1,14 +1,15 @@
-
 import { NextResponse } from 'next/server';
 import { getParties } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
+import { PartyType } from '@prisma/client';
 
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const include_invoices = searchParams.get('include_invoices') === 'true'
+  const type = searchParams.get('type') as PartyType | undefined;
 
-  const parties = await getParties(include_invoices);
+  const parties = await getParties(include_invoices, type);
   return NextResponse.json(parties);
 }
 
@@ -18,5 +19,3 @@ export async function POST(request: Request) {
   const newParty = await prisma.party.create({ data: body });
   return NextResponse.json(newParty, { status: 201 });
 }
-
-    

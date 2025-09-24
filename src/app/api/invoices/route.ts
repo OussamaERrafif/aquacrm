@@ -39,10 +39,22 @@ export async function POST(request: Request) {
 
   const currentDate = new Date();
   
+  const lastInvoice = await prisma.invoice.findFirst({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  let newInvoiceNumber = 'INV-1';
+  if (lastInvoice && lastInvoice.invoiceNumber) {
+    const lastInvoiceNumber = parseInt(lastInvoice.invoiceNumber.split('-')[1]);
+    newInvoiceNumber = `INV-${lastInvoiceNumber + 1}`;
+  }
+
   const newInvoice = await prisma.invoice.create({
     data: {
       ...invoiceData,
-      invoiceNumber: `INV-${Date.now()}`,
+      invoiceNumber: newInvoiceNumber,
       date: currentDate,
       dueDate: add(currentDate, { days: 30 }),
       totalAmount,
