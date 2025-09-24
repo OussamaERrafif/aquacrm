@@ -18,13 +18,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { PageHeader } from '@/components/app/page-header';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const partySchema = z.object({
   name: z.string().min(1, 'الاسم مطلوب.'),
   company: z.string().optional(),
-  email: z.string().email('عنوان بريد إلكتروني غير صالح.'),
+  email: z.string(),
   phone: z.string().optional(),
   address: z.string().optional(),
+  type: z.enum(['BUYER', 'SELLER'], { errorMap: () => ({ message: 'النوع مطلوب.' }) }),
 });
 
 type PartyFormValues = z.infer<typeof partySchema>;
@@ -112,6 +114,27 @@ export default function NewPartyPage() {
                     <FormControl>
                       <Input placeholder="123-456-7890" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>النوع</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="اختر نوع الطرف" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="BUYER">مشتر</SelectItem>
+                        <SelectItem value="SELLER">بائع</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

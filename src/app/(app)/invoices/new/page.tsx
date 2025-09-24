@@ -35,6 +35,7 @@ import { PlusCircle, Trash2, Package } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { ProductSelectionModal } from "@/components/app/product-selection-modal";
+import { PartySelectionModal } from '@/components/app/party-selection-modal';
 import React, { useEffect } from "react";
 import type { Fish, Party } from "@/lib/types";
 import { useRouter } from "next/navigation";
@@ -65,19 +66,21 @@ const sizeOptions: z.infer<typeof invoiceItemSchema.shape.length>[] = ["xs", "s"
 
 export default function NewInvoicePage() {
     const router = useRouter();
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
-    const [partyList, setPartyList] = React.useState<Party[]>([]);
+  const [productModalOpen, setProductModalOpen] = React.useState(false);
+  const [partyModalOpen, setPartyModalOpen] = React.useState(false);
+  const [partyList, setPartyList] = React.useState<Party[]>([]);
+  const [selectedParty, setSelectedParty] = React.useState<Party | null>(null);
     const [fishList, setFishList] = React.useState<Fish[]>([]);
 
     useEffect(() => {
         async function fetchData() {
             const resParties = await fetch('/api/parties');
-            if (resParties.ok) {
-              const partiesData = await resParties.json();
-              setPartyList(partiesData);
-            } else {
-              console.error('Failed to fetch parties');
-            }
+                if (resParties.ok) {
+                  const partiesData = await resParties.json();
+                  setPartyList(partiesData);
+                } else {
+                  console.error('Failed to fetch parties');
+                }
             
             const resFish = await fetch('/api/products');
             if (resFish.ok) {
@@ -151,9 +154,17 @@ export default function NewInvoicePage() {
   return (
     <>
     <ProductSelectionModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={productModalOpen}
+        onClose={() => setProductModalOpen(false)}
         onSelectProducts={handleSelectProducts}
+    />
+    <PartySelectionModal
+      isOpen={partyModalOpen}
+      onClose={() => setPartyModalOpen(false)}
+      onSelect={(p) => {
+        setSelectedParty(p);
+        form.setValue('partyId', p.id);
+      }}
     />
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -200,18 +211,14 @@ export default function NewInvoicePage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>الطرف</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} dir="rtl">
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="اختر طرفًا" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {partyList.map(p => (
-                          <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <div className="flex gap-2">
+                        <Button type="button" onClick={() => setPartyModalOpen(true)} className="w-full text-right">
+                          {selectedParty ? `${selectedParty.name} ${selectedParty.company ? `(${selectedParty.company})` : ''}` : 'اختر طرفًا أو ابحث عنه'}
+                        </Button>
+                        <input type="hidden" name={field.name} value={field.value} />
+                      </div>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -223,7 +230,7 @@ export default function NewInvoicePage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-medium">بنود الفاتورة</h3>
-                 <Button variant="outline" size="sm" type="button" onClick={() => setIsModalOpen(true)}>
+                 <Button variant="outline" size="sm" type="button" onClick={() => setProductModalOpen(true)}>
                     <Package className="ml-2 h-4 w-4" />
                     اختيار المنتجات
                  </Button>

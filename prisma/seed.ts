@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, PartyType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { faker } from '@faker-js/faker/locale/fr'; // Using French locale for Moroccan-style names
 
@@ -19,180 +19,84 @@ async function main() {
   await prisma.collaborator.deleteMany({});
   await prisma.tracability.deleteMany({});
   console.log('Database cleared.');
+// Extended Moroccan Fish & Seafood Seeding (French + Arabic)
 
-  // Create Parties (customers and suppliers)
-  const parties = [];
-  for (let i = 0; i < 20; i++) {
-    const party = await prisma.party.create({
-      data: {
-        name: faker.person.fullName(),
-        company: faker.company.name(),
-        email: faker.internet.email(),
-        phone: faker.phone.number(),
-        address: `${faker.location.streetAddress()}, ${faker.location.city()}, Morocco`,
-        type: faker.helpers.arrayElement([PartyType.BUYER, PartyType.SELLER]),
-      },
-    });
-    parties.push(party);
+const fishProducts = [
+  { name: 'Sardine سردين', category: 'Poisson bleu', price: 30, supplier: 'Coopérative de pêche Agadir' },
+  { name: 'Merlu ميرلو', category: 'Poisson blanc', price: 90, supplier: 'Marché de gros Casablanca' },
+  { name: 'Sole سول', category: 'Poisson plat', price: 120, supplier: 'Pêche côtière Dakhla' },
+  { name: 'Thon تونة', category: 'Poisson pélagique', price: 150, supplier: 'Port de Tan-Tan' },
+  { name: 'Dorade Royale دوراد', category: 'Poisson blanc', price: 110, supplier: 'Coopérative Safi' },
+  { name: 'Loup de Mer (Bar) لووت دو مير (بـار)', category: 'Poisson blanc', price: 130, supplier: 'Port de Larache' },
+  { name: 'Crevette Royale روبيان ملكي', category: 'Crustacé', price: 160, supplier: 'Pêcheurs de Nador' },
+  { name: 'Calmar كلمار', category: 'Céphalopode', price: 140, supplier: 'Marché d’El Jadida' },
+  { name: 'Chinchard (Maquereau) شينشار (ماكرو)', category: 'Poisson bleu', price: 60, supplier: 'Port de Mohammedia' },
+  { name: 'Espadon سيف البحر', category: 'Poisson noble', price: 200, supplier: 'Pêche hauturière Agadir' },
+  { name: 'Rouget روشيه', category: 'Poisson côtier', price: 100, supplier: 'Marché de Larache' },
+  { name: 'Seiche سيش', category: 'Céphalopode', price: 150, supplier: 'Port de Laâyoune' },
+  { name: 'Langouste Rouge لوبستر أحمر', category: 'Crustacé', price: 350, supplier: 'Pêcheurs de Dakhla' },
+  { name: 'Huître de Dakhla محار الداخلة', category: 'Mollusque', price: 80, supplier: 'Ferme marine Dakhla' },
+  { name: 'Palourdes (Clams) محار', category: 'Mollusque', price: 70, supplier: 'Marée Rabat' },
+
+  // Extended Moroccan fish & seafood
+  { name: 'Carangue كرانغ', category: 'Poisson pélagique', price: 90, supplier: 'Port d’Agadir' },
+  { name: 'Bonite بونيت', category: 'Poisson bleu', price: 80, supplier: 'Marché de Casablanca' },
+  { name: 'Mulet بوري', category: 'Poisson gris', price: 70, supplier: 'Port de Kénitra' },
+  { name: 'Anchois أنشوفة', category: 'Poisson bleu', price: 40, supplier: 'Port d’Al Hoceima' },
+  { name: 'Pagre بَاجَر', category: 'Poisson blanc', price: 120, supplier: 'Pêche côtière Safi' },
+  { name: 'Denté دنط', category: 'Poisson noble', price: 150, supplier: 'Port de Tanger' },
+  { name: 'Raie راي', category: 'Poisson plat', price: 90, supplier: 'Marché de Mohammedia' },
+  { name: 'Requin قرش', category: 'Poisson pélagique', price: 200, supplier: 'Port de Tan-Tan' },
+  { name: 'Homard لوبستر', category: 'Crustacé', price: 400, supplier: 'Pêcheurs de Dakhla' },
+  { name: 'Écrevisse كرافيت', category: 'Crustacé', price: 120, supplier: 'Ferme marine Nador' },
+  { name: 'Bigorneau بيروني', category: 'Mollusque', price: 50, supplier: 'Côte Atlantique' },
+  { name: 'Telline تيلين', category: 'Mollusque', price: 60, supplier: 'Marée Rabat' },
+  { name: 'Mérou جرو', category: 'Poisson noble', price: 250, supplier: 'Port de Casablanca' },
+  { name: 'Saint-Pierre سان بيير', category: 'Poisson noble', price: 220, supplier: 'Port de Safi' },
+  { name: 'Turbo توربو', category: 'Poisson plat', price: 180, supplier: 'Port de Tanger' },
+  { name: 'Capitaine كابيتان', category: 'Poisson blanc', price: 170, supplier: 'Port de Dakhla' },
+  { name: 'Maquereau ماكرو', category: 'Poisson bleu', price: 60, supplier: 'Pêcheurs d’El Jadida' },
+  { name: 'Congre كونغر', category: 'Poisson allongé', price: 110, supplier: 'Port d’Essaouira' },
+  { name: 'Poisson-Scorpion سمك عقرب', category: 'Poisson côtier', price: 140, supplier: 'Marché de Tétouan' },
+  { name: 'Dorade Grise دوراد رمادية', category: 'Poisson blanc', price: 100, supplier: 'Port de Safi' },
+  { name: 'Chapon شابون', category: 'Poisson de roche', price: 160, supplier: 'Port de Tanger' },
+  { name: 'Baliste باليست', category: 'Poisson de récif', price: 130, supplier: 'Port de Larache' },
+  { name: 'Anguille ثعبان البحر', category: 'Poisson allongé', price: 200, supplier: 'Marée Rabat' },
+  { name: 'Crabe سلطعون', category: 'Crustacé', price: 90, supplier: 'Port de Kénitra' },
+  { name: 'Araignée de Mer عنكبوت البحر', category: 'Crustacé', price: 150, supplier: 'Pêcheurs de Larache' },
+  { name: 'Poulpe أخطبوط', category: 'Céphalopode', price: 120, supplier: 'Port de Laâyoune' },
+  { name: 'Langoustine لانغوستين', category: 'Crustacé', price: 180, supplier: 'Marché de Casablanca' },
+  { name: 'Crevette Grise روبيان رمادي', category: 'Crustacé', price: 90, supplier: 'Port de Tanger' },
+  { name: 'Crevette Rose روبيان وردي', category: 'Crustacé', price: 110, supplier: 'Port de Safi' },
+  { name: 'Bernique برنيك', category: 'Mollusque', price: 50, supplier: 'Côte Atlantique' },
+  { name: 'Alose أَلوز', category: 'Poisson bleu', price: 80, supplier: 'Port de Mohammedia' },
+];
+
+for (const fish of fishProducts) {
+  // Skip creating fish if it already exists
+  const existingFish = await prisma.fish.findUnique({ where: { name: fish.name } as any });
+  if (existingFish) {
+    continue;
   }
-  console.log('Created 20 parties.');
 
-  // Create Fish products
-  const fishProducts: any[] = [];
-  const fishNames = ['Sardine', 'Merlu', 'Sole', 'Thon', 'Dorade', 'Loup de mer', 'Crevette Royale', 'Calmar'];
-  for (const name of fishNames) {
-    // Skip creating fish if a product with the same name already exists
-    const existingFish = await prisma.fish.findUnique({ where: { name } as any });
-    if (existingFish) {
-      fishProducts.push(existingFish as any);
-      continue;
-    }
+  await prisma.fish.create({
+    data: {
+      name: fish.name,
+      category: fish.category,
+      status: 'In Stock',
+      price: fish.price,
+      stock: 50, // default stock
+      minStock: 5,
+      supplier: fish.supplier,
+      imageUrl: `/images/fish/${fish.name.split(' ')[0].toLowerCase()}.jpg`,
+      imageHint: fish.name.split(' ')[0].toLowerCase(),
+    },
+  });
+}
 
-    const fish = await prisma.fish.create({
-      data: {
-        name: name,
-        category: faker.commerce.department(),
-        status: 'In Stock',
-        price: parseFloat(faker.commerce.price({ min: 50, max: 200 })),
-        stock: faker.number.int({ min: 10, max: 100 }),
-        minStock: 5,
-        supplier: faker.company.name(),
-        imageUrl: faker.image.url(),
-        imageHint: name.toLowerCase().replace(' ', '_'),
-      },
-    });
-    fishProducts.push(fish);
-  }
-  console.log(`Created ${fishNames.length} fish products.`);
+console.log(`Created ${fishProducts.length} Moroccan fish products (FR + AR).`);
+console.log('Seeding finished.');
 
-  // Create Invoices (buy and sell)
-  for (let i = 0; i < 30; i++) {
-    const party = faker.helpers.arrayElement(parties);
-    const type = faker.helpers.arrayElement(['buy', 'sell']);
-    const status = faker.helpers.arrayElement(['Paid', 'Unpaid', 'Overdue']);
-    const totalAmount = parseFloat(faker.commerce.price({ min: 500, max: 10000 }));
-
-    const lastInvoice = await prisma.invoice.findFirst({
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    let newInvoiceNumber = 'INV-1';
-    if (lastInvoice && lastInvoice.invoiceNumber) {
-      const lastInvoiceNumber = parseInt(lastInvoice.invoiceNumber.split('-')[1]);
-      newInvoiceNumber = `INV-${lastInvoiceNumber + 1}`;
-    }
-
-    await prisma.invoice.create({
-      data: {
-        invoiceNumber: newInvoiceNumber,
-        type: type,
-        date: faker.date.past(),
-        dueDate: faker.date.future(),
-        totalAmount: totalAmount,
-        status: status,
-        partyId: party.id,
-        items: {
-          create: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }).map(() => {
-            const fish = faker.helpers.arrayElement(fishProducts);
-            const weight = faker.number.int({ min: 1, max: 20 });
-            const pricePerKilo = fish.price;
-            return {
-              fishId: fish.id,
-              length: faker.helpers.arrayElement(['xs', 's', 'm', 'l', 'xl', 'xxl']),
-              weight: weight,
-              pricePerKilo: pricePerKilo,
-            };
-          }),
-        },
-      },
-    });
-  }
-  console.log('Created 30 invoices.');
-
-  // Create Loans
-  for (let i = 0; i < 10; i++) {
-    const party = faker.helpers.arrayElement(parties);
-    await prisma.loan.create({
-      data: {
-        amount: parseFloat(faker.finance.amount({ min: 1000, max: 20000 })),
-        disbursementDate: faker.date.past(),
-        repaymentSchedule: 'Monthly',
-        outstandingBalance: parseFloat(faker.finance.amount({ min: 0, max: 10000 })),
-        status: faker.helpers.arrayElement(['Active', 'Paid Off', 'Defaulted']),
-        fisherId: party.id,
-      },
-    });
-  }
-  console.log('Created 10 loans.');
-
-  // Create Tracability entries
-  for (let i = 0; i < 15; i++) {
-    const tracData: Prisma.TracabilityCreateInput = {
-      codeMareyeur: `MAR-${faker.string.alphanumeric(8).toUpperCase()}`,
-      nomMareyeur: faker.person.fullName(),
-      poidsAchete: faker.number.float({ min: 100, max: 1000, fractionDigits: 2 }),
-      poidsVendu: faker.number.float({ min: 50, max: 900, fractionDigits: 2 }),
-      tracabilityDate: faker.date.past(),
-    } as any;
-
-    await prisma.tracability.create({ data: tracData as any });
-  }
-  console.log('Created 15 tracability entries.');
-
-  // Create Collaborators
-  const collaborators = [];
-  for (let i = 0; i < 5; i++) {
-    const collaborator = await prisma.collaborator.create({
-      data: {
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        phone: faker.phone.number(),
-        address: `${faker.location.streetAddress()}, ${faker.location.city()}, Morocco`,
-      },
-    });
-    collaborators.push(collaborator);
-  }
-  console.log('Created 5 collaborators.');
-
-  // Create ChargesInvoices
-  for (const collaborator of collaborators) {
-    for (let i = 0; i < 2; i++) {
-      const totalAmount = parseFloat(faker.commerce.price({ min: 100, max: 2000 }));
-      const lastChargesInvoice = await prisma.chargesInvoice.findFirst({
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-
-      let newChargesInvoiceNumber = 'INV-1';
-      if (lastChargesInvoice && lastChargesInvoice.invoiceNumber) {
-        const lastChargesInvoiceNumber = parseInt(lastChargesInvoice.invoiceNumber.split('-')[1]);
-        newChargesInvoiceNumber = `INV-${lastChargesInvoiceNumber + 1}`;
-      }
-
-      await prisma.chargesInvoice.create({
-        data: {
-          invoiceNumber: newChargesInvoiceNumber,
-          collaboratorId: collaborator.id,
-          date: faker.date.past(),
-          totalAmount: totalAmount,
-          status: faker.helpers.arrayElement(['Paid', 'Unpaid']),
-          charges: {
-            create: Array.from({ length: faker.number.int({ min: 1, max: 3 }) }).map(() => ({
-              title: faker.commerce.productName(),
-              price: parseFloat(faker.commerce.price({ min: 10, max: 500 })),
-            })),
-          },
-        },
-      });
-    }
-  }
-  console.log('Created charges invoices.');
-
-
-  console.log('Seeding finished.');
 
   // Ensure an admin user exists
   const adminUsername = 'admin';

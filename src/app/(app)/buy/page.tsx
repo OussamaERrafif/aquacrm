@@ -90,6 +90,10 @@ export default function BuyPage() {
     const to = filters.to ? new Date(filters.to) : null;
 
     return invoices.filter((inv) => {
+      // filter by status if provided
+      if (filters.status) {
+        if (inv.status !== filters.status) return false;
+      }
       if (filters.category) {
         const hasCat = inv.items.some((it) => it.fish.category === filters.category);
         if (!hasCat) return false;
@@ -105,6 +109,32 @@ export default function BuyPage() {
       return true;
     });
   }, [invoices, filters]);
+
+  // apply sorting if requested
+  const sortedInvoices = React.useMemo(() => {
+    if (!filters) return filteredInvoices;
+    const { sortBy, sortOrder } = filters as any;
+    if (!sortBy) return filteredInvoices;
+    const copy = [...filteredInvoices];
+    copy.sort((a, b) => {
+      let va: any = null;
+      let vb: any = null;
+      if (sortBy === 'date') {
+        va = new Date(a.date).getTime();
+        vb = new Date(b.date).getTime();
+      } else if (sortBy === 'name') {
+        va = (a.party?.name || '').toLowerCase();
+        vb = (b.party?.name || '').toLowerCase();
+      }
+      if (va == null && vb == null) return 0;
+      if (va == null) return 1;
+      if (vb == null) return -1;
+      if (va < vb) return sortOrder === 'desc' ? 1 : -1;
+      if (va > vb) return sortOrder === 'desc' ? -1 : 1;
+      return 0;
+    });
+    return copy;
+  }, [filteredInvoices, filters]);
 
   const totalCost = invoices.reduce((sum, inv) => sum + inv.totalAmount, 0);
   
@@ -217,7 +247,7 @@ export default function BuyPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredInvoices.map((invoice) => (
+                {(sortedInvoices || filteredInvoices).map((invoice) => (
                   <TableRow key={invoice.id}>
                     <TableCell className="font-medium">
                       <Link href={`/invoices/${invoice.id}`} className="hover:underline">{invoice.invoiceNumber}</Link>
