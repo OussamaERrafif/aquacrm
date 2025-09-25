@@ -114,11 +114,31 @@ export default function NewInvoicePage() {
   });
 
   const onSubmit = async (data: InvoiceFormValues) => {
-    await fetch('/api/invoices', {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const res = await fetch('/api/invoices', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify(data),
     });
+
+    if (res.status === 401) {
+      // Token missing/invalid/expired on server side
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+      }
+      router.push('/login');
+      return;
+    }
+
+    if (!res.ok) {
+      console.error('Failed to create invoice', res.status);
+      // Optionally show an error toast here
+      return;
+    }
+
     const redirectUrl = data.type === 'buy' ? '/buy' : '/sell';
     router.push(redirectUrl);
     router.refresh();
