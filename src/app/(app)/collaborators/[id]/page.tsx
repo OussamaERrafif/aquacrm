@@ -102,7 +102,7 @@ export default function CollaboratorDetailsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {collaborator.chargesInvoices.map((ci) => (
+                            {(collaborator.chargesInvoices ?? []).map((ci) => (
                                 <TableRow key={ci.id}>
                                     <TableCell>
                                         <Link href={`/chargesinvoices/${ci.id}`} className="hover:underline">
@@ -114,7 +114,7 @@ export default function CollaboratorDetailsPage() {
                                     <TableCell className="text-left">{ci.status}</TableCell>
                                 </TableRow>
                             ))}
-                             {collaborator.chargesInvoices.length === 0 && (
+                             {(collaborator.chargesInvoices ?? []).length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={4} className="text-center">لم يتم العثور على فواتير مصاريف.</TableCell>
                                 </TableRow>
