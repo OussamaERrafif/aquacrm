@@ -7,7 +7,9 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu';
-import { PlusCircle, Search, Filter, TrendingUp, TrendingDown, ArrowLeft } from 'lucide-react';
+import { PlusCircle, Search, Filter, TrendingUp, TrendingDown, ArrowLeft, Trash } from 'lucide-react';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -52,15 +54,56 @@ export default function ProductsPage() {
   const statuses = ['In Stock', 'Low Stock', 'Out of Stock'];
 
 
+  const { toast } = useToast();
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [selectedToDelete, setSelectedToDelete] = React.useState<string | null>(null);
+
+  const openDeleteDialog = (id: string) => {
+    setSelectedToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedToDelete) return;
+    const id = selectedToDelete;
+    setDeleteDialogOpen(false);
+    const prev = products;
+    setProducts(products.filter(p => p.id !== id));
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const res = await fetch(`/api/products/${id}`, {
+        method: 'DELETE',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
+      });
+      if (res.status === 401) {
+        if (typeof window !== 'undefined') localStorage.removeItem('token');
+        window.location.href = '/login';
+        return;
+      }
+      if (!res.ok) {
+        throw new Error('Failed to delete');
+      }
+      toast({ title: 'تم الحذف', description: 'تم حذف المنتج بنجاح' });
+    } catch (err) {
+      console.error(err);
+      setProducts(prev);
+      toast({ title: 'خطأ', description: 'فشل حذف المنتج' });
+    } finally {
+      setSelectedToDelete(null);
+    }
+  };
+
   return (
     <>
       <PageHeader 
         title="كتالوج المنتجات"
         action={
             <div className="flex gap-2">
-            <Button>
-                <PlusCircle className="ml-2 h-4 w-4" />
-                إضافة منتج
+            <Button asChild>
+                <Link href="/products/new">
+                  <PlusCircle className="ml-2 h-4 w-4" />
+                  إضافة منتج
+                </Link>
             </Button>
             <ProductPDFExportButton products={products} />
             </div>
@@ -142,9 +185,26 @@ export default function ProductsPage() {
 
             </CardContent>
              <CardFooter className="p-4 bg-muted/50">
-                 <Button variant="ghost" size="sm" className="w-full justify-center" asChild>
-                    <Link href={`/products/${f.id}`}>عرض التفاصيل <ArrowLeft className="mr-2 h-4 w-4" /></Link>
-                </Button>
+             <div className="w-full flex gap-2">
+              <Button variant="ghost" size="sm" className="flex-1 justify-center" asChild>
+                <Link href={`/products/${f.id}`}>عرض التفاصيل <ArrowLeft className="mr-2 h-4 w-4" /></Link>
+              </Button>
+                    <AlertDialog open={deleteDialogOpen && selectedToDelete === f.id} onOpenChange={(open) => { if (!open) setSelectedToDelete(null); setDeleteDialogOpen(open); }}>
+                      <Button variant="ghost" size="sm" className="justify-center" onClick={() => openDeleteDialog(f.id)}>
+                        <Trash className="h-4 w-4 text-red-500" />
+                      </Button>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                          <AlertDialogDescription>هل أنت متأكد أنك تريد حذف هذا المنتج؟ هذا الإجراء لا يمكن التراجع عنه.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                          <AlertDialogAction onClick={confirmDelete}>حذف</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+             </div>
             </CardFooter>
           </Card>
         ))}

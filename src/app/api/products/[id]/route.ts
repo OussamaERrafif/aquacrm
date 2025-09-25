@@ -15,6 +15,18 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  await prisma.fish.delete({ where: { id: params.id } });
-  return new Response(null, { status: 204 });
+  // Remove dependent invoice items first to satisfy foreign key constraints
+  await prisma.invoiceItem.deleteMany({ where: { fishId: params.id } });
+
+  // Then delete the fish record
+  try {
+    await prisma.fish.delete({ where: { id: params.id } });
+    return new Response(null, { status: 204 });
+  } catch (err: any) {
+    // If fish not found, return 404
+    if (err?.code === 'P2025') {
+      return new Response('Not Found', { status: 404 });
+    }
+    throw err;
+  }
 }
